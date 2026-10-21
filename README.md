@@ -7,7 +7,7 @@
 Themes · live design studio · new-tab wallpapers · iOS-style animations · call bar · Now Bar · reworked PDF viewer
 
 ![Firefox edition](https://img.shields.io/badge/Firefox%20edition-1.21.0-ff7139)
-![Chromium edition](https://img.shields.io/badge/Chromium%20edition-0.1.0%20early-4285f4)
+![Chromium edition](https://img.shields.io/badge/Chromium%20edition-0.1.2%20early-4285f4)
 ![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078d4)
 ![Languages](https://img.shields.io/badge/languages-10-8e6bff)
 ![License](https://img.shields.io/badge/license-MIT-2ea44f)
@@ -29,7 +29,7 @@ Hand Design comes in two editions. They share the same palettes, the same quick 
 | | 🦊 **Firefox edition** | 🌐 **Chromium edition** |
 |---|---|---|
 | **Browsers** | Floorp · Firefox · Firefox Developer Edition · Firefox Nightly · LibreWolf · Waterfox · Zen · Mercury | Chrome · Edge · Brave · Vivaldi · Opera / Opera GX · Yandex · Chromium · Thorium |
-| **Version** | 1.21.0 — stable | 0.1.0 — early |
+| **Version** | 1.21.0 — stable | 0.1.2 — early |
 | **How it works** | Restyles the whole browser interface (`userChrome.css`, `userContent.css`, a small AutoConfig loader) | MV3 extension + a theme package for the window frame |
 | **Folder** | [`firefox/`](firefox/) | [`chrome/`](chrome/) |
 | **Installer** | `Setup.cmd` (10 languages) | `Setup.cmd` (Russian / English) |
@@ -60,12 +60,12 @@ One button on the toolbar: switch theme, light / dark, accent color, turn **all 
 ### 🛠 Hand Design Studio
 Every detail, live, on top of any theme: colors, shape, density, tabs, address bar, right-click menu styles, Ctrl+Tab switcher, font, animations, new tab, PDF viewer, language. Your own colors always win over the theme; switching the theme resets them, so every theme still looks like itself. Presets, export / import, one-click reset.
 
-![Studio](docs/studio.jpg)
+![Studio](docs/studio-menus.jpg)
 
 ### 🖼 New tab
 Lock-screen clock, 10 built-in wallpapers or your own picture, dimming and blur, search and shortcuts — in every supported browser.
 
-![Wallpapers](docs/wallpapers.jpg)
+![Wallpapers](docs/wallpaper-picker.jpg)
 
 ### 📞 Call bar & 🎵 Now Bar
 A call in another tab (Telegram, Discord, WhatsApp, Meet…) shows a small island with a timer, mic and camera controls and a jump-back button. Music playing in another tab gets a draggable player with artwork and controls.
@@ -98,6 +98,30 @@ English, Русский, Українська, Deutsch, Français, Español, Por
 | Interface languages | 10 | 2 |
 
 Vivaldi also gets an experimental full-interface stylesheet in the Chromium edition.
+
+<details>
+<summary><b>Chromium edition screenshots</b></summary>
+
+| New tab | Quick panel |
+|---|---|
+| ![New tab in Chrome](docs/chrome-newtab.jpg) | ![Quick panel in Chrome](docs/chrome-panel.jpg) |
+| **Studio** | **Search** |
+| ![Studio in Chrome](docs/chrome-studio.jpg) | ![Search in Chrome](docs/chrome-search.jpg) |
+| **PDF viewer** | **Now Bar** |
+| ![PDF in Chrome](docs/chrome-pdf.jpg) | ![Now Bar in Chrome](docs/chrome-nowbar.jpg) |
+
+</details>
+
+<details>
+<summary><b>More themes</b></summary>
+
+| One UI | iOS Liquid Glass |
+|---|---|
+| ![One UI](docs/theme-oneui.jpg) | ![iOS](docs/theme-ios.jpg) |
+| **Night Drive** | **Cyberpunk** |
+| ![Night Drive](docs/theme-nightdrive.jpg) | ![Cyberpunk](docs/theme-cyber.jpg) |
+
+</details>
 
 ## Install
 
@@ -185,7 +209,7 @@ Unofficial community project, not affiliated with or endorsed by Mozilla, Ablaze
 | | 🦊 **Для Firefox** | 🌐 **Для Chromium** |
 |---|---|---|
 | **Браузеры** | Floorp · Firefox · Firefox Developer Edition · Firefox Nightly · LibreWolf · Waterfox · Zen · Mercury | Chrome · Edge · Brave · Vivaldi · Opera / Opera GX · Яндекс · Chromium · Thorium |
-| **Версия** | 1.21.0 — стабильная | 0.1.0 — ранняя |
+| **Версия** | 1.21.0 — стабильная | 0.1.2 — ранняя |
 | **Как устроено** | Перерисовывает весь интерфейс браузера (`userChrome.css`, `userContent.css`, маленький загрузчик AutoConfig) | Расширение MV3 + тема-пакет для рамки окна |
 | **Папка** | [`firefox/`](firefox/) | [`chrome/`](chrome/) |
 | **Установщик** | `Setup.cmd` (10 языков) | `Setup.cmd` (русский / английский) |
