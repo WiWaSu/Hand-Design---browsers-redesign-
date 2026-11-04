@@ -2,187 +2,177 @@
 
 # Hand Design
 
-**One design for your whole browser — Firefox, Floorp, Chrome, Edge and their forks.**
+<sub>formerly Redesigned Fox and Floorp Modern</sub>
 
-Themes · live design studio · new-tab wallpapers · iOS-style animations · call bar · Now Bar · reworked PDF viewer
+**A complete redesign for Floorp, Firefox and Firefox forks on Windows.**
+24 themes · live design studio · new-tab wallpapers · iOS-style animations · reworked PDF viewer · 10 languages
 
-![Firefox edition](https://img.shields.io/badge/Firefox%20edition-1.21.0-ff7139)
-![Chromium edition](https://img.shields.io/badge/Chromium%20edition-0.1.2%20early-4285f4)
+![Version](https://img.shields.io/badge/version-1.21.0-8e6bff)
 ![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078d4)
-![Languages](https://img.shields.io/badge/languages-10-8e6bff)
+![Floorp](https://img.shields.io/badge/Floorp-12-6b4dff)
+![Firefox](https://img.shields.io/badge/Firefox-156%2B-ff7139)
 ![License](https://img.shields.io/badge/license-MIT-2ea44f)
 
-[**Download**](../../releases/latest) · [Changelog](CHANGELOG.md) · [Release notes](changes/) · [Русская версия ↓](#русский)
+[Русская версия ниже](#русский) · [Changelog](CHANGELOG.md) · [Release notes by version](changes/)
 
-![Hand Design themes](docs/hero.jpg)
-
-<sub>formerly Redesigned Fox and Floorp Modern</sub>
+![24 themes](docs/hero.jpg)
 
 </div>
 
----
+## Supported browsers
 
-## Pick your browser
+Floorp · Firefox · Firefox Developer Edition · Firefox Nightly · LibreWolf · Waterfox · Zen Browser · Mercury
 
-Hand Design comes in two editions. They share the same palettes, the same quick panel idea and the same Studio — each one goes as deep as its browser allows.
+## Features
 
-| | 🦊 **Firefox edition** | 🌐 **Chromium edition** |
-|---|---|---|
-| **Browsers** | Floorp · Firefox · Firefox Developer Edition · Firefox Nightly · LibreWolf · Waterfox · Zen · Mercury | Chrome · Edge · Brave · Vivaldi · Opera / Opera GX · Yandex · Chromium · Thorium |
-| **Version** | 1.21.0 — stable | 0.1.2 — early |
-| **How it works** | Restyles the whole browser interface (`userChrome.css`, `userContent.css`, a small AutoConfig loader) | MV3 extension + a theme package for the window frame |
-| **Folder** | [`firefox/`](firefox/) | [`chrome/`](chrome/) |
-| **Installer** | `Setup.cmd` (10 languages) | `Setup.cmd` (Russian / English) |
+### 🌐 10 languages
+English, Русский, Українська, Deutsch, Français, Español, Português, Polski, Türkçe, 中文. Pick one with the globe button in the installer — the same language is used everywhere in the browser (Studio, quick panel, PDF viewer, new tab, notifications). You can switch it later in Studio. Default: your Windows / browser language.
 
-Not sure? If you use Floorp or Firefox, the Firefox edition gives you the full redesign. The Chromium edition is newer and limited by what Chrome lets extensions change.
-
-## What you get
-
-### 🎨 Themes
-24 hand-tuned themes in the Firefox edition; the Chromium edition is generated from the very same palettes (with light and dark variants where a theme has both).
-
-| Group | Themes |
+### 🎨 24 themes
+| Theme | Look |
 |---|---|
-| **Inspired by systems** | One UI · iOS Liquid Glass · Material You · Windows 11 · macOS · Nothing |
-| **Mood** | Night Drive · Cyberpunk · Synthwave |
-| **Retro** | Aero · Retro 98 · Terminal · Paper |
-| **Light palettes** | Arctic · Sakura · Mint · Latte |
-| **Dark palettes** | Midnight · Fjord · Ember · Forest · Ocean · Rosé |
-| **Accessibility** | High Contrast |
+| **One UI** | Samsung Galaxy: pure black, pill-shaped tabs and buttons, thin lock-screen clock |
+| **iOS · Liquid Glass** | iOS 26: wallpaper behind the window, floating glass toolbar, glass tabs, menus and clock |
+| **Material You** | Android / Pixel: tonal colors from your accent, stacked clock |
+| **Windows 11** | Fluent: crisp corners, accent underline, Bloom wallpaper |
+| **macOS** | Traffic-light window buttons, blue menus, wave wallpaper |
+| **Nothing** | Monochrome, red dot, dot-matrix clock |
+| **Night Drive** | Night road behind a fogged car window: blurred lights at the edges, thin glowing clock |
+| **Aero** | Windows 7: glossy blue glass, shiny buttons |
+| **Retro 98** | Windows 98: grey bevelled buttons, navy title bars, teal desktop, zero rounding |
+| **Terminal** | Green phosphor, monospace everything, scanlines, blinking cursor |
+| **Paper** | Warm paper, serif font, flat and calm |
+| **Cyberpunk** | Cut corners, yellow neon, pink and cyan city grid |
+| **Arctic · Sakura · Mint · Latte** | Light palettes: ice blue, soft pink, fresh mint, coffee with milk |
+| **Midnight · Fjord · Ember · Forest · Ocean · Rosé** | Dark palettes: navy glass, nordic grey-blue, warm embers, deep forest, ocean turquoise, muted rose |
+| **Synthwave** | 80s neon sunset, pink and purple |
+| **High Contrast** | Black, white and yellow — maximum readability |
+
+Themes are grouped (dark, light, glass, bright, strict, retro) and picked from compact chips in Studio or color dots in the quick panel.
 
 ![Theme picker](docs/studio-themes.jpg)
 
-### 🎛 Quick panel
-One button on the toolbar: switch theme, light / dark, accent color, turn **all rounded corners off**. Applies instantly — no restart, no installer.
+### 🎛 Quick panel — switch themes right in the browser
+Click the **palette button** on the toolbar: pick any of the 24 themes, turn **all rounded corners off**, switch light / dark and the accent color. Everything applies instantly in every window, the new tab, settings pages and PDFs — no installer, no restart. The choice is also written to `userChrome.css` / `userContent.css`, so it stays after a restart.
 
 ![Quick panel](docs/quick-panel.jpg)
 
-### 🛠 Hand Design Studio
-Every detail, live, on top of any theme: colors, shape, density, tabs, address bar, right-click menu styles, Ctrl+Tab switcher, font, animations, new tab, PDF viewer, language. Your own colors always win over the theme; switching the theme resets them, so every theme still looks like itself. Presets, export / import, one-click reset.
+### 🛠 Hand Design Studio — tweak everything, live
+Open with **All design settings…** in the quick panel, **☰ → Design**, or `Alt+Shift+S`. Every change applies instantly, on top of any theme:
 
-![Studio](docs/studio-menus.jpg)
+- **Theme** — the same 24 themes, switched live
 
-### 🖼 New tab
-Lock-screen clock, 10 built-in wallpapers or your own picture, dimming and blur, search and shortcuts — in every supported browser.
+- **Colors** — accent, window background, fields, menus, text; menu transparency and blur
+- **Shape** — **no rounded corners at all** (one switch), page corner radius, gap and shadow, menu radius, button shape, density
+- **Hide tabs completely** — not the compact strip: tabs slide out from the window edge on hover, or stay fully hidden (`Alt+Shift+T` toggles)
+- **Tabs** — 6 shapes (pill, rounded, square, underline, card, Chrome-like), 6 selected-tab styles (incl. none), height, width, close button, font weight
+- **Address bar** — height, radius, alignment, border style
+- **Right-click menus** — 7 styles: One UI, iOS glass, Windows 11, macOS, Touch, Nothing, Neon
+- **Ctrl+Tab switcher** — preview window with 4 styles: iOS, Windows 11, list, neon
+- **Font** — any installed font, UI text size
+- **Animations** — speed and springiness
+- **New tab** — clock size, weight, font and position, date, search width, shortcuts, wallpaper blur
+- **Show / hide** — bookmarks bar, toolbar buttons, Now Bar, call bar, loading line
+- 6 ready-made presets, export / import settings as a file, one-click reset
 
-![Wallpapers](docs/wallpaper-picker.jpg)
+![Studio](docs/studio.jpg)
 
-### 📞 Call bar & 🎵 Now Bar
-A call in another tab (Telegram, Discord, WhatsApp, Meet…) shows a small island with a timer, mic and camera controls and a jump-back button. Music playing in another tab gets a draggable player with artwork and controls.
+### 📞 Call bar
+A call in another tab (Telegram, Discord, WhatsApp, Meet…) shows a small island at the top: site, call timer, mute mic, turn camera off, jump to the call. It shrinks to a timer pill after a few seconds. `Alt+Shift+M` mutes the mic from any tab.
 
 ![Call bar](docs/call-bar.jpg)
 
-### 📄 PDF viewer
-New toolbar and page tones (paper / sepia / night), Edge-style ink with no selection frames, straight lines with Shift, **Clear**, page bookmarks with notes, quick text, own color picker, reopens where you stopped.
+### 🔔 Update check
+Once a day the browser checks the [releases repo](https://github.com/WiWaSu/Redesigned-Firefox-and-forks-). A new version shows a notification and a red dot on the Design button; the quick panel has **Download**, **What's new** and **Later**. Nothing is downloaded automatically. Turn it off in Studio → Updates.
+
+### 🖼 New-tab wallpapers
+Button at the bottom left of the new tab: 10 built-in wallpapers, **your own picture**, dimming slider. Applies to every open new tab at once. Can also be chosen in the installer.
+
+![Wallpapers](docs/wallpapers.jpg)
 
 ### ✨ Animations
-Real spring physics like on iPhone. Four modes: **iOS springs**, **Smooth**, **System**, **Off**.
+Real spring physics like on iPhone: tabs pop in, menus and panels unfold from where you clicked, buttons respond to presses, the new tab's clock fades in from blur, shortcuts bounce in one by one. Four modes in the installer: **iOS springs**, **Smooth**, **System** (follows Windows), **Off**. Works even when Windows animation effects are disabled.
 
-### 🌍 10 languages
-English, Русский, Українська, Deutsch, Français, Español, Português, Polski, Türkçe, 中文 — in the Firefox installer (globe button) and in Studio. The Chromium edition currently speaks Russian and English.
+### 🧩 Extras
+- **Now Bar** — music playing in another tab shows a draggable bar with artwork, progress, previous / next, pause and mute (YouTube, Telegram and more)
+- Page-loading line under the toolbar
+- Theme button: Auto / Light / Dark in one click
+- Toasts: downloads finished, page zoom, tab muted
+- `Alt+Shift+C` copy page address · `Alt+Shift+D` close duplicate tabs · `Alt+Shift+Z` focus mode
+- Lock-screen clock on the Firefox / LibreWolf / Waterfox new tab too
+- Restyled screenshot tool and screen-sharing indicator
 
-## Editions compared
+### 📄 PDF viewer
+- New toolbar and icons; floats over the pages in the iOS theme
+- Interface theme (auto / light / dark) and page tone (paper / sepia / night)
+- **Edge-style ink** — drawings have no selection frame, grab them only by the strokes, keep drawing right next to them
+- Reopens every PDF on the page where you stopped
+- **Page bookmarks** with notes — ribbon button, `Ctrl+B` for the current page
+- Quick text — click a "……" gap or double-click empty space and type
+- Own color picker instead of the Windows color dialog
+- Auto-redraws pages after a GPU switch (integrated ↔ discrete)
 
-| Feature | Firefox | Chromium |
-|---|:---:|:---:|
-| Themes for the whole interface | ✅ | Window frame colors only |
-| Quick panel & Studio | ✅ | ✅ |
-| New tab: clock, wallpapers | ✅ | ✅ |
-| Tab shape, address bar shape | ✅ | — |
-| Hide tabs completely | ✅ | — |
-| Right-click menu styles | ✅ | — |
-| Tab switcher with previews | Ctrl+Tab | Alt+Q |
-| Call bar · Now Bar | ✅ | ✅ |
-| PDF viewer with drawing | ✅ | ✅ |
-| Update check | ✅ | ✅ |
-| Interface languages | 10 | 2 |
+## Screenshots
 
-Vivaldi also gets an experimental full-interface stylesheet in the Chromium edition.
-
-<details>
-<summary><b>Chromium edition screenshots</b></summary>
-
-| New tab | Quick panel |
-|---|---|
-| ![New tab in Chrome](docs/chrome-newtab.jpg) | ![Quick panel in Chrome](docs/chrome-panel.jpg) |
-| **Studio** | **Search** |
-| ![Studio in Chrome](docs/chrome-studio.jpg) | ![Search in Chrome](docs/chrome-search.jpg) |
-| **PDF viewer** | **Now Bar** |
-| ![PDF in Chrome](docs/chrome-pdf.jpg) | ![Now Bar in Chrome](docs/chrome-nowbar.jpg) |
-
-</details>
-
-<details>
-<summary><b>More themes</b></summary>
-
-| One UI | iOS Liquid Glass |
-|---|---|
-| ![One UI](docs/theme-oneui.jpg) | ![iOS](docs/theme-ios.jpg) |
-| **Night Drive** | **Cyberpunk** |
-| ![Night Drive](docs/theme-nightdrive.jpg) | ![Cyberpunk](docs/theme-cyber.jpg) |
-
-</details>
+<table>
+<tr><td><img src="docs/theme-oneui.jpg" alt="One UI"><br><b>One UI</b></td><td><img src="docs/theme-ios.jpg" alt="iOS · Liquid Glass"><br><b>iOS · Liquid Glass</b></td></tr>
+<tr><td><img src="docs/theme-material.jpg" alt="Material You"><br><b>Material You</b></td><td><img src="docs/theme-fluent.jpg" alt="Windows 11"><br><b>Windows 11</b></td></tr>
+<tr><td><img src="docs/theme-macos.jpg" alt="macOS"><br><b>macOS</b></td><td><img src="docs/theme-nothing.jpg" alt="Nothing"><br><b>Nothing</b></td></tr>
+<tr><td><img src="docs/theme-nightdrive.jpg" alt="Night Drive"><br><b>Night Drive</b></td><td><img src="docs/theme-aero.jpg" alt="Aero"><br><b>Aero</b></td></tr>
+<tr><td><img src="docs/theme-retro.jpg" alt="Retro 98"><br><b>Retro 98</b></td><td><img src="docs/theme-terminal.jpg" alt="Terminal"><br><b>Terminal</b></td></tr>
+<tr><td><img src="docs/theme-paper.jpg" alt="Paper"><br><b>Paper</b></td><td><img src="docs/theme-cyber.jpg" alt="Cyberpunk"><br><b>Cyberpunk</b></td></tr>
+<tr><td><img src="docs/wallpaper-picker.jpg" alt="Wallpapers"><br><b>Wallpaper picker</b></td><td><img src="docs/studio-menus.jpg" alt="Studio"><br><b>Studio: right-click menu styles</b></td></tr>
+</table>
 
 ## Install
 
-Download the latest release from [**Releases**](../../releases/latest) and unzip it.
+1. Download the latest release (or `Code → Download ZIP`) and unzip it.
+2. Run **`Setup.cmd`** and allow administrator rights (needed once to put a tiny script loader into the browser folder).
+3. Pick a theme, wallpaper, accent color, light/dark mode, corners, animations and features, then choose the browsers.
+4. Press **Install** and restart the browser.
 
-### 🦊 Firefox edition
-1. Run **`Setup.cmd`** and allow administrator rights (once — it puts a tiny loader into the browser folder).
-2. Pick language, theme, wallpaper, accent, light / dark, corners, animations, features and browsers.
-3. Press **Install** and restart the browser.
+Prefer the console? `install.cmd` does the same with text prompts. If SmartScreen appears: *More info → Run anyway*.
 
-Use the built-in browser theme **“System theme — auto”**: third-party themes repaint the window frame. Prefer the console? `install.cmd` does the same with text prompts.
+Want a single `.exe` to send to someone? Run **`build-exe.bat`** in the version folder: it packs the installer into `Hand-Design-Setup-v<version>.exe` using only built-in Windows tools (PowerShell + IExpress). The batch file is not part of the release zips.
 
-### 🌐 Chromium edition
-1. Run **`Setup.cmd`** and pick a theme and settings. Files go to `%LOCALAPPDATA%\HandDesign\Chrome`.
-2. Chrome doesn't let programs install extensions, so do this once in the browser: open the extensions page, turn on **Developer mode**, click **Load unpacked** and paste the path the installer copied for you.
-3. Repeat **Load unpacked** for the `frame` folder — that's the window-frame theme.
-
-To update later, just run the installer again and restart the browser.
-
-> SmartScreen warning? *More info → Run anyway.* The scripts are plain text — you can read every line before running them.
-
-## Keyboard shortcuts
-
-| Action | Firefox | Chromium |
-|---|---|---|
-| Open Studio | `Alt+Shift+S` | `Alt+Shift+S` |
-| Quick panel | toolbar button | `Alt+Shift+D` |
-| Tab switcher | `Ctrl+Tab` | `Alt+Q` |
-| Mute mic in a call | `Alt+Shift+M` | `Alt+Shift+M` |
-| Hide / show tabs | `Alt+Shift+T` | — |
-| Copy page address | `Alt+Shift+C` | — |
-| Close duplicate tabs | `Alt+Shift+D` | — |
-| Focus mode | `Alt+Shift+Z` | — |
-| Bookmark PDF page | `Ctrl+B` | — |
-
-## Updates
-
-Big updates come out **once a week, on Fridays**. Both editions check this repository once a day: a new version shows a notification and a dot on the Design button, with **Download**, **What's new** and **Later**. Nothing is downloaded automatically, and the check can be turned off in Studio.
-
-Firefox: after a major browser update the loader may disappear from the program folder — if the toolbar buttons or PDF features are gone, run `Setup.cmd` again.
+Use the built-in browser theme **"System theme — auto"** — third-party themes repaint the window frame.
 
 ## Uninstall
 
-- **Firefox:** `Setup.cmd` → **Remove theme** (or `uninstall.cmd`). The stock look comes back after a restart; your own CSS rules are kept, backups are saved as `*.bak-floorp-modern`.
-- **Chromium:** `uninstall.cmd`, then remove the two unpacked extensions in the browser.
+`Setup.cmd` → **Remove theme** (or `uninstall.cmd`). The previous look, the stock PDF viewer and default settings come back after a restart. Your own `userChrome.css` / `userContent.css` rules are kept; backups are saved as `*.bak-floorp-modern`.
 
-## Repository layout
+## After a browser update
 
+A major update may remove the loader from the program folder. If the toolbar buttons or PDF features disappear, run `Setup.cmd` again.
+
+## How it works
+
+| Where | What |
+|---|---|
+| Browser folder (`C:\Program Files\…`) | `config.js` + `defaults\pref\config-prefs.js` — AutoConfig loader |
+| Profile `chrome\userChrome.css` | Browser interface (block `FLOORP-MODERN`) |
+| Profile `chrome\userContent.css` | New tab, settings pages, PDF viewer (blocks `FLOORP-MODERN`, `PDF-TWEAKS`) |
+| Profile `chrome\pdf-tweaks\` | Window features, PDF actor, Studio, wallpapers, themes for live switching (`themes\`) |
+| Profile `user.js` | A few prefs (stylesheets, Nova, animations) |
+
+The theme is stored in the `floorp.modern.theme` pref; the theme block inside the CSS files sits between `FM-THEME BEGIN/END` markers, so the browser can swap it itself. Studio settings are stored in the `floorp.modern.studio` pref and applied as a live stylesheet — no restart needed. Logs for troubleshooting: `chrome\pdf-tweaks\fm-log.json` and `fm-boot.json`.
+
+## Development
+
+CSS is generated by the scripts in `tools/`:
+
+```sh
+python3 tools/gen_chrome.py files                 # base chrome + content CSS
+python3 tools/gen_css.py > files/pdf-viewer-theme.css
+python3 tools/gen_ios.py src/themes               # iOS overlay (source)
+python3 tools/gen_themes.py src/themes            # other theme overlays (source)
+python3 tools/pack_themes.py                      # themes for installer + live switching
+sh tools/build.sh                                 # release zip
 ```
-firefox/     Firefox edition: installer, styles, scripts, tools
-chrome/      Chromium edition: extension, theme packages, installer, tools
-docs/        screenshots and images
-changes/     release notes for every version
-CHANGELOG.md full history
-```
-
-Building, generators and internals are described in each edition's own folder.
 
 ## Disclaimer
 
-Unofficial community project, not affiliated with or endorsed by Mozilla, Ablaze (Floorp), Google or any other browser vendor. It uses documented customization mechanisms only. Use at your own risk.
+Unofficial community mod, not affiliated with or endorsed by Mozilla or Ablaze (Floorp). It uses the browsers' documented customization mechanisms (`userChrome.css`, `userContent.css`, AutoConfig). Use at your own risk.
 
 ## License
 
@@ -192,138 +182,105 @@ Unofficial community project, not affiliated with or endorsed by Mozilla, Ablaze
 
 <a id="русский"></a>
 
-<div align="center">
+## Русский
 
-# Hand Design — по-русски
+**Полный редизайн Floorp, Firefox и форков Firefox для Windows.** (раньше — Redesigned Fox и Floorp Modern)
+24 темы · живая настройка дизайна · обои новой вкладки · анимации как в iOS · новый просмотрщик PDF
 
-**Единый дизайн для всего браузера — Firefox, Floorp, Chrome, Edge и их форков.**
+**Поддерживаются:** Floorp, Firefox, Firefox Developer Edition, Firefox Nightly, LibreWolf, Waterfox, Zen Browser, Mercury.
 
-<sub>раньше — Redesigned Fox и Floorp Modern</sub>
+### 🌐 10 языков
+Русский, English, Українська, Deutsch, Français, Español, Português, Polski, Türkçe, 中文. Язык выбирается кнопкой с глобусом в установщике — он же ставится всему Hand Design в браузере (Studio, быстрая панель, PDF, новая вкладка, уведомления). Сменить можно и потом, в Studio. По умолчанию — язык Windows / браузера.
 
-</div>
+### 🎨 24 темы
+- **One UI** — как Samsung Galaxy: чёрный фон, вкладки и кнопки-«таблетки», тонкие часы.
+- **iOS · Liquid Glass** — как iOS 26: обои под окном, парящая стеклянная панель, стеклянные вкладки, меню и часы.
+- **Material You** — как Android / Pixel: тональные цвета из акцента, часы столбиком.
+- **Windows 11** — Fluent: строгие углы, акцентная полоска, обои Bloom.
+- **macOS** — «светофор» вместо кнопок окна, синие меню, обои-волны.
+- **Nothing** — монохром, красная точка, часы из точек.
+- **Night Drive** — ночная дорога за запотевшим стеклом машины: размытые огни по краям, тонкие светящиеся часы.
+- **Aero** — Windows 7: голубое стекло с бликом, глянцевые кнопки.
+- **Retro 98** — Windows 98: серые выпуклые кнопки, синие заголовки, бирюзовый рабочий стол, никаких скруглений.
+- **Terminal** — зелёный фосфор, всё моноширинное, строки развёртки, мигающий курсор.
+- **Paper** — тёплая бумага, шрифт с засечками, плоско и спокойно.
+- **Cyberpunk** — срезанные углы, жёлтый неон, розово-голубой город.
+- **Arctic, Sakura, Mint, Latte** — светлые: ледяной голубой, нежно-розовая, мята, кофе с молоком.
+- **Midnight, Fjord, Ember, Forest, Ocean, Rosé** — тёмные: синяя ночь со стеклом, северный серо-голубой, тёплые угли, лес, океан, приглушённая роза.
+- **Synthwave** — неоновый закат 80-х.
+- **High Contrast** — чёрный, белый, жёлтый: максимальная читаемость.
 
-## Выберите браузер
+Темы разложены по группам (тёмные, светлые, стекло, яркие, строгие, ретро) и выбираются компактными «таблетками» в Studio или кружками в быстрой панели.
 
-У Hand Design две версии. Палитры, быстрая панель и Studio у них общие, а настраивают они ровно столько, сколько позволяет браузер.
+### 🎛 Быстрая панель — темы прямо в браузере
+Кнопка **с палитрой** на панели: любая из 24 тем, **«Без скруглений»**, светлое / тёмное оформление, цвет акцента. Всё меняется сразу во всех окнах, на новой вкладке, в настройках и в PDF — без установщика и без перезапуска. Выбор записывается и в `userChrome.css` / `userContent.css`, так что после перезапуска всё остаётся.
 
-| | 🦊 **Для Firefox** | 🌐 **Для Chromium** |
-|---|---|---|
-| **Браузеры** | Floorp · Firefox · Firefox Developer Edition · Firefox Nightly · LibreWolf · Waterfox · Zen · Mercury | Chrome · Edge · Brave · Vivaldi · Opera / Opera GX · Яндекс · Chromium · Thorium |
-| **Версия** | 1.21.0 — стабильная | 0.1.2 — ранняя |
-| **Как устроено** | Перерисовывает весь интерфейс браузера (`userChrome.css`, `userContent.css`, маленький загрузчик AutoConfig) | Расширение MV3 + тема-пакет для рамки окна |
-| **Папка** | [`firefox/`](firefox/) | [`chrome/`](chrome/) |
-| **Установщик** | `Setup.cmd` (10 языков) | `Setup.cmd` (русский / английский) |
+### 🛠 Hand Design Studio — настройка всего, сразу
+**«Все настройки дизайна…»** в быстрой панели, **☰ → Дизайн** или `Alt+Shift+S`. Всё меняется мгновенно, поверх любой темы:
 
-Сомневаетесь — если у вас Floorp или Firefox, берите версию для Firefox: это полный редизайн. Версия для Chromium моложе, и Chrome разрешает расширениям менять меньше.
+- **Тема** — те же 24 темы, меняются сразу
 
-## Что внутри
+- **Цвета** — акцент, фон окна, поля, меню, текст; прозрачность и размытие меню
+- **Форма** — **без скруглений вообще** (один переключатель), скругление, отступ и тень страницы, скругление меню, форма кнопок, плотность
+- **Скрыть вкладки целиком** — не компактный вид: выезжают от края окна при наведении или не видны совсем (`Alt+Shift+T`)
+- **Вкладки** — 6 форм (таблетки, скруглённые, прямые, подчёркивание, карточки, как в Chrome), 6 стилей выбранной вкладки (в том числе без подсветки), высота, ширина, крестик, жирность
+- **Адресная строка** — высота, скругление, выравнивание, рамка
+- **Меню правой кнопки** — 7 стилей: One UI, стекло iOS, Windows 11, macOS, сенсорное, Nothing, неон
+- **Ctrl+Tab** — окно с превью вкладок, 4 стиля: iOS, Windows 11, список, неон
+- **Шрифт** — любой установленный, размер текста
+- **Анимации** — скорость и пружинистость
+- **Новая вкладка** — размер, толщина, шрифт и место часов, дата, ширина поиска, ярлыки, размытие обоев
+- **Показать / скрыть** — панель закладок, кнопки, Now Bar, плашку звонка, полоску загрузки
+- 6 готовых наборов, сохранение и загрузка настроек файлом, сброс
 
-### 🎨 Темы
-24 темы в версии для Firefox; версия для Chromium собирается из тех же палитр (со светлым и тёмным вариантом, где они есть).
+### 📞 Плашка звонка
+Звонок в другой вкладке (Telegram, Discord, WhatsApp, Meet…) — сверху появляется «островок»: сайт, время звонка, выключить микрофон или камеру, перейти к звонку. Через пару секунд сворачивается в таблетку с таймером. `Alt+Shift+M` — микрофон из любой вкладки.
 
-| Группа | Темы |
-|---|---|
-| **Как в системах** | One UI · iOS Liquid Glass · Material You · Windows 11 · macOS · Nothing |
-| **Настроение** | Night Drive · Cyberpunk · Synthwave |
-| **Ретро** | Aero · Retro 98 · Terminal · Paper |
-| **Светлые палитры** | Arctic · Sakura · Mint · Latte |
-| **Тёмные палитры** | Midnight · Fjord · Ember · Forest · Ocean · Rosé |
-| **Доступность** | High Contrast |
+### 🔔 Проверка обновлений
+Раз в сутки браузер смотрит в [репозиторий релизов](https://github.com/WiWaSu/Redesigned-Firefox-and-forks-). Есть новая версия — уведомление и красная точка на кнопке «Дизайн», в быстрой панели «Скачать», «Что нового», «Позже». Сам ничего не скачивает. Выключить — Studio → «Обновления».
 
-### 🎛 Быстрая панель
-Одна кнопка на панели: тема, светлое / тёмное, цвет акцента, **«Без скруглений»**. Меняется сразу — без перезапуска и без установщика.
-
-### 🛠 Hand Design Studio
-Каждая мелочь, вживую, поверх любой темы: цвета, форма, плотность, вкладки, адресная строка, стили меню правой кнопки, переключатель Ctrl+Tab, шрифт, анимации, новая вкладка, просмотрщик PDF, язык. Ваши цвета всегда сильнее темы; при смене темы они сбрасываются, чтобы каждая тема выглядела собой. Готовые наборы, сохранение в файл, сброс в один клик.
-
-### 🖼 Новая вкладка
-Часы как на экране блокировки, 10 готовых обоев или своя картинка, затемнение и размытие, поиск и ярлыки — во всех поддерживаемых браузерах.
-
-### 📞 Плашка звонка и 🎵 Now Bar
-Звонок в другой вкладке (Telegram, Discord, WhatsApp, Meet…) — сверху «островок» с таймером, микрофоном, камерой и кнопкой «к звонку». Музыка в другой вкладке — перетаскиваемый плеер с обложкой и кнопками.
-
-### 📄 Просмотрщик PDF
-Новая панель и цвет страниц (бумага / сепия / ночь), рисование как в Edge без рамок, прямые линии с Shift, «Очистить», закладки страниц с заметками, быстрый текст, своя палитра, открытие на той же странице.
+### 🖼 Обои новой вкладки
+Кнопка слева внизу: 10 готовых обоев, **своя картинка**, затемнение. Меняются сразу во всех вкладках. Можно выбрать и в установщике.
 
 ### ✨ Анимации
-Настоящие «пружины», как на iPhone. Четыре режима: **Как в iOS**, **Плавные**, **Как в Windows**, **Выкл**.
+Настоящие «пружины», как на iPhone: вкладки выныривают, меню раскрываются из точки нажатия, кнопки пружинят, часы проявляются из размытия, ярлыки выпрыгивают по очереди. В установщике 4 режима: **Как в iOS**, **Плавные**, **Как в Windows**, **Выкл**. Работают, даже если в Windows анимации выключены.
 
-### 🌍 10 языков
-Русский, English, Українська, Deutsch, Français, Español, Português, Polski, Türkçe, 中文 — в установщике для Firefox (кнопка с глобусом) и в Studio. Версия для Chromium пока говорит по-русски и по-английски.
+### 🧩 Дополнительно
+- **Now Bar** — музыка в другой вкладке: плашка с обложкой, прогрессом, назад/вперёд, паузой и звуком (YouTube, Telegram и др.), её можно перетаскивать
+- Полоска загрузки страницы
+- Кнопка темы: Авто / Светлая / Тёмная
+- Уведомления: загрузка файла, масштаб, звук вкладки
+- `Alt+Shift+C` — копировать адрес · `Alt+Shift+D` — закрыть одинаковые вкладки · `Alt+Shift+Z` — режим фокуса
+- Часы экрана блокировки и на новой вкладке Firefox / LibreWolf / Waterfox
+- Новый вид снимков экрана и плашки демонстрации экрана
 
-## Сравнение версий
+### 📄 Просмотрщик PDF
+- Новая панель и иконки; в теме iOS парит над страницами
+- Тема интерфейса (авто / светлая / тёмная) и цвет страниц (бумага / сепия / ночь)
+- **Рисование как в Edge** — без рамок, рисунок хватается только за линии, рядом можно рисовать дальше
+- Открывает PDF на той странице, где вы остановились
+- **Закладки страниц** с заметками — кнопка-ленточка, `Ctrl+B` для текущей страницы
+- Быстрый текст — клик по пропуску «……» или двойной клик по пустому месту
+- Своя палитра цветов вместо системного окна Windows
+- Сам перерисовывает страницы после переключения видеокарты
 
-| Возможность | Firefox | Chromium |
-|---|:---:|:---:|
-| Темы для всего интерфейса | ✅ | Только цвета рамки окна |
-| Быстрая панель и Studio | ✅ | ✅ |
-| Новая вкладка: часы, обои | ✅ | ✅ |
-| Форма вкладок и адресной строки | ✅ | — |
-| Скрыть вкладки целиком | ✅ | — |
-| Стили меню правой кнопки | ✅ | — |
-| Переключатель вкладок с превью | Ctrl+Tab | Alt+Q |
-| Плашка звонка · Now Bar | ✅ | ✅ |
-| Просмотрщик PDF с рисованием | ✅ | ✅ |
-| Проверка обновлений | ✅ | ✅ |
-| Языки интерфейса | 10 | 2 |
+### Скриншоты
+См. раздел [Screenshots](#screenshots) выше.
 
-Для Vivaldi в версии для Chromium есть опытный стиль всего интерфейса.
+### Установка
+1. Скачайте последний релиз (или `Code → Download ZIP`) и распакуйте.
+2. Запустите **`Setup.cmd`** и разрешите права администратора (один раз, чтобы положить загрузчик в папку браузера).
+3. Выберите тему, обои, акцент, светлую/тёмную, скругления, анимации и функции, отметьте браузеры.
+4. Нажмите **Установить** и перезапустите браузер.
 
-## Установка
+Консольный вариант — `install.cmd`. Тема браузера должна быть встроенной: **«Системная тема — авто»**.
 
-Скачайте последний выпуск из [**Releases**](../../releases/latest) и распакуйте.
+Нужен один файл `.exe`, чтобы отправить другу? Запустите **`build-exe.bat`** в папке версии — он соберёт `Hand-Design-Setup-v<версия>.exe` только встроенными средствами Windows (PowerShell + IExpress). В архивы релизов этот батник не входит.
 
-### 🦊 Для Firefox
-1. Запустите **`Setup.cmd`** и разрешите права администратора (один раз — чтобы положить загрузчик в папку браузера).
-2. Выберите язык, тему, обои, акцент, светлое / тёмное, скругления, анимации, функции и браузеры.
-3. Нажмите **«Установить»** и перезапустите браузер.
+### Удаление
+`Setup.cmd` → **«Удалить оформление»** (или `uninstall.cmd`). Ваши собственные стили не трогаются.
 
-Тема браузера должна быть встроенной: **«Системная тема — авто»**. Консольный вариант — `install.cmd`.
+### После обновления браузера
+Если пропали кнопки на панели или функции PDF — запустите `Setup.cmd` ещё раз.
 
-### 🌐 Для Chromium
-1. Запустите **`Setup.cmd`** и выберите тему и настройки. Файлы ставятся в `%LOCALAPPDATA%\HandDesign\Chrome`.
-2. Chrome не даёт программам ставить расширения, поэтому один раз в браузере: страница расширений → **«Режим разработчика»** → **«Загрузить распакованное»** → вставьте путь, который скопировал установщик.
-3. Ещё раз **«Загрузить распакованное»** — для папки `frame`, это тема рамки окна.
-
-Обновление — снова запустить установщик и перезапустить браузер.
-
-> Предупреждение SmartScreen? *Подробнее → Выполнить в любом случае.* Скрипты — обычный текст, каждую строку можно прочитать до запуска.
-
-## Горячие клавиши
-
-| Действие | Firefox | Chromium |
-|---|---|---|
-| Открыть Studio | `Alt+Shift+S` | `Alt+Shift+S` |
-| Быстрая панель | кнопка на панели | `Alt+Shift+D` |
-| Переключатель вкладок | `Ctrl+Tab` | `Alt+Q` |
-| Микрофон в звонке | `Alt+Shift+M` | `Alt+Shift+M` |
-| Скрыть / показать вкладки | `Alt+Shift+T` | — |
-| Копировать адрес | `Alt+Shift+C` | — |
-| Закрыть одинаковые вкладки | `Alt+Shift+D` | — |
-| Режим фокуса | `Alt+Shift+Z` | — |
-| Закладка страницы PDF | `Ctrl+B` | — |
-
-## Обновления
-
-Большие обновления выходят **раз в неделю, по пятницам**. Обе версии раз в сутки заглядывают в этот репозиторий: есть новая версия — уведомление и точка на кнопке «Дизайн», в панели «Скачать», «Что нового», «Позже». Сами ничего не скачивают; проверку можно выключить в Studio.
-
-Firefox: после крупного обновления браузера загрузчик может пропасть из папки программы — если исчезли кнопки на панели или функции PDF, запустите `Setup.cmd` ещё раз.
-
-## Удаление
-
-- **Firefox:** `Setup.cmd` → **«Удалить оформление»** (или `uninstall.cmd`). После перезапуска вернётся обычный вид; ваши собственные стили не трогаются, копии сохраняются как `*.bak-floorp-modern`.
-- **Chromium:** `uninstall.cmd`, затем удалите два распакованных расширения в браузере.
-
-## Устройство репозитория
-
-```
-firefox/     версия для Firefox: установщик, стили, скрипты, инструменты
-chrome/      версия для Chromium: расширение, тема-пакеты, установщик, инструменты
-docs/        скриншоты и картинки
-changes/     заметки к каждой версии
-CHANGELOG.md полная история
-```
-
-Сборка, генераторы и внутреннее устройство описаны в папке каждой версии.
-
-Неофициальный проект сообщества, не связан с Mozilla, Ablaze (Floorp), Google и другими разработчиками браузеров. Используются только документированные способы настройки. На свой страх и риск. Лицензия [MIT](LICENSE).
+Неофициальный мод, не связан с Mozilla и Ablaze. Используйте на свой страх и риск. Лицензия MIT.
