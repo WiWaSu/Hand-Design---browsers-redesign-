@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Terminal",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Terminal». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        3,
+        6,
+        3
+      ],
+      "frame_inactive": [
+        3,
+        6,
+        3
+      ],
+      "frame_incognito": [
+        3,
+        6,
+        3
+      ],
+      "frame_incognito_inactive": [
+        3,
+        6,
+        3
+      ],
+      "toolbar": [
+        8,
+        17,
+        8
+      ],
+      "toolbar_text": [
+        92,
+        255,
+        133
+      ],
+      "toolbar_button_icon": [
+        92,
+        255,
+        133
+      ],
+      "tab_text": [
+        92,
+        255,
+        133
+      ],
+      "tab_background_text": [
+        43,
+        168,
+        76
+      ],
+      "tab_background_text_inactive": [
+        43,
+        168,
+        76
+      ],
+      "bookmark_text": [
+        92,
+        255,
+        133
+      ],
+      "ntp_background": [
+        1,
+        3,
+        1
+      ],
+      "ntp_text": [
+        92,
+        255,
+        133
+      ],
+      "ntp_link": [
+        51,
+        255,
+        102
+      ],
+      "omnibox_background": [
+        0,
+        0,
+        0
+      ],
+      "omnibox_text": [
+        92,
+        255,
+        133
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

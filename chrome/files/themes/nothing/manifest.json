@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Nothing",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Nothing». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        0,
+        0,
+        0
+      ],
+      "frame_inactive": [
+        0,
+        0,
+        0
+      ],
+      "frame_incognito": [
+        0,
+        0,
+        0
+      ],
+      "frame_incognito_inactive": [
+        0,
+        0,
+        0
+      ],
+      "toolbar": [
+        17,
+        17,
+        17
+      ],
+      "toolbar_text": [
+        255,
+        255,
+        255
+      ],
+      "toolbar_button_icon": [
+        255,
+        255,
+        255
+      ],
+      "tab_text": [
+        255,
+        255,
+        255
+      ],
+      "tab_background_text": [
+        138,
+        138,
+        138
+      ],
+      "tab_background_text_inactive": [
+        138,
+        138,
+        138
+      ],
+      "bookmark_text": [
+        255,
+        255,
+        255
+      ],
+      "ntp_background": [
+        0,
+        0,
+        0
+      ],
+      "ntp_text": [
+        255,
+        255,
+        255
+      ],
+      "ntp_link": [
+        215,
+        25,
+        33
+      ],
+      "omnibox_background": [
+        0,
+        0,
+        0
+      ],
+      "omnibox_text": [
+        255,
+        255,
+        255
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

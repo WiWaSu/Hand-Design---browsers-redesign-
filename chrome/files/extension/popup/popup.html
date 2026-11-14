@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="color-scheme" content="light dark">
+  <title>Hand Design</title>
+  <script src="../shared/boot.js"></script>
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="popup.css">
+  <script type="module" src="popup.js"></script>
+</head>
+<body>
+  <header class="head">
+    <div class="logo" aria-hidden="true"></div>
+    <div class="head-text">
+      <div class="title">Hand Design</div>
+      <div class="sub" id="theme-name"></div>
+    </div>
+    <span class="ver" id="ver"></span>
+  </header>
+
+  <a id="update" class="update" hidden target="_blank" rel="noopener"></a>
+
+  <section class="card">
+    <div class="cap" id="cap-theme">Тема</div>
+    <div id="themes" class="themes"></div>
+    <div id="mode" class="seg" role="radiogroup"></div>
+  </section>
+
+  <section class="card">
+    <div class="cap" id="cap-accent">Акцент</div>
+    <div id="accents" class="accents"></div>
+  </section>
+
+  <section class="card">
+    <div class="cap" id="cap-wall">Обои новой вкладки</div>
+    <div id="walls" class="walls"></div>
+  </section>
+
+  <section class="card list">
+    <div class="line"><span id="l-square">Без скруглений</span><button class="hd-switch" data-key="square" role="switch"></button></div>
+    <div class="line"><span id="l-nowbar">Now Bar</span><button class="hd-switch" data-key="showNowBar" role="switch"></button></div>
+    <div class="line"><span id="l-callbar">Плашка звонка</span><button class="hd-switch" data-key="showCallBar" role="switch"></button></div>
+    <div class="line"><span id="l-pdf">Просмотр PDF</span><button class="hd-switch" data-key="pdf" role="switch"></button></div>
+  </section>
+
+  <div class="bottom">
+    <button id="frame-btn" class="pill">Покрасить рамку</button>
+    <button id="studio" class="studio">Все настройки…</button>
+  </div>
+  <div id="frame-steps" class="steps" hidden></div>
+</body>
+</html>

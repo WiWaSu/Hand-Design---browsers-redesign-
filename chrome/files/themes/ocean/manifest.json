@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Ocean",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Ocean». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        6,
+        22,
+        29
+      ],
+      "frame_inactive": [
+        6,
+        22,
+        29
+      ],
+      "frame_incognito": [
+        6,
+        22,
+        29
+      ],
+      "frame_incognito_inactive": [
+        6,
+        22,
+        29
+      ],
+      "toolbar": [
+        13,
+        34,
+        43
+      ],
+      "toolbar_text": [
+        223,
+        246,
+        251
+      ],
+      "toolbar_button_icon": [
+        223,
+        246,
+        251
+      ],
+      "tab_text": [
+        223,
+        246,
+        251
+      ],
+      "tab_background_text": [
+        131,
+        170,
+        181
+      ],
+      "tab_background_text_inactive": [
+        131,
+        170,
+        181
+      ],
+      "bookmark_text": [
+        223,
+        246,
+        251
+      ],
+      "ntp_background": [
+        6,
+        22,
+        29
+      ],
+      "ntp_text": [
+        223,
+        246,
+        251
+      ],
+      "ntp_link": [
+        34,
+        195,
+        230
+      ],
+      "omnibox_background": [
+        17,
+        42,
+        53
+      ],
+      "omnibox_text": [
+        223,
+        246,
+        251
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

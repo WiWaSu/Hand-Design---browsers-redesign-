@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Ember",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Ember». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        29,
+        26,
+        23
+      ],
+      "frame_inactive": [
+        29,
+        26,
+        23
+      ],
+      "frame_incognito": [
+        29,
+        26,
+        23
+      ],
+      "frame_incognito_inactive": [
+        29,
+        26,
+        23
+      ],
+      "toolbar": [
+        40,
+        36,
+        32
+      ],
+      "toolbar_text": [
+        235,
+        219,
+        178
+      ],
+      "toolbar_button_icon": [
+        235,
+        219,
+        178
+      ],
+      "tab_text": [
+        235,
+        219,
+        178
+      ],
+      "tab_background_text": [
+        168,
+        153,
+        132
+      ],
+      "tab_background_text_inactive": [
+        168,
+        153,
+        132
+      ],
+      "bookmark_text": [
+        235,
+        219,
+        178
+      ],
+      "ntp_background": [
+        29,
+        26,
+        23
+      ],
+      "ntp_text": [
+        235,
+        219,
+        178
+      ],
+      "ntp_link": [
+        254,
+        128,
+        25
+      ],
+      "omnibox_background": [
+        48,
+        43,
+        38
+      ],
+      "omnibox_text": [
+        235,
+        219,
+        178
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

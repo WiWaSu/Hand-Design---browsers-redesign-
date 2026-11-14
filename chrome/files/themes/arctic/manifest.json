@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Arctic",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Arctic». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        238,
+        243,
+        249
+      ],
+      "frame_inactive": [
+        238,
+        243,
+        249
+      ],
+      "frame_incognito": [
+        238,
+        243,
+        249
+      ],
+      "frame_incognito_inactive": [
+        238,
+        243,
+        249
+      ],
+      "toolbar": [
+        255,
+        255,
+        255
+      ],
+      "toolbar_text": [
+        20,
+        32,
+        46
+      ],
+      "toolbar_button_icon": [
+        20,
+        32,
+        46
+      ],
+      "tab_text": [
+        20,
+        32,
+        46
+      ],
+      "tab_background_text": [
+        91,
+        107,
+        128
+      ],
+      "tab_background_text_inactive": [
+        91,
+        107,
+        128
+      ],
+      "bookmark_text": [
+        20,
+        32,
+        46
+      ],
+      "ntp_background": [
+        238,
+        243,
+        249
+      ],
+      "ntp_text": [
+        20,
+        32,
+        46
+      ],
+      "ntp_link": [
+        47,
+        125,
+        246
+      ],
+      "omnibox_background": [
+        255,
+        255,
+        255
+      ],
+      "omnibox_text": [
+        20,
+        32,
+        46
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

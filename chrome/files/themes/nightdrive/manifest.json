@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Night Drive",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Night Drive». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        7,
+        8,
+        13
+      ],
+      "frame_inactive": [
+        7,
+        8,
+        13
+      ],
+      "frame_incognito": [
+        7,
+        8,
+        13
+      ],
+      "frame_incognito_inactive": [
+        7,
+        8,
+        13
+      ],
+      "toolbar": [
+        21,
+        24,
+        34
+      ],
+      "toolbar_text": [
+        238,
+        240,
+        246
+      ],
+      "toolbar_button_icon": [
+        238,
+        240,
+        246
+      ],
+      "tab_text": [
+        238,
+        240,
+        246
+      ],
+      "tab_background_text": [
+        154,
+        160,
+        180
+      ],
+      "tab_background_text_inactive": [
+        154,
+        160,
+        180
+      ],
+      "bookmark_text": [
+        238,
+        240,
+        246
+      ],
+      "ntp_background": [
+        5,
+        6,
+        11
+      ],
+      "ntp_text": [
+        238,
+        240,
+        246
+      ],
+      "ntp_link": [
+        255,
+        178,
+        91
+      ],
+      "omnibox_background": [
+        27,
+        31,
+        43
+      ],
+      "omnibox_text": [
+        238,
+        240,
+        246
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

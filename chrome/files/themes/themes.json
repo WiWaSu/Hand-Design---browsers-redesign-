@@ -1,0 +1,359 @@
+[
+ {
+  "id": "oneui",
+  "name": "One UI",
+  "scheme": "both",
+  "swatch": [
+   "#0f1012",
+   "#1c1d21",
+   "#3e91ff",
+   "#f2f3f5"
+  ],
+  "groups": [
+   "dark"
+  ]
+ },
+ {
+  "id": "ios",
+  "name": "iOS Liquid Glass",
+  "scheme": "both",
+  "swatch": [
+   "#05060b",
+   "#1c1c1e",
+   "#0a84ff",
+   "#ffffff"
+  ],
+  "groups": [
+   "glass",
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "id": "material",
+  "name": "Material You",
+  "scheme": "both",
+  "swatch": [
+   "#131418",
+   "#1d2027",
+   "#a8c7fa",
+   "#e4e2e6"
+  ],
+  "groups": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "id": "fluent",
+  "name": "Windows 11",
+  "scheme": "both",
+  "swatch": [
+   "#202020",
+   "#2b2b2b",
+   "#4cc2ff",
+   "#ffffff"
+  ],
+  "groups": [
+   "light",
+   "dark",
+   "strict"
+  ]
+ },
+ {
+  "id": "macos",
+  "name": "macOS",
+  "scheme": "both",
+  "swatch": [
+   "#1e1e1e",
+   "#2c2c2e",
+   "#0a84ff",
+   "#f5f5f7"
+  ],
+  "groups": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "id": "nothing",
+  "name": "Nothing",
+  "scheme": "both",
+  "swatch": [
+   "#000000",
+   "#111111",
+   "#d71921",
+   "#ffffff"
+  ],
+  "groups": [
+   "dark",
+   "strict"
+  ]
+ },
+ {
+  "id": "nightdrive",
+  "name": "Night Drive",
+  "scheme": "dark",
+  "swatch": [
+   "#07080d",
+   "#151822",
+   "#ffb25b",
+   "#eef0f6"
+  ],
+  "groups": [
+   "dark",
+   "glass"
+  ]
+ },
+ {
+  "id": "aero",
+  "name": "Aero",
+  "scheme": "both",
+  "swatch": [
+   "#163a6b",
+   "#1d4a85",
+   "#5ab0ff",
+   "#ffffff"
+  ],
+  "groups": [
+   "glass",
+   "retro"
+  ]
+ },
+ {
+  "id": "retro",
+  "name": "Retro 98",
+  "scheme": "light",
+  "swatch": [
+   "#008080",
+   "#c0c0c0",
+   "#000080",
+   "#000000"
+  ],
+  "groups": [
+   "retro",
+   "light"
+  ]
+ },
+ {
+  "id": "terminal",
+  "name": "Terminal",
+  "scheme": "dark",
+  "swatch": [
+   "#030803",
+   "#081108",
+   "#33ff66",
+   "#b7ffc4"
+  ],
+  "groups": [
+   "retro",
+   "dark"
+  ]
+ },
+ {
+  "id": "paper",
+  "name": "Paper",
+  "scheme": "light",
+  "swatch": [
+   "#f3eee3",
+   "#fbf8f1",
+   "#b4532a",
+   "#2b2620"
+  ],
+  "groups": [
+   "light"
+  ]
+ },
+ {
+  "id": "cyber",
+  "name": "Cyberpunk",
+  "scheme": "dark",
+  "swatch": [
+   "#0a0612",
+   "#15111f",
+   "#ff00aa",
+   "#f3f0ff"
+  ],
+  "groups": [
+   "bright",
+   "dark"
+  ]
+ },
+ {
+  "id": "arctic",
+  "name": "Arctic",
+  "scheme": "light",
+  "swatch": [
+   "#eef3f9",
+   "#ffffff",
+   "#2f7df6",
+   "#14202e"
+  ],
+  "groups": [
+   "light"
+  ]
+ },
+ {
+  "id": "sakura",
+  "name": "Sakura",
+  "scheme": "light",
+  "swatch": [
+   "#fbf0f3",
+   "#fffafb",
+   "#e0567f",
+   "#3a1d27"
+  ],
+  "groups": [
+   "light",
+   "bright"
+  ]
+ },
+ {
+  "id": "mint",
+  "name": "Mint",
+  "scheme": "light",
+  "swatch": [
+   "#eef7f3",
+   "#fbfffd",
+   "#16a37a",
+   "#12302a"
+  ],
+  "groups": [
+   "light"
+  ]
+ },
+ {
+  "id": "latte",
+  "name": "Latte",
+  "scheme": "light",
+  "swatch": [
+   "#f2ebe3",
+   "#fbf7f2",
+   "#8b5e3c",
+   "#33261c"
+  ],
+  "groups": [
+   "light"
+  ]
+ },
+ {
+  "id": "midnight",
+  "name": "Midnight",
+  "scheme": "dark",
+  "swatch": [
+   "#0b1020",
+   "#141a2e",
+   "#6c8cff",
+   "#e6eaff"
+  ],
+  "groups": [
+   "dark",
+   "glass"
+  ]
+ },
+ {
+  "id": "fjord",
+  "name": "Fjord",
+  "scheme": "dark",
+  "swatch": [
+   "#242b37",
+   "#2e3644",
+   "#88c0d0",
+   "#e5e9f0"
+  ],
+  "groups": [
+   "dark",
+   "strict"
+  ]
+ },
+ {
+  "id": "ember",
+  "name": "Ember",
+  "scheme": "dark",
+  "swatch": [
+   "#1d1a17",
+   "#282420",
+   "#fe8019",
+   "#ebdbb2"
+  ],
+  "groups": [
+   "dark",
+   "retro"
+  ]
+ },
+ {
+  "id": "forest",
+  "name": "Forest",
+  "scheme": "dark",
+  "swatch": [
+   "#0f1a13",
+   "#17241b",
+   "#7bc47f",
+   "#e2efe3"
+  ],
+  "groups": [
+   "dark"
+  ]
+ },
+ {
+  "id": "ocean",
+  "name": "Ocean",
+  "scheme": "dark",
+  "swatch": [
+   "#06161d",
+   "#0d222b",
+   "#22c3e6",
+   "#dff6fb"
+  ],
+  "groups": [
+   "dark",
+   "glass"
+  ]
+ },
+ {
+  "id": "rose",
+  "name": "Rosé",
+  "scheme": "dark",
+  "swatch": [
+   "#191724",
+   "#1f1d2e",
+   "#ebbcba",
+   "#e0def4"
+  ],
+  "groups": [
+   "dark"
+  ]
+ },
+ {
+  "id": "synthwave",
+  "name": "Synthwave",
+  "scheme": "dark",
+  "swatch": [
+   "#140a24",
+   "#1f1033",
+   "#ff4fd8",
+   "#fbeaff"
+  ],
+  "groups": [
+   "bright",
+   "dark",
+   "retro"
+  ]
+ },
+ {
+  "id": "contrast",
+  "name": "High Contrast",
+  "scheme": "dark",
+  "swatch": [
+   "#000000",
+   "#000000",
+   "#ffe600",
+   "#ffffff"
+  ],
+  "groups": [
+   "dark",
+   "strict",
+   "bright"
+  ]
+ }
+]

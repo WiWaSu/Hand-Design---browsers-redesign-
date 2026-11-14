@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Material You",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Material You». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        21,
+        28,
+        39
+      ],
+      "frame_inactive": [
+        21,
+        28,
+        39
+      ],
+      "frame_incognito": [
+        21,
+        28,
+        39
+      ],
+      "frame_incognito_inactive": [
+        21,
+        28,
+        39
+      ],
+      "toolbar": [
+        33,
+        44,
+        61
+      ],
+      "toolbar_text": [
+        228,
+        226,
+        230
+      ],
+      "toolbar_button_icon": [
+        228,
+        226,
+        230
+      ],
+      "tab_text": [
+        228,
+        226,
+        230
+      ],
+      "tab_background_text": [
+        163,
+        163,
+        173
+      ],
+      "tab_background_text_inactive": [
+        163,
+        163,
+        173
+      ],
+      "bookmark_text": [
+        228,
+        226,
+        230
+      ],
+      "ntp_background": [
+        29,
+        50,
+        79
+      ],
+      "ntp_text": [
+        228,
+        226,
+        230
+      ],
+      "ntp_link": [
+        157,
+        199,
+        255
+      ],
+      "omnibox_background": [
+        42,
+        58,
+        81
+      ],
+      "omnibox_text": [
+        228,
+        226,
+        230
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

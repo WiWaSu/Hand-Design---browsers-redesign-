@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="color-scheme" content="light dark">
+  <title>Вкладки</title>
+  <script src="../shared/boot.js"></script>
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="switcher.css">
+  <script type="module" src="switcher.js"></script>
+</head>
+<body>
+  <div id="bg" aria-hidden="true"></div>
+  <header class="bar">
+    <input id="filter" type="search" spellcheck="false" autocomplete="off">
+    <span id="count" class="count"></span>
+  </header>
+  <main id="grid" class="grid" role="listbox"></main>
+  <footer id="help" class="help"></footer>
+</body>
+</html>

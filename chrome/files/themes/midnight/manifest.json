@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Midnight",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Midnight». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        11,
+        16,
+        32
+      ],
+      "frame_inactive": [
+        11,
+        16,
+        32
+      ],
+      "frame_incognito": [
+        11,
+        16,
+        32
+      ],
+      "frame_incognito_inactive": [
+        11,
+        16,
+        32
+      ],
+      "toolbar": [
+        20,
+        26,
+        46
+      ],
+      "toolbar_text": [
+        230,
+        234,
+        255
+      ],
+      "toolbar_button_icon": [
+        230,
+        234,
+        255
+      ],
+      "tab_text": [
+        230,
+        234,
+        255
+      ],
+      "tab_background_text": [
+        143,
+        152,
+        191
+      ],
+      "tab_background_text_inactive": [
+        143,
+        152,
+        191
+      ],
+      "bookmark_text": [
+        230,
+        234,
+        255
+      ],
+      "ntp_background": [
+        11,
+        16,
+        32
+      ],
+      "ntp_text": [
+        230,
+        234,
+        255
+      ],
+      "ntp_link": [
+        108,
+        140,
+        255
+      ],
+      "omnibox_background": [
+        24,
+        32,
+        58
+      ],
+      "omnibox_text": [
+        230,
+        234,
+        255
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

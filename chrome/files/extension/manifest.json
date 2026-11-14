@@ -1,0 +1,70 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design",
+  "short_name": "Hand Design",
+  "version": "0.1.2",
+  "description": "Hand Design for Chromium: 24 темы, новая вкладка с обоями и часами, Studio, Now Bar, плашка звонка, превью вкладок, PDF.",
+  "author": "WiWaSu",
+  "homepage_url": "https://github.com/WiWaSu/Hand-Design---browsers-redesign-",
+  "minimum_chrome_version": "123",
+  "icons": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "action": {
+    "default_title": "Hand Design — дизайн",
+    "default_popup": "popup/popup.html",
+    "default_icon": { "16": "icons/icon16.png", "32": "icons/icon32.png" }
+  },
+  "chrome_url_overrides": { "newtab": "newtab/newtab.html" },
+  "options_ui": { "page": "studio/studio.html", "open_in_tab": true },
+  "background": { "service_worker": "background.js", "type": "module" },
+  "permissions": ["storage", "unlimitedStorage", "tabs", "topSites", "search", "favicon", "history", "alarms", "nativeMessaging", "webRequest", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/page-hook.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/bridge.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/island.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "_execute_action": {
+      "suggested_key": { "default": "Alt+Shift+D" },
+      "description": "Быстрая панель «Дизайн» / Quick design panel"
+    },
+    "switcher": {
+      "suggested_key": { "default": "Alt+Q" },
+      "description": "Переключатель вкладок с превью / Tab switcher with previews"
+    },
+    "toggle-mic": {
+      "suggested_key": { "default": "Alt+Shift+M" },
+      "description": "Плашка звонка: микрофон вкл/выкл / Call bar: toggle microphone"
+    },
+    "open-studio": {
+      "suggested_key": { "default": "Alt+Shift+S" },
+      "description": "Открыть Hand Design Studio / Open Hand Design Studio"
+    },
+    "toggle-cam": {
+      "description": "Плашка звонка: камера вкл/выкл / Call bar: toggle camera"
+    },
+    "media-toggle": {
+      "description": "Now Bar: пауза / продолжить / Now Bar: play or pause"
+    }
+  },
+  "web_accessible_resources": [
+    { "resources": ["icons/icon48.png"], "matches": ["<all_urls>"] }
+  ]
+}

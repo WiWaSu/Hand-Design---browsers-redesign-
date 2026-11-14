@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Fjord",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Fjord». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        36,
+        43,
+        55
+      ],
+      "frame_inactive": [
+        36,
+        43,
+        55
+      ],
+      "frame_incognito": [
+        36,
+        43,
+        55
+      ],
+      "frame_incognito_inactive": [
+        36,
+        43,
+        55
+      ],
+      "toolbar": [
+        46,
+        54,
+        68
+      ],
+      "toolbar_text": [
+        229,
+        233,
+        240
+      ],
+      "toolbar_button_icon": [
+        229,
+        233,
+        240
+      ],
+      "tab_text": [
+        229,
+        233,
+        240
+      ],
+      "tab_background_text": [
+        154,
+        165,
+        184
+      ],
+      "tab_background_text_inactive": [
+        154,
+        165,
+        184
+      ],
+      "bookmark_text": [
+        229,
+        233,
+        240
+      ],
+      "ntp_background": [
+        36,
+        43,
+        55
+      ],
+      "ntp_text": [
+        229,
+        233,
+        240
+      ],
+      "ntp_link": [
+        136,
+        192,
+        208
+      ],
+      "omnibox_background": [
+        52,
+        61,
+        76
+      ],
+      "omnibox_text": [
+        229,
+        233,
+        240
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

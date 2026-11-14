@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Hand Design Studio</title>
+  <script src="../shared/boot.js"></script>
+  <link rel="stylesheet" href="studio.css">
+  <link rel="stylesheet" href="studio-chrome.css">
+  <script type="module" src="studio.js"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>Hand Design Studio</h1>
+        <p class="sub"><span id="sub">Изменения сразу видны на новой вкладке справа.</span> <span id="ver"></span></p>
+      </div>
+    </div>
+    <div class="actions">
+      <a id="github" class="ghost" href="https://github.com/WiWaSu/Hand-Design---browsers-redesign-" target="_blank" rel="noopener">GitHub</a>
+      <button id="export" class="ghost">Сохранить в файл</button>
+      <button id="import" class="ghost">Загрузить из файла</button>
+      <button id="reset" class="ghost danger">Сбросить всё</button>
+    </div>
+  </header>
+
+  <section id="welcome" class="welcome" hidden>
+    <h2 id="w-title">Hand Design установлен</h2>
+    <ol id="w-steps"></ol>
+    <button id="w-close" class="ghost">Понятно</button>
+  </section>
+
+  <div class="hero">
+    <div class="hero-left">
+      <section class="presets">
+        <h2><span id="h-theme">Тема</span> <span id="theme-current" class="muted"></span></h2>
+        <div id="theme-filter" class="filter-row"></div>
+        <div id="themes" class="theme-row"></div>
+        <div class="frame-row">
+          <div><b id="frame-title">Рамка браузера</b><div class="hint" id="frame-hint">Вкладки и адресную строку Chrome красит тема-пакет — один щелчок и «Загрузить распакованное».</div></div>
+          <button id="frame-btn" class="ghost">Покрасить рамку</button>
+        </div>
+        <div id="frame-steps" class="steps" hidden></div>
+      </section>
+      <section class="presets">
+        <h2 id="h-square">Скругления</h2>
+        <div id="square-row" class="square-row"></div>
+      </section>
+      <section class="presets">
+        <h2 id="h-presets">Готовые наборы</h2>
+        <div id="presets" class="preset-row"></div>
+      </section>
+    </div>
+    <figure class="preview">
+      <div class="pv-frame"><iframe id="preview" src="../newtab/newtab.html?preview=1" title="preview" tabindex="-1"></iframe></div>
+      <figcaption id="pv-cap">Новая вкладка</figcaption>
+    </figure>
+  </div>
+
+  <div class="layout">
+    <nav id="nav" class="nav"></nav>
+    <main id="groups" class="groups"></main>
+  </div>
+  <div id="toast" class="toast" hidden></div>
+</body>
+</html>

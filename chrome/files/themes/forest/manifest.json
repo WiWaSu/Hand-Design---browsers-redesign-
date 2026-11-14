@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Forest",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Forest». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        15,
+        26,
+        19
+      ],
+      "frame_inactive": [
+        15,
+        26,
+        19
+      ],
+      "frame_incognito": [
+        15,
+        26,
+        19
+      ],
+      "frame_incognito_inactive": [
+        15,
+        26,
+        19
+      ],
+      "toolbar": [
+        23,
+        36,
+        27
+      ],
+      "toolbar_text": [
+        226,
+        239,
+        227
+      ],
+      "toolbar_button_icon": [
+        226,
+        239,
+        227
+      ],
+      "tab_text": [
+        226,
+        239,
+        227
+      ],
+      "tab_background_text": [
+        143,
+        168,
+        148
+      ],
+      "tab_background_text_inactive": [
+        143,
+        168,
+        148
+      ],
+      "bookmark_text": [
+        226,
+        239,
+        227
+      ],
+      "ntp_background": [
+        15,
+        26,
+        19
+      ],
+      "ntp_text": [
+        226,
+        239,
+        227
+      ],
+      "ntp_link": [
+        123,
+        196,
+        127
+      ],
+      "omnibox_background": [
+        28,
+        44,
+        33
+      ],
+      "omnibox_text": [
+        226,
+        239,
+        227
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

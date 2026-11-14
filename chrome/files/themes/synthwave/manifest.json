@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Synthwave",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Synthwave». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        20,
+        10,
+        36
+      ],
+      "frame_inactive": [
+        20,
+        10,
+        36
+      ],
+      "frame_incognito": [
+        20,
+        10,
+        36
+      ],
+      "frame_incognito_inactive": [
+        20,
+        10,
+        36
+      ],
+      "toolbar": [
+        31,
+        16,
+        51
+      ],
+      "toolbar_text": [
+        251,
+        234,
+        255
+      ],
+      "toolbar_button_icon": [
+        251,
+        234,
+        255
+      ],
+      "tab_text": [
+        251,
+        234,
+        255
+      ],
+      "tab_background_text": [
+        177,
+        149,
+        201
+      ],
+      "tab_background_text_inactive": [
+        177,
+        149,
+        201
+      ],
+      "bookmark_text": [
+        251,
+        234,
+        255
+      ],
+      "ntp_background": [
+        20,
+        10,
+        36
+      ],
+      "ntp_text": [
+        251,
+        234,
+        255
+      ],
+      "ntp_link": [
+        255,
+        79,
+        216
+      ],
+      "omnibox_background": [
+        38,
+        20,
+        61
+      ],
+      "omnibox_text": [
+        251,
+        234,
+        255
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

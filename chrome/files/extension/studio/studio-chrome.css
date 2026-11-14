@@ -1,0 +1,47 @@
+/* Studio для Chrome: дополнения к studio.css из Firefox-версии */
+:root {
+  --acc: var(--hd-accent, #4C9AFF);
+  --on-acc: var(--hd-on-accent, #fff);
+  font-family: var(--hd-font, "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif);
+}
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 28px; max-width: 1180px; margin: 0 auto 10px; align-items: start; }
+.hero .presets { max-width: none; }
+.preview { margin: 0; position: sticky; top: 20px; }
+.pv-frame {
+  width: 380px; height: 238px; border-radius: 10px; overflow: hidden; position: relative;
+  border: 1px solid var(--line);
+  background: #000;
+}
+.pv-frame iframe {
+  width: 1520px; height: 952px; border: 0; transform: scale(.25); transform-origin: 0 0; pointer-events: none;
+  position: absolute; inset: 0;
+}
+.preview figcaption { text-align: center; color: var(--muted); font-size: 12.5px; margin-top: 8px; }
+.frame-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px; padding: 12px 16px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+}
+.steps {
+  margin-top: 10px; padding: 12px 16px; border-radius: 8px; background: var(--soft); line-height: 1.55;
+}
+.steps code { font: 12px "Cascadia Mono", Consolas, monospace; background: var(--card); padding: 2px 7px; border-radius: 6px; word-break: break-all; }
+.welcome {
+  max-width: 1180px; margin: 0 auto 24px; padding: 20px 24px; border-radius: 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+.welcome ol { margin: 4px 0 14px; padding-inline-start: 22px; line-height: 1.7; }
+.welcome a { color: var(--acc); }
+.row-link { margin-top: 8px; }
+.row-link a { color: var(--acc); font-weight: 600; text-decoration: none; }
+.row-link a:hover { text-decoration: underline; }
+:root[hd-square] .pv-frame, :root[hd-square] .box, :root[hd-square] .theme, :root[hd-square] .sq, :root[hd-square] .preset,
+:root[hd-square] .ghost, :root[hd-square] .card, :root[hd-square] .seg button, :root[hd-square] .frame-row { border-radius: 0 !important; }
+@media (max-width: 1000px) {
+  .hero { grid-template-columns: 1fr; }
+  .preview { position: static; justify-self: center; }
+}
+:root[offline] .top::after { content: none; }
+
+/* Chrome даёт страницам расширений body { font-size: 75% } — возвращаем обычный размер */
+body { font-size: 100%; font-family: inherit; }

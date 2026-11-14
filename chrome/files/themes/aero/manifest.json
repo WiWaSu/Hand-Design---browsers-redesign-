@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Aero",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Aero». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        20,
+        34,
+        58
+      ],
+      "frame_inactive": [
+        20,
+        34,
+        58
+      ],
+      "frame_incognito": [
+        20,
+        34,
+        58
+      ],
+      "frame_incognito_inactive": [
+        20,
+        34,
+        58
+      ],
+      "toolbar": [
+        28,
+        47,
+        80
+      ],
+      "toolbar_text": [
+        234,
+        242,
+        255
+      ],
+      "toolbar_button_icon": [
+        234,
+        242,
+        255
+      ],
+      "tab_text": [
+        234,
+        242,
+        255
+      ],
+      "tab_background_text": [
+        159,
+        180,
+        212
+      ],
+      "tab_background_text_inactive": [
+        159,
+        180,
+        212
+      ],
+      "bookmark_text": [
+        234,
+        242,
+        255
+      ],
+      "ntp_background": [
+        11,
+        58,
+        122
+      ],
+      "ntp_text": [
+        234,
+        242,
+        255
+      ],
+      "ntp_link": [
+        43,
+        124,
+        211
+      ],
+      "omnibox_background": [
+        27,
+        43,
+        72
+      ],
+      "omnibox_text": [
+        234,
+        242,
+        255
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

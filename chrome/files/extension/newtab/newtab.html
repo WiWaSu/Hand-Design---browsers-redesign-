@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Новая вкладка</title>
+  <script src="../shared/boot.js"></script>
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="newtab.css">
+  <script type="module" src="newtab.js"></script>
+  <script src="../content/island.js" defer></script>
+</head>
+<body>
+  <div id="wall" aria-hidden="true"><div id="wall-img"></div><div id="wall-vignette"></div><div id="wall-shade"></div></div>
+
+  <main id="stage">
+    <section id="clock" aria-live="off">
+      <div id="date"></div>
+      <div id="time"><span id="hh">00</span><span id="colon">:</span><span id="mm">00</span></div>
+    </section>
+
+    <form id="search" role="search" autocomplete="off">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m15.5 15.5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="q" type="search" spellcheck="false" autocomplete="off" aria-label="Поиск">
+      <kbd id="q-hint">Enter</kbd>
+      <ul id="sugg" role="listbox" hidden></ul>
+    </form>
+
+    <nav id="tiles" aria-label="Сайты"></nav>
+  </main>
+
+  <div id="topbar">
+    <a class="tb-link" id="tb-mail" href="https://mail.google.com/mail/">Gmail</a>
+    <a class="tb-link" id="tb-img" href="https://www.google.com/imghp">Картинки</a>
+    <button id="apps-btn" class="tb-ico" title="Приложения и инструменты Chrome">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="12" cy="19" r="2"/><circle cx="19" cy="19" r="2"/></svg>
+    </button>
+  </div>
+  <div id="apps-pop" hidden>
+    <div class="pop-title" id="apps-chrome-title">Chrome</div>
+    <div class="apps-grid" id="chrome-grid"></div>
+    <div class="pop-title">Google</div>
+    <div class="apps-grid" id="google-grid"></div>
+  </div>
+
+  <div id="notice" hidden>
+    <div id="notice-text"></div>
+    <div class="notice-btns"><button id="notice-off" class="notice-b"></button><button id="notice-ok" class="notice-b main"></button></div>
+  </div>
+
+  <div id="corner">
+    <button id="studio-btn" class="round" title="Hand Design Studio">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.6-.8 1.6-1.6 0-.5-.2-.8-.4-1.1-.3-.3-.4-.6-.4-1 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5C21 6.4 17 3 12 3Z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="7.5" cy="11" r="1.3" fill="currentColor"/><circle cx="10" cy="7.3" r="1.3" fill="currentColor"/><circle cx="14.5" cy="7.3" r="1.3" fill="currentColor"/><circle cx="17" cy="11" r="1.3" fill="currentColor"/></svg>
+    </button>
+    <button id="wall-btn" class="round" title="Обои">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m4 17 5-5 4 4 2.5-2.5L20 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="15.5" cy="8.5" r="1.6" fill="currentColor"/></svg>
+    </button>
+  </div>
+
+  <div id="wall-pop" hidden>
+    <div class="pop-title" id="wall-title">Обои</div>
+    <div id="wall-grid"></div>
+    <label class="pop-dim"><span id="dim-label">Затемнение</span><input id="dim" type="range" min="0" max="70" step="5"></label>
+    <button id="more" class="pop-more">Настроить весь дизайн…</button>
+  </div>
+</body>
+</html>

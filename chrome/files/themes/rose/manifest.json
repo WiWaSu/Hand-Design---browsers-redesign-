@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Rosé",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Rosé». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        25,
+        23,
+        36
+      ],
+      "frame_inactive": [
+        25,
+        23,
+        36
+      ],
+      "frame_incognito": [
+        25,
+        23,
+        36
+      ],
+      "frame_incognito_inactive": [
+        25,
+        23,
+        36
+      ],
+      "toolbar": [
+        31,
+        29,
+        46
+      ],
+      "toolbar_text": [
+        224,
+        222,
+        244
+      ],
+      "toolbar_button_icon": [
+        224,
+        222,
+        244
+      ],
+      "tab_text": [
+        224,
+        222,
+        244
+      ],
+      "tab_background_text": [
+        144,
+        140,
+        170
+      ],
+      "tab_background_text_inactive": [
+        144,
+        140,
+        170
+      ],
+      "bookmark_text": [
+        224,
+        222,
+        244
+      ],
+      "ntp_background": [
+        25,
+        23,
+        36
+      ],
+      "ntp_text": [
+        224,
+        222,
+        244
+      ],
+      "ntp_link": [
+        235,
+        188,
+        186
+      ],
+      "omnibox_background": [
+        38,
+        35,
+        58
+      ],
+      "omnibox_text": [
+        224,
+        222,
+        244
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

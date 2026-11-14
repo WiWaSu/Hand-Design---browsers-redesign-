@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Cyberpunk",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Cyberpunk». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        11,
+        9,
+        18
+      ],
+      "frame_inactive": [
+        11,
+        9,
+        18
+      ],
+      "frame_incognito": [
+        11,
+        9,
+        18
+      ],
+      "frame_incognito_inactive": [
+        11,
+        9,
+        18
+      ],
+      "toolbar": [
+        21,
+        17,
+        31
+      ],
+      "toolbar_text": [
+        243,
+        240,
+        255
+      ],
+      "toolbar_button_icon": [
+        243,
+        240,
+        255
+      ],
+      "tab_text": [
+        243,
+        240,
+        255
+      ],
+      "tab_background_text": [
+        164,
+        151,
+        204
+      ],
+      "tab_background_text_inactive": [
+        164,
+        151,
+        204
+      ],
+      "bookmark_text": [
+        243,
+        240,
+        255
+      ],
+      "ntp_background": [
+        7,
+        5,
+        13
+      ],
+      "ntp_text": [
+        243,
+        240,
+        255
+      ],
+      "ntp_link": [
+        252,
+        238,
+        10
+      ],
+      "omnibox_background": [
+        26,
+        21,
+        38
+      ],
+      "omnibox_text": [
+        243,
+        240,
+        255
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

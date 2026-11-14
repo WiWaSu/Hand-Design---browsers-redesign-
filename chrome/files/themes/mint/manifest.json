@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Mint",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Mint». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        238,
+        247,
+        243
+      ],
+      "frame_inactive": [
+        238,
+        247,
+        243
+      ],
+      "frame_incognito": [
+        238,
+        247,
+        243
+      ],
+      "frame_incognito_inactive": [
+        238,
+        247,
+        243
+      ],
+      "toolbar": [
+        251,
+        255,
+        253
+      ],
+      "toolbar_text": [
+        18,
+        48,
+        42
+      ],
+      "toolbar_button_icon": [
+        18,
+        48,
+        42
+      ],
+      "tab_text": [
+        18,
+        48,
+        42
+      ],
+      "tab_background_text": [
+        92,
+        122,
+        113
+      ],
+      "tab_background_text_inactive": [
+        92,
+        122,
+        113
+      ],
+      "bookmark_text": [
+        18,
+        48,
+        42
+      ],
+      "ntp_background": [
+        238,
+        247,
+        243
+      ],
+      "ntp_text": [
+        18,
+        48,
+        42
+      ],
+      "ntp_link": [
+        22,
+        163,
+        122
+      ],
+      "omnibox_background": [
+        255,
+        255,
+        255
+      ],
+      "omnibox_text": [
+        18,
+        48,
+        42
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

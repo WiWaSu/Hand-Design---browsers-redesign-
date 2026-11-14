@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — Paper",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «Paper». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        239,
+        233,
+        222
+      ],
+      "frame_inactive": [
+        239,
+        233,
+        222
+      ],
+      "frame_incognito": [
+        239,
+        233,
+        222
+      ],
+      "frame_incognito_inactive": [
+        239,
+        233,
+        222
+      ],
+      "toolbar": [
+        248,
+        244,
+        236
+      ],
+      "toolbar_text": [
+        43,
+        38,
+        34
+      ],
+      "toolbar_button_icon": [
+        43,
+        38,
+        34
+      ],
+      "tab_text": [
+        43,
+        38,
+        34
+      ],
+      "tab_background_text": [
+        122,
+        112,
+        102
+      ],
+      "tab_background_text_inactive": [
+        122,
+        112,
+        102
+      ],
+      "bookmark_text": [
+        43,
+        38,
+        34
+      ],
+      "ntp_background": [
+        241,
+        235,
+        223
+      ],
+      "ntp_text": [
+        43,
+        38,
+        34
+      ],
+      "ntp_link": [
+        180,
+        83,
+        42
+      ],
+      "omnibox_background": [
+        255,
+        253,
+        248
+      ],
+      "omnibox_text": [
+        43,
+        38,
+        34
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

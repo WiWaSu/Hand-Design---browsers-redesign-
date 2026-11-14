@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — iOS Liquid Glass · светлая",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «iOS Liquid Glass». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        233,
+        238,
+        248
+      ],
+      "frame_inactive": [
+        233,
+        238,
+        248
+      ],
+      "frame_incognito": [
+        233,
+        238,
+        248
+      ],
+      "frame_incognito_inactive": [
+        233,
+        238,
+        248
+      ],
+      "toolbar": [
+        249,
+        250,
+        253
+      ],
+      "toolbar_text": [
+        0,
+        0,
+        0
+      ],
+      "toolbar_button_icon": [
+        0,
+        0,
+        0
+      ],
+      "tab_text": [
+        0,
+        0,
+        0
+      ],
+      "tab_background_text": [
+        129,
+        131,
+        139
+      ],
+      "tab_background_text_inactive": [
+        129,
+        131,
+        139
+      ],
+      "bookmark_text": [
+        0,
+        0,
+        0
+      ],
+      "ntp_background": [
+        5,
+        6,
+        17
+      ],
+      "ntp_text": [
+        0,
+        0,
+        0
+      ],
+      "ntp_link": [
+        0,
+        122,
+        255
+      ],
+      "omnibox_background": [
+        254,
+        254,
+        255
+      ],
+      "omnibox_text": [
+        0,
+        0,
+        0
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}

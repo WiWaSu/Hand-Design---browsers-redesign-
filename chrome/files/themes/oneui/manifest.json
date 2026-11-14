@@ -1,0 +1,99 @@
+{
+  "manifest_version": 3,
+  "name": "Hand Design — One UI",
+  "version": "0.1.2",
+  "description": "Цвета рамки браузера для темы Hand Design «One UI». Theme colors for Hand Design.",
+  "theme": {
+    "colors": {
+      "frame": [
+        0,
+        0,
+        0
+      ],
+      "frame_inactive": [
+        0,
+        0,
+        0
+      ],
+      "frame_incognito": [
+        0,
+        0,
+        0
+      ],
+      "frame_incognito_inactive": [
+        0,
+        0,
+        0
+      ],
+      "toolbar": [
+        23,
+        24,
+        26
+      ],
+      "toolbar_text": [
+        242,
+        242,
+        243
+      ],
+      "toolbar_button_icon": [
+        242,
+        242,
+        243
+      ],
+      "tab_text": [
+        242,
+        242,
+        243
+      ],
+      "tab_background_text": [
+        154,
+        157,
+        163
+      ],
+      "tab_background_text_inactive": [
+        154,
+        157,
+        163
+      ],
+      "bookmark_text": [
+        242,
+        242,
+        243
+      ],
+      "ntp_background": [
+        4,
+        5,
+        10
+      ],
+      "ntp_text": [
+        242,
+        242,
+        243
+      ],
+      "ntp_link": [
+        144,
+        192,
+        255
+      ],
+      "omnibox_background": [
+        31,
+        32,
+        34
+      ],
+      "omnibox_text": [
+        242,
+        242,
+        243
+      ],
+      "button_background": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "properties": {
+      "ntp_background_alignment": "bottom"
+    }
+  }
+}
