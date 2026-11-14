@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Hand Design Studio</title>
+  <link rel="stylesheet" href="studio.css">
+  <script type="module" src="studio.js"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>Hand Design Studio</h1>
+        <p class="sub">Изменения сразу видны в окне браузера. <span id="ver"></span></p>
+      </div>
+    </div>
+    <div class="actions">
+      <a id="github" class="ghost" href="https://github.com/WiWaSu/Hand-Design---browsers-redesign-" target="_blank" rel="noopener" title="Страница Hand Design на GitHub: новые версии, описание, вопросы">GitHub</a>
+      <button id="export" class="ghost">Сохранить в файл</button>
+      <button id="import" class="ghost">Загрузить из файла</button>
+      <button id="reset" class="ghost danger">Сбросить всё</button>
+    </div>
+  </header>
+  <section class="presets">
+    <h2>Тема <span id="theme-current" class="muted"></span></h2>
+    <div id="theme-filter" class="filter-row"></div>
+    <div id="themes" class="theme-row"></div>
+  </section>
+  <section class="presets">
+    <h2>Скругления</h2>
+    <div id="square-row" class="square-row"></div>
+  </section>
+  <section class="presets">
+    <h2>Готовые наборы</h2>
+    <div id="presets" class="preset-row"></div>
+  </section>
+  <div class="layout">
+    <nav id="nav" class="nav"></nav>
+    <main id="groups" class="groups"></main>
+  </div>
+  <div id="toast" class="toast" hidden></div>
+  <noscript>Страница работает только в браузере с установленным Hand Design.</noscript>
+</body>
+</html>

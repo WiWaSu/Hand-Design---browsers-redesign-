@@ -1,0 +1,11 @@
+#!/bin/sh
+# Собирает архив установщика: Hand-Design-v<версия>.zip
+# Проверяет, что версия в VERSION совпадает с версией в installer.ps1.
+set -e
+cd "$(dirname "$0")/.."
+V=$(tr -d ' \r\n' < VERSION)
+grep -q "\$Version = \"$V\"" files/installer.ps1 || { echo "Версия в installer.ps1 не совпадает с VERSION ($V)"; exit 1; }
+grep -q "APP_VERSION = \"$V\"" files/pdf-tweaks/FloorpModernStudio.sys.mjs || { echo "Версия в FloorpModernStudio.sys.mjs не совпадает с VERSION ($V)"; exit 1; }
+OUT=${1:-.}/Hand-Design-v$V.zip
+git archive --format=zip --prefix=Hand-Design-v$V/ -o "$OUT" HEAD
+echo "$OUT"
