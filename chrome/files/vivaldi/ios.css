@@ -1,0 +1,20 @@
+/* Hand Design for Vivaldi — тема «iOS Liquid Glass».
+   Сгенерировано tools/gen_chrome_themes.py. Опытная функция: Vivaldi меняет разметку от версии к версии.
+   Подключение: vivaldi://experiments → «Allow for using CSS modifications»,
+   Настройки → Внешний вид → «Пользовательские изменения интерфейса» → папка с этим файлом. */
+#browser {
+  --colorBg: #05060b; --colorBgDark: #05060b; --colorBgDarker: #05060b;
+  --colorBgLight: #161619; --colorBgLighter: #28282a; --colorBgIntense: #28282a;
+  --colorFg: #ffffff; --colorFgFaded: #8f8f97; --colorFgFadedMore: #8f8f97; --colorFgIntense: #ffffff;
+  --colorTabBar: #05060b; --colorAccentBg: #161619; --colorAccentBgDark: #05060b; --colorAccentFg: #ffffff;
+  --colorHighlightBg: #0a84ff; --colorHighlightFg: #ffffff; --colorHighlightBgAlpha: #0a84ff40;
+  --radius: 12px;
+}
+/* вкладки и адресная строка — формы темы */
+#tabs-container .tab-position .tab { border-radius: 14px !important; }
+#tabs-container .tab-position .tab.active { box-shadow: inset 0 0 0 1px #0a84ff55 !important; }
+.UrlBar-AddressField, .toolbar-mainbar .UrlBar-AddressField { border-radius: 12px !important; }
+.UrlBar-AddressField:focus-within { box-shadow: 0 0 0 2px #0a84ff88 !important; }
+/* меню и панели — скругление темы */
+.menu-container, .vivaldi-menu, .context-menu { border-radius: 26px !important; overflow: hidden; }
+#webview-container { border-radius: 14px; overflow: hidden; }

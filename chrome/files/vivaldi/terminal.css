@@ -1,0 +1,20 @@
+/* Hand Design for Vivaldi — тема «Terminal».
+   Сгенерировано tools/gen_chrome_themes.py. Опытная функция: Vivaldi меняет разметку от версии к версии.
+   Подключение: vivaldi://experiments → «Allow for using CSS modifications»,
+   Настройки → Внешний вид → «Пользовательские изменения интерфейса» → папка с этим файлом. */
+#browser {
+  --colorBg: #030603; --colorBgDark: #030603; --colorBgDarker: #030603;
+  --colorBgLight: #081108; --colorBgLighter: #000000; --colorBgIntense: #000000;
+  --colorFg: #5cff85; --colorFgFaded: #2ba84c; --colorFgFadedMore: #2ba84c; --colorFgIntense: #5cff85;
+  --colorTabBar: #030603; --colorAccentBg: #081108; --colorAccentBgDark: #030603; --colorAccentFg: #5cff85;
+  --colorHighlightBg: #33ff66; --colorHighlightFg: #000000; --colorHighlightBgAlpha: #33ff6640;
+  --radius: 2px;
+}
+/* вкладки и адресная строка — формы темы */
+#tabs-container .tab-position .tab { border-radius: 2px !important; }
+#tabs-container .tab-position .tab.active { box-shadow: inset 0 0 0 1px #33ff6655 !important; }
+.UrlBar-AddressField, .toolbar-mainbar .UrlBar-AddressField { border-radius: 2px !important; }
+.UrlBar-AddressField:focus-within { box-shadow: 0 0 0 2px #33ff6688 !important; }
+/* меню и панели — скругление темы */
+.menu-container, .vivaldi-menu, .context-menu { border-radius: 2px !important; overflow: hidden; }
+#webview-container { border-radius: 2px; overflow: hidden; }

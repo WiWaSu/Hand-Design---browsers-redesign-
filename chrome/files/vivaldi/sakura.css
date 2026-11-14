@@ -1,0 +1,20 @@
+/* Hand Design for Vivaldi — тема «Sakura» (светлая).
+   Сгенерировано tools/gen_chrome_themes.py. Опытная функция: Vivaldi меняет разметку от версии к версии.
+   Подключение: vivaldi://experiments → «Allow for using CSS modifications»,
+   Настройки → Внешний вид → «Пользовательские изменения интерфейса» → папка с этим файлом. */
+#browser {
+  --colorBg: #fbf0f3; --colorBgDark: #fbf0f3; --colorBgDarker: #fbf0f3;
+  --colorBgLight: #fffafb; --colorBgLighter: #ffffff; --colorBgIntense: #ffffff;
+  --colorFg: #3a1d27; --colorFgFaded: #8a6672; --colorFgFadedMore: #8a6672; --colorFgIntense: #3a1d27;
+  --colorTabBar: #fbf0f3; --colorAccentBg: #fffafb; --colorAccentBgDark: #fbf0f3; --colorAccentFg: #3a1d27;
+  --colorHighlightBg: #e0567f; --colorHighlightFg: #ffffff; --colorHighlightBgAlpha: #e0567f40;
+  --radius: 12px;
+}
+/* вкладки и адресная строка — формы темы */
+#tabs-container .tab-position .tab { border-radius: 14px !important; }
+#tabs-container .tab-position .tab.active { box-shadow: inset 0 0 0 1px #e0567f55 !important; }
+.UrlBar-AddressField, .toolbar-mainbar .UrlBar-AddressField { border-radius: 12px !important; }
+.UrlBar-AddressField:focus-within { box-shadow: 0 0 0 2px #e0567f88 !important; }
+/* меню и панели — скругление темы */
+.menu-container, .vivaldi-menu, .context-menu { border-radius: 22px !important; overflow: hidden; }
+#webview-container { border-radius: 14px; overflow: hidden; }

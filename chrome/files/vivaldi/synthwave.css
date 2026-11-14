@@ -1,0 +1,20 @@
+/* Hand Design for Vivaldi — тема «Synthwave».
+   Сгенерировано tools/gen_chrome_themes.py. Опытная функция: Vivaldi меняет разметку от версии к версии.
+   Подключение: vivaldi://experiments → «Allow for using CSS modifications»,
+   Настройки → Внешний вид → «Пользовательские изменения интерфейса» → папка с этим файлом. */
+#browser {
+  --colorBg: #140a24; --colorBgDark: #140a24; --colorBgDarker: #140a24;
+  --colorBgLight: #1f1033; --colorBgLighter: #26143d; --colorBgIntense: #26143d;
+  --colorFg: #fbeaff; --colorFgFaded: #b195c9; --colorFgFadedMore: #b195c9; --colorFgIntense: #fbeaff;
+  --colorTabBar: #140a24; --colorAccentBg: #1f1033; --colorAccentBgDark: #140a24; --colorAccentFg: #fbeaff;
+  --colorHighlightBg: #ff4fd8; --colorHighlightFg: #ffffff; --colorHighlightBgAlpha: #ff4fd840;
+  --radius: 8px;
+}
+/* вкладки и адресная строка — формы темы */
+#tabs-container .tab-position .tab { border-radius: 8px !important; }
+#tabs-container .tab-position .tab.active { box-shadow: inset 0 0 0 1px #ff4fd855 !important; }
+.UrlBar-AddressField, .toolbar-mainbar .UrlBar-AddressField { border-radius: 8px !important; }
+.UrlBar-AddressField:focus-within { box-shadow: 0 0 0 2px #ff4fd888 !important; }
+/* меню и панели — скругление темы */
+.menu-container, .vivaldi-menu, .context-menu { border-radius: 16px !important; overflow: hidden; }
+#webview-container { border-radius: 14px; overflow: hidden; }
