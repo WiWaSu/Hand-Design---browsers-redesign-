@@ -1,0 +1,23 @@
+/* FM-THEME BEGIN mint pdf */
+/* ---------------- Тема: Mint ---------------- */
+:root:not([fm-theme]:not([fm-theme="mint"])):has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #16A37A) !important;
+    --x-on-accent: #ffffff !important;
+    --x-ground: #eef7f3 !important;
+    --x-rail: #eef7f3 !important;
+    --x-bar: #fbfffd !important;
+    --x-well: #ffffff !important;
+    --x-field: #ffffff !important;
+    --x-line: rgb(0 0 0 / .1) !important;
+    --x-ink: #12302a !important;
+    --x-muted: #5c7a71 !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 999px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 999px !important; }
+}
+/* FM-THEME END pdf */

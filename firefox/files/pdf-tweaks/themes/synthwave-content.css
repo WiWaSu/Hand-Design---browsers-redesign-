@@ -1,0 +1,85 @@
+/* FM-THEME BEGIN synthwave content */
+/* ---------------- Тема: Synthwave ---------------- */
+@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+  :root:not([fm-theme]:not([fm-theme="synthwave"])) {
+    --fm-accent: var(--fm-user-accent, #FF4FD8) !important;
+    --fm-on-accent: #14041d !important;
+    --fm-frame: #140a24 !important;
+    --fm-bar: #1f1033 !important;
+    --fm-field: #26143d !important;
+    --fm-menu: rgb(31 16 51 / .95) !important;
+    --fm-ink: #fbeaff !important;
+    --fm-muted: #b195c9 !important;
+    --fm-line: rgb(255 255 255 / .09) !important;
+    --fm-hover: rgb(255 255 255 / .07) !important;
+    --fm-press: rgb(255 255 255 / .12) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #FF4FD8) 20%, transparent) !important;
+    --fm-radius: 16px !important;
+    --fm-font: Bahnschrift, "Segoe UI", sans-serif !important;
+    --color-accent-primary: var(--fm-accent) !important;
+    --button-background-color-primary: var(--fm-accent) !important;
+    --button-text-color-primary: var(--fm-on-accent) !important;
+    --link-color: var(--fm-accent) !important;
+    --focus-outline-color: var(--fm-accent) !important;
+    --toggle-background-color-pressed: var(--fm-accent) !important;
+    --page-nav-button-background-color-selected: var(--fm-soft) !important;
+    --page-nav-button-text-color-selected: var(--fm-accent) !important;
+    --card-border-radius: 16px !important;
+    --box-border-radius: 16px !important;
+    --button-border-radius: 999px !important;
+    --input-text-border-radius: 14px !important;
+    --select-border-radius: 999px !important;
+    --page-nav-button-border-radius: 8px !important;
+  }
+  :root:not([fm-theme]:not([fm-theme="synthwave"])) :is(setting-group, groupbox):not([hidden]), :root:not([fm-theme]:not([fm-theme="synthwave"])) .card, :root:not([fm-theme]:not([fm-theme="synthwave"])) .addon.card, :root:not([fm-theme]:not([fm-theme="synthwave"])) moz-card { border-radius: 16px !important; }
+  :root:not([fm-theme]:not([fm-theme="synthwave"])) button:not(.ghost-button):not([type="icon"]), :root:not([fm-theme]:not([fm-theme="synthwave"])) select, :root:not([fm-theme]:not([fm-theme="synthwave"])) menulist, :root:not([fm-theme]:not([fm-theme="synthwave"])) input[type="search"], :root:not([fm-theme]:not([fm-theme="synthwave"])) input[type="text"] { border-radius: 999px !important; }
+  :root:not([fm-theme]:not([fm-theme="synthwave"])) .category, :root:not([fm-theme]:not([fm-theme="synthwave"])) .page-nav-button { border-radius: 8px !important; }
+}
+
+@-moz-document url-prefix("chrome://noraneko-settings/") {
+  :root:not([fm-theme]:not([fm-theme="synthwave"])), :root:not([fm-theme]:not([fm-theme="synthwave"]))[data-theme], :root:not([fm-theme]:not([fm-theme="synthwave"])) .floorp-standard-ui {
+    --fm-accent: var(--fm-user-accent, #FF4FD8) !important;
+    --fm-on-accent: #14041d !important;
+    --fm-frame: #140a24 !important;
+    --fm-bar: #1f1033 !important;
+    --fm-field: #26143d !important;
+    --fm-menu: rgb(31 16 51 / .95) !important;
+    --fm-ink: #fbeaff !important;
+    --fm-muted: #b195c9 !important;
+    --fm-line: rgb(255 255 255 / .09) !important;
+    --fm-hover: rgb(255 255 255 / .07) !important;
+    --fm-press: rgb(255 255 255 / .12) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #FF4FD8) 20%, transparent) !important;
+    --fm-radius: 16px !important;
+    --fm-font: Bahnschrift, "Segoe UI", sans-serif !important;
+    --floorp-brand: var(--fm-accent) !important;
+    --floorp-action: var(--fm-accent) !important;
+    --floorp-focus: var(--fm-accent) !important;
+    --floorp-switch-on: var(--fm-accent) !important;
+    --chakra-colors-purple-solid: var(--fm-accent) !important;
+    --chakra-colors-purple-fg: var(--fm-accent) !important;
+    --chakra-colors-purple-focus-ring: var(--fm-accent) !important;
+    --chakra-colors-purple-subtle: var(--fm-soft) !important;
+  }
+}
+
+@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
+
+  html:not([fm-theme]:not([fm-theme="synthwave"])) { background: #140a24 !important; }
+  :root:not([fm-theme]:not([fm-theme="synthwave"])) #root::before { animation: none !important; inset: 0 !important; background: linear-gradient(180deg, #14082a 0%, #2b0b45 55%, #ff4fd8 56%, #2b0b45 57%, #120625 100%) !important; }
+  :root:not([fm-theme]:not([fm-theme="synthwave"])) #root::after { display: none !important; }
+  :root:not([fm-theme]:not([fm-theme="synthwave"])) .absolute.top-4.right-4 .tabular-nums {
+    font-family: Bahnschrift, "Segoe UI", sans-serif !important; font-weight: 700 !important;
+    font-size: clamp(100px, 12vw, 180px) !important; color: #ffd36b !important; text-shadow: none !important;
+  }
+  :root:not([fm-theme]:not([fm-theme="synthwave"])) .absolute.top-4.right-4 .flex-col.text-right > div { color: #b195c9 !important; }
+  :root:not([fm-theme]:not([fm-theme="synthwave"])) .group.cursor-pointer:has(input[readonly]) {
+    background: rgb(255 255 255 / .08) !important; border: 1px solid rgb(255 255 255 / .14) !important;
+    backdrop-filter: blur(18px) !important; box-shadow: 0 16px 40px rgb(0 0 0 / .35) !important;
+  }
+  :root:not([fm-theme]:not([fm-theme="synthwave"])) .group.cursor-pointer:has(input[readonly]) :is(input, svg) { color: #fbeaff !important; }
+  :root:not([fm-theme]:not([fm-theme="synthwave"])) .inline-block.backdrop-blur-sm.p-3 { background: rgb(255 255 255 / .08) !important; border-color: rgb(255 255 255 / .14) !important; }
+  :root:not([fm-theme]:not([fm-theme="synthwave"])) .inline-block.backdrop-blur-sm.p-3 * { color: #fbeaff !important; }
+
+}
+/* FM-THEME END content */

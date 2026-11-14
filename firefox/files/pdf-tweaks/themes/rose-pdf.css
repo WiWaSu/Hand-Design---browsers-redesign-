@@ -1,0 +1,23 @@
+/* FM-THEME BEGIN rose pdf */
+/* ---------------- Тема: Rosé ---------------- */
+:root:not([fm-theme]:not([fm-theme="rose"])):has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #EBBCBA) !important;
+    --x-on-accent: #1f1d2e !important;
+    --x-ground: #191724 !important;
+    --x-rail: #191724 !important;
+    --x-bar: #1f1d2e !important;
+    --x-well: #26233a !important;
+    --x-field: #26233a !important;
+    --x-line: rgb(255 255 255 / .09) !important;
+    --x-ink: #e0def4 !important;
+    --x-muted: #908caa !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 999px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 999px !important; }
+}
+/* FM-THEME END pdf */

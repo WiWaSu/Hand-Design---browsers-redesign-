@@ -1,0 +1,56 @@
+/* FM-THEME BEGIN rose chrome */
+/* ---------------- Тема: Rosé ---------------- */
+:root:not([fm-theme]:not([fm-theme="rose"])), :root:not([fm-theme]:not([fm-theme="rose"])) menupopup, :root:not([fm-theme]:not([fm-theme="rose"])) panel, :root:not([fm-theme]:not([fm-theme="rose"])) tooltip, :root:not([fm-theme]:not([fm-theme="rose"])) #urlbar, :root:not([fm-theme]:not([fm-theme="rose"])) .urlbarView {
+  --fm-accent: var(--fm-user-accent, #EBBCBA) !important;
+  --fm-on-accent: #1f1d2e !important;
+  --fm-frame: #191724 !important;
+  --fm-bar: #1f1d2e !important;
+  --fm-field: #26233a !important;
+  --fm-menu: rgb(31 29 46 / .96) !important;
+  --fm-ink: #e0def4 !important;
+  --fm-muted: #908caa !important;
+  --fm-line: rgb(255 255 255 / .09) !important;
+  --fm-hover: rgb(255 255 255 / .07) !important;
+  --fm-press: rgb(255 255 255 / .12) !important;
+  --fm-soft: color-mix(in srgb, var(--fm-user-accent, #EBBCBA) 20%, transparent) !important;
+  --fm-radius: 20px !important;
+  --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+  --fm-ring: color-mix(in srgb, var(--fm-accent) 40%, transparent) !important;
+  --fm-ring-focus: color-mix(in srgb, var(--fm-accent) 65%, transparent) !important;
+  --fm-ring-glow: color-mix(in srgb, var(--fm-accent) 10%, transparent) !important;
+  --panel-background-color: var(--fm-menu) !important;
+  --arrowpanel-background: var(--fm-menu) !important;
+  --panel-border-radius: 20px !important;
+  --arrowpanel-border-radius: 20px !important;
+  --menuitem-border-radius: 12px !important;
+  --arrowpanel-menuitem-border-radius: 12px !important;
+  --urlbarview-border-radius: 20px !important;
+  --toolbarbutton-border-radius: 999px !important;
+  --tab-border-radius: 12px !important;
+  --urlbarview-background-color-selected: var(--fm-soft) !important;
+}
+:root:not([fm-theme]:not([fm-theme="rose"])):not([inDOMFullscreen], [inFullscreen]) #tabbrowser-tabpanels .browserContainer { border-radius: var(--fm-radius) !important; }
+:root:not([fm-theme]:not([fm-theme="rose"])) menupopup::part(content), :root:not([fm-theme]:not([fm-theme="rose"])) panel::part(content) {
+  border-radius: 20px !important; background-color: var(--fm-menu) !important; background-image: none !important;
+}
+:root:not([fm-theme]:not([fm-theme="rose"])) menupopup > :is(menuitem, menu), :root:not([fm-theme]:not([fm-theme="rose"])) .subviewbutton, :root:not([fm-theme]:not([fm-theme="rose"])) #appMenu-mainView .subviewbutton { border-radius: 12px !important; }
+:root:not([fm-theme]:not([fm-theme="rose"])) .tabbrowser-tab > .tab-stack > .tab-background { border-radius: 12px !important; }
+:root:not([fm-theme]:not([fm-theme="rose"])) #urlbar-background, :root:not([fm-theme]:not([fm-theme="rose"])) .urlbar-background { border-radius: 14px !important; }
+:root:not([fm-theme]:not([fm-theme="rose"])) #urlbar[open] > :is(#urlbar-background, .urlbar-background) { border-radius: 20px !important; }
+:root:not([fm-theme]:not([fm-theme="rose"])) toolbar .toolbarbutton-1 > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack, .toolbarbutton-text), :root:not([fm-theme]:not([fm-theme="rose"])) #PlacesToolbarItems > .bookmark-item, :root:not([fm-theme]:not([fm-theme="rose"])) .urlbarView-row-inner, :root:not([fm-theme]:not([fm-theme="rose"])) .tab-close-button { border-radius: 999px !important; }
+:root:not([fm-theme]:not([fm-theme="rose"])) .urlbarView-favicon { border-radius: 999px !important; }
+:root:not([fm-theme]:not([fm-theme="rose"])) #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon {
+  border-radius: 50% !important; background: var(--fm-accent) !important;
+}
+:root:not([fm-theme]:not([fm-theme="rose"])) moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
+:root:not([fm-theme]:not([fm-theme="rose"])) .fm-nowbar, :root:not([fm-theme]:not([fm-theme="rose"])) .fm-toast { border-radius: 999px !important; }
+
+
+
+:root:not([fm-theme]:not([fm-theme="rose"])) { color-scheme: dark !important; }
+:root:not([fm-theme]:not([fm-theme="rose"])) #navigator-toolbox, :root:not([fm-theme]:not([fm-theme="rose"])) #nav-bar, :root:not([fm-theme]:not([fm-theme="rose"])) #TabsToolbar, :root:not([fm-theme]:not([fm-theme="rose"])) #sidebar-main { color: var(--fm-ink) !important; }
+:root:not([fm-theme]:not([fm-theme="rose"])) .tabbrowser-tab[selected] > .tab-stack > .tab-background {
+  background: var(--fm-soft) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fm-accent) 30%, transparent) !important;
+}
+:root:not([fm-theme]:not([fm-theme="rose"])) .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; }
+/* FM-THEME END chrome */

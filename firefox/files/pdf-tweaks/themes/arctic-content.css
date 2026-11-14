@@ -1,0 +1,85 @@
+/* FM-THEME BEGIN arctic content */
+/* ---------------- Тема: Arctic ---------------- */
+@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+  :root:not([fm-theme]:not([fm-theme="arctic"])) {
+    --fm-accent: var(--fm-user-accent, #2F7DF6) !important;
+    --fm-on-accent: #ffffff !important;
+    --fm-frame: #eef3f9 !important;
+    --fm-bar: #ffffff !important;
+    --fm-field: #ffffff !important;
+    --fm-menu: rgb(255 255 255 / .96) !important;
+    --fm-ink: #14202e !important;
+    --fm-muted: #5b6b80 !important;
+    --fm-line: rgb(0 0 0 / .1) !important;
+    --fm-hover: rgb(0 0 0 / .05) !important;
+    --fm-press: rgb(0 0 0 / .09) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #2F7DF6) 16%, transparent) !important;
+    --fm-radius: 18px !important;
+    --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+    --color-accent-primary: var(--fm-accent) !important;
+    --button-background-color-primary: var(--fm-accent) !important;
+    --button-text-color-primary: var(--fm-on-accent) !important;
+    --link-color: var(--fm-accent) !important;
+    --focus-outline-color: var(--fm-accent) !important;
+    --toggle-background-color-pressed: var(--fm-accent) !important;
+    --page-nav-button-background-color-selected: var(--fm-soft) !important;
+    --page-nav-button-text-color-selected: var(--fm-accent) !important;
+    --card-border-radius: 18px !important;
+    --box-border-radius: 18px !important;
+    --button-border-radius: 999px !important;
+    --input-text-border-radius: 14px !important;
+    --select-border-radius: 999px !important;
+    --page-nav-button-border-radius: 10px !important;
+  }
+  :root:not([fm-theme]:not([fm-theme="arctic"])) :is(setting-group, groupbox):not([hidden]), :root:not([fm-theme]:not([fm-theme="arctic"])) .card, :root:not([fm-theme]:not([fm-theme="arctic"])) .addon.card, :root:not([fm-theme]:not([fm-theme="arctic"])) moz-card { border-radius: 18px !important; }
+  :root:not([fm-theme]:not([fm-theme="arctic"])) button:not(.ghost-button):not([type="icon"]), :root:not([fm-theme]:not([fm-theme="arctic"])) select, :root:not([fm-theme]:not([fm-theme="arctic"])) menulist, :root:not([fm-theme]:not([fm-theme="arctic"])) input[type="search"], :root:not([fm-theme]:not([fm-theme="arctic"])) input[type="text"] { border-radius: 999px !important; }
+  :root:not([fm-theme]:not([fm-theme="arctic"])) .category, :root:not([fm-theme]:not([fm-theme="arctic"])) .page-nav-button { border-radius: 10px !important; }
+}
+
+@-moz-document url-prefix("chrome://noraneko-settings/") {
+  :root:not([fm-theme]:not([fm-theme="arctic"])), :root:not([fm-theme]:not([fm-theme="arctic"]))[data-theme], :root:not([fm-theme]:not([fm-theme="arctic"])) .floorp-standard-ui {
+    --fm-accent: var(--fm-user-accent, #2F7DF6) !important;
+    --fm-on-accent: #ffffff !important;
+    --fm-frame: #eef3f9 !important;
+    --fm-bar: #ffffff !important;
+    --fm-field: #ffffff !important;
+    --fm-menu: rgb(255 255 255 / .96) !important;
+    --fm-ink: #14202e !important;
+    --fm-muted: #5b6b80 !important;
+    --fm-line: rgb(0 0 0 / .1) !important;
+    --fm-hover: rgb(0 0 0 / .05) !important;
+    --fm-press: rgb(0 0 0 / .09) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #2F7DF6) 16%, transparent) !important;
+    --fm-radius: 18px !important;
+    --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+    --floorp-brand: var(--fm-accent) !important;
+    --floorp-action: var(--fm-accent) !important;
+    --floorp-focus: var(--fm-accent) !important;
+    --floorp-switch-on: var(--fm-accent) !important;
+    --chakra-colors-purple-solid: var(--fm-accent) !important;
+    --chakra-colors-purple-fg: var(--fm-accent) !important;
+    --chakra-colors-purple-focus-ring: var(--fm-accent) !important;
+    --chakra-colors-purple-subtle: var(--fm-soft) !important;
+  }
+}
+
+@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
+
+  html:not([fm-theme]:not([fm-theme="arctic"])) { background: #eef3f9 !important; }
+  :root:not([fm-theme]:not([fm-theme="arctic"])) #root::before { animation: none !important; inset: 0 !important; background: radial-gradient(80% 70% at 20% 10%, #dbe9ff, transparent 70%), radial-gradient(70% 60% at 90% 90%, #e3f6ff, transparent 70%), #f4f8fc !important; }
+  :root:not([fm-theme]:not([fm-theme="arctic"])) #root::after { display: none !important; }
+  :root:not([fm-theme]:not([fm-theme="arctic"])) .absolute.top-4.right-4 .tabular-nums {
+    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; font-weight: 300 !important;
+    font-size: clamp(100px, 12vw, 180px) !important; color: #14202e !important; text-shadow: none !important;
+  }
+  :root:not([fm-theme]:not([fm-theme="arctic"])) .absolute.top-4.right-4 .flex-col.text-right > div { color: #5b6b80 !important; }
+  :root:not([fm-theme]:not([fm-theme="arctic"])) .group.cursor-pointer:has(input[readonly]) {
+    background: rgb(255 255 255 / .72) !important; border: 1px solid rgb(0 0 0 / .1) !important;
+    backdrop-filter: blur(18px) !important; box-shadow: 0 16px 40px rgb(0 0 0 / .08) !important;
+  }
+  :root:not([fm-theme]:not([fm-theme="arctic"])) .group.cursor-pointer:has(input[readonly]) :is(input, svg) { color: #14202e !important; }
+  :root:not([fm-theme]:not([fm-theme="arctic"])) .inline-block.backdrop-blur-sm.p-3 { background: rgb(255 255 255 / .72) !important; border-color: rgb(0 0 0 / .1) !important; }
+  :root:not([fm-theme]:not([fm-theme="arctic"])) .inline-block.backdrop-blur-sm.p-3 * { color: #14202e !important; }
+
+}
+/* FM-THEME END content */

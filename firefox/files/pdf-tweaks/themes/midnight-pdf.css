@@ -1,0 +1,23 @@
+/* FM-THEME BEGIN midnight pdf */
+/* ---------------- Тема: Midnight ---------------- */
+:root:not([fm-theme]:not([fm-theme="midnight"])):has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #6C8CFF) !important;
+    --x-on-accent: #0b1022 !important;
+    --x-ground: #0b1020 !important;
+    --x-rail: #0b1020 !important;
+    --x-bar: #141a2e !important;
+    --x-well: #18203a !important;
+    --x-field: #18203a !important;
+    --x-line: rgb(255 255 255 / .09) !important;
+    --x-ink: #e6eaff !important;
+    --x-muted: #8f98bf !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 999px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 999px !important; }
+}
+/* FM-THEME END pdf */

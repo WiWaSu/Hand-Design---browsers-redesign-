@@ -1,0 +1,58 @@
+/* FM-THEME BEGIN midnight chrome */
+/* ---------------- Тема: Midnight ---------------- */
+:root:not([fm-theme]:not([fm-theme="midnight"])), :root:not([fm-theme]:not([fm-theme="midnight"])) menupopup, :root:not([fm-theme]:not([fm-theme="midnight"])) panel, :root:not([fm-theme]:not([fm-theme="midnight"])) tooltip, :root:not([fm-theme]:not([fm-theme="midnight"])) #urlbar, :root:not([fm-theme]:not([fm-theme="midnight"])) .urlbarView {
+  --fm-accent: var(--fm-user-accent, #6C8CFF) !important;
+  --fm-on-accent: #0b1022 !important;
+  --fm-frame: #0b1020 !important;
+  --fm-bar: #141a2e !important;
+  --fm-field: #18203a !important;
+  --fm-menu: rgb(20 26 46 / .95) !important;
+  --fm-ink: #e6eaff !important;
+  --fm-muted: #8f98bf !important;
+  --fm-line: rgb(255 255 255 / .09) !important;
+  --fm-hover: rgb(255 255 255 / .07) !important;
+  --fm-press: rgb(255 255 255 / .12) !important;
+  --fm-soft: color-mix(in srgb, var(--fm-user-accent, #6C8CFF) 20%, transparent) !important;
+  --fm-radius: 18px !important;
+  --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+  --fm-ring: color-mix(in srgb, var(--fm-accent) 40%, transparent) !important;
+  --fm-ring-focus: color-mix(in srgb, var(--fm-accent) 65%, transparent) !important;
+  --fm-ring-glow: color-mix(in srgb, var(--fm-accent) 10%, transparent) !important;
+  --panel-background-color: var(--fm-menu) !important;
+  --arrowpanel-background: var(--fm-menu) !important;
+  --panel-border-radius: 18px !important;
+  --arrowpanel-border-radius: 18px !important;
+  --menuitem-border-radius: 10px !important;
+  --arrowpanel-menuitem-border-radius: 10px !important;
+  --urlbarview-border-radius: 18px !important;
+  --toolbarbutton-border-radius: 999px !important;
+  --tab-border-radius: 10px !important;
+  --urlbarview-background-color-selected: var(--fm-soft) !important;
+}
+:root:not([fm-theme]:not([fm-theme="midnight"])):not([inDOMFullscreen], [inFullscreen]) #tabbrowser-tabpanels .browserContainer { border-radius: var(--fm-radius) !important; }
+:root:not([fm-theme]:not([fm-theme="midnight"])) menupopup::part(content), :root:not([fm-theme]:not([fm-theme="midnight"])) panel::part(content) {
+  border-radius: 18px !important; background-color: var(--fm-menu) !important; background-image: none !important;
+}
+:root:not([fm-theme]:not([fm-theme="midnight"])) menupopup > :is(menuitem, menu), :root:not([fm-theme]:not([fm-theme="midnight"])) .subviewbutton, :root:not([fm-theme]:not([fm-theme="midnight"])) #appMenu-mainView .subviewbutton { border-radius: 10px !important; }
+:root:not([fm-theme]:not([fm-theme="midnight"])) .tabbrowser-tab > .tab-stack > .tab-background { border-radius: 10px !important; }
+:root:not([fm-theme]:not([fm-theme="midnight"])) #urlbar-background, :root:not([fm-theme]:not([fm-theme="midnight"])) .urlbar-background { border-radius: 14px !important; }
+:root:not([fm-theme]:not([fm-theme="midnight"])) #urlbar[open] > :is(#urlbar-background, .urlbar-background) { border-radius: 18px !important; }
+:root:not([fm-theme]:not([fm-theme="midnight"])) toolbar .toolbarbutton-1 > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack, .toolbarbutton-text), :root:not([fm-theme]:not([fm-theme="midnight"])) #PlacesToolbarItems > .bookmark-item, :root:not([fm-theme]:not([fm-theme="midnight"])) .urlbarView-row-inner, :root:not([fm-theme]:not([fm-theme="midnight"])) .tab-close-button { border-radius: 999px !important; }
+:root:not([fm-theme]:not([fm-theme="midnight"])) .urlbarView-favicon { border-radius: 999px !important; }
+:root:not([fm-theme]:not([fm-theme="midnight"])) #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon {
+  border-radius: 50% !important; background: var(--fm-accent) !important;
+}
+:root:not([fm-theme]:not([fm-theme="midnight"])) moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
+:root:not([fm-theme]:not([fm-theme="midnight"])) .fm-nowbar, :root:not([fm-theme]:not([fm-theme="midnight"])) .fm-toast { border-radius: 999px !important; }
+
+
+
+:root:not([fm-theme]:not([fm-theme="midnight"])) { color-scheme: dark !important; }
+:root:not([fm-theme]:not([fm-theme="midnight"])) #navigator-toolbox, :root:not([fm-theme]:not([fm-theme="midnight"])) #nav-bar, :root:not([fm-theme]:not([fm-theme="midnight"])) #TabsToolbar, :root:not([fm-theme]:not([fm-theme="midnight"])) #sidebar-main { color: var(--fm-ink) !important; }
+:root:not([fm-theme]:not([fm-theme="midnight"])) .tabbrowser-tab[selected] > .tab-stack > .tab-background {
+  background: var(--fm-soft) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fm-accent) 30%, transparent) !important;
+}
+:root:not([fm-theme]:not([fm-theme="midnight"])) .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; }
+:root:not([fm-theme]:not([fm-theme="midnight"])) menupopup::part(content), :root:not([fm-theme]:not([fm-theme="midnight"])) panel::part(content) { backdrop-filter: blur(26px) saturate(1.6) !important; }
+:root:not([fm-theme]:not([fm-theme="midnight"])) #urlbar-background, :root:not([fm-theme]:not([fm-theme="midnight"])) .urlbar-background { backdrop-filter: blur(18px) !important; }
+/* FM-THEME END chrome */

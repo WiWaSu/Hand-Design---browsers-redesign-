@@ -1,0 +1,85 @@
+/* FM-THEME BEGIN ember content */
+/* ---------------- Тема: Ember ---------------- */
+@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+  :root:not([fm-theme]:not([fm-theme="ember"])) {
+    --fm-accent: var(--fm-user-accent, #FE8019) !important;
+    --fm-on-accent: #1d1a17 !important;
+    --fm-frame: #1d1a17 !important;
+    --fm-bar: #282420 !important;
+    --fm-field: #302b26 !important;
+    --fm-menu: rgb(40 36 32 / .97) !important;
+    --fm-ink: #ebdbb2 !important;
+    --fm-muted: #a89984 !important;
+    --fm-line: rgb(255 255 255 / .09) !important;
+    --fm-hover: rgb(255 255 255 / .07) !important;
+    --fm-press: rgb(255 255 255 / .12) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #FE8019) 20%, transparent) !important;
+    --fm-radius: 10px !important;
+    --fm-font: "Cascadia Code", "Segoe UI", sans-serif !important;
+    --color-accent-primary: var(--fm-accent) !important;
+    --button-background-color-primary: var(--fm-accent) !important;
+    --button-text-color-primary: var(--fm-on-accent) !important;
+    --link-color: var(--fm-accent) !important;
+    --focus-outline-color: var(--fm-accent) !important;
+    --toggle-background-color-pressed: var(--fm-accent) !important;
+    --page-nav-button-background-color-selected: var(--fm-soft) !important;
+    --page-nav-button-text-color-selected: var(--fm-accent) !important;
+    --card-border-radius: 10px !important;
+    --box-border-radius: 10px !important;
+    --button-border-radius: 8px !important;
+    --input-text-border-radius: 8px !important;
+    --select-border-radius: 8px !important;
+    --page-nav-button-border-radius: 6px !important;
+  }
+  :root:not([fm-theme]:not([fm-theme="ember"])) :is(setting-group, groupbox):not([hidden]), :root:not([fm-theme]:not([fm-theme="ember"])) .card, :root:not([fm-theme]:not([fm-theme="ember"])) .addon.card, :root:not([fm-theme]:not([fm-theme="ember"])) moz-card { border-radius: 10px !important; }
+  :root:not([fm-theme]:not([fm-theme="ember"])) button:not(.ghost-button):not([type="icon"]), :root:not([fm-theme]:not([fm-theme="ember"])) select, :root:not([fm-theme]:not([fm-theme="ember"])) menulist, :root:not([fm-theme]:not([fm-theme="ember"])) input[type="search"], :root:not([fm-theme]:not([fm-theme="ember"])) input[type="text"] { border-radius: 8px !important; }
+  :root:not([fm-theme]:not([fm-theme="ember"])) .category, :root:not([fm-theme]:not([fm-theme="ember"])) .page-nav-button { border-radius: 6px !important; }
+}
+
+@-moz-document url-prefix("chrome://noraneko-settings/") {
+  :root:not([fm-theme]:not([fm-theme="ember"])), :root:not([fm-theme]:not([fm-theme="ember"]))[data-theme], :root:not([fm-theme]:not([fm-theme="ember"])) .floorp-standard-ui {
+    --fm-accent: var(--fm-user-accent, #FE8019) !important;
+    --fm-on-accent: #1d1a17 !important;
+    --fm-frame: #1d1a17 !important;
+    --fm-bar: #282420 !important;
+    --fm-field: #302b26 !important;
+    --fm-menu: rgb(40 36 32 / .97) !important;
+    --fm-ink: #ebdbb2 !important;
+    --fm-muted: #a89984 !important;
+    --fm-line: rgb(255 255 255 / .09) !important;
+    --fm-hover: rgb(255 255 255 / .07) !important;
+    --fm-press: rgb(255 255 255 / .12) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #FE8019) 20%, transparent) !important;
+    --fm-radius: 10px !important;
+    --fm-font: "Cascadia Code", "Segoe UI", sans-serif !important;
+    --floorp-brand: var(--fm-accent) !important;
+    --floorp-action: var(--fm-accent) !important;
+    --floorp-focus: var(--fm-accent) !important;
+    --floorp-switch-on: var(--fm-accent) !important;
+    --chakra-colors-purple-solid: var(--fm-accent) !important;
+    --chakra-colors-purple-fg: var(--fm-accent) !important;
+    --chakra-colors-purple-focus-ring: var(--fm-accent) !important;
+    --chakra-colors-purple-subtle: var(--fm-soft) !important;
+  }
+}
+
+@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
+
+  html:not([fm-theme]:not([fm-theme="ember"])) { background: #1d1a17 !important; }
+  :root:not([fm-theme]:not([fm-theme="ember"])) #root::before { animation: none !important; inset: 0 !important; background: radial-gradient(50% 40% at 50% 100%, rgb(254 128 25 / .28), transparent 70%), #1a1714 !important; }
+  :root:not([fm-theme]:not([fm-theme="ember"])) #root::after { display: none !important; }
+  :root:not([fm-theme]:not([fm-theme="ember"])) .absolute.top-4.right-4 .tabular-nums {
+    font-family: "Cascadia Code", "Segoe UI", sans-serif !important; font-weight: 400 !important;
+    font-size: clamp(100px, 12vw, 180px) !important; color: #fabd2f !important; text-shadow: none !important;
+  }
+  :root:not([fm-theme]:not([fm-theme="ember"])) .absolute.top-4.right-4 .flex-col.text-right > div { color: #a89984 !important; }
+  :root:not([fm-theme]:not([fm-theme="ember"])) .group.cursor-pointer:has(input[readonly]) {
+    background: rgb(255 255 255 / .08) !important; border: 1px solid rgb(255 255 255 / .14) !important;
+    backdrop-filter: blur(18px) !important; box-shadow: 0 16px 40px rgb(0 0 0 / .35) !important;
+  }
+  :root:not([fm-theme]:not([fm-theme="ember"])) .group.cursor-pointer:has(input[readonly]) :is(input, svg) { color: #ebdbb2 !important; }
+  :root:not([fm-theme]:not([fm-theme="ember"])) .inline-block.backdrop-blur-sm.p-3 { background: rgb(255 255 255 / .08) !important; border-color: rgb(255 255 255 / .14) !important; }
+  :root:not([fm-theme]:not([fm-theme="ember"])) .inline-block.backdrop-blur-sm.p-3 * { color: #ebdbb2 !important; }
+
+}
+/* FM-THEME END content */

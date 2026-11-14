@@ -1,0 +1,162 @@
+/* Hand Design — тема «Latte», подключается на лету */
+@-moz-document url-prefix("chrome://") {
+:root[fm-theme="latte"][fm-theme], :root[fm-theme="latte"][fm-theme] menupopup, :root[fm-theme="latte"][fm-theme] panel, :root[fm-theme="latte"][fm-theme] tooltip, :root[fm-theme="latte"][fm-theme] #urlbar, :root[fm-theme="latte"][fm-theme] .urlbarView {
+  --fm-accent: var(--fm-user-accent, #8B5E3C) !important;
+  --fm-on-accent: #ffffff !important;
+  --fm-frame: #f2ebe3 !important;
+  --fm-bar: #fbf7f2 !important;
+  --fm-field: #fffdfa !important;
+  --fm-menu: rgb(251 247 242 / .97) !important;
+  --fm-ink: #33261c !important;
+  --fm-muted: #7d6a5a !important;
+  --fm-line: rgb(0 0 0 / .1) !important;
+  --fm-hover: rgb(0 0 0 / .05) !important;
+  --fm-press: rgb(0 0 0 / .09) !important;
+  --fm-soft: color-mix(in srgb, var(--fm-user-accent, #8B5E3C) 16%, transparent) !important;
+  --fm-radius: 14px !important;
+  --fm-font: "Segoe UI Variable Display", "Segoe UI", sans-serif !important;
+  --fm-ring: color-mix(in srgb, var(--fm-accent) 40%, transparent) !important;
+  --fm-ring-focus: color-mix(in srgb, var(--fm-accent) 65%, transparent) !important;
+  --fm-ring-glow: color-mix(in srgb, var(--fm-accent) 10%, transparent) !important;
+  --panel-background-color: var(--fm-menu) !important;
+  --arrowpanel-background: var(--fm-menu) !important;
+  --panel-border-radius: 14px !important;
+  --arrowpanel-border-radius: 14px !important;
+  --menuitem-border-radius: 8px !important;
+  --arrowpanel-menuitem-border-radius: 8px !important;
+  --urlbarview-border-radius: 14px !important;
+  --toolbarbutton-border-radius: 10px !important;
+  --tab-border-radius: 8px !important;
+  --urlbarview-background-color-selected: var(--fm-soft) !important;
+}
+:root[fm-theme="latte"][fm-theme]:not([inDOMFullscreen], [inFullscreen]) #tabbrowser-tabpanels .browserContainer { border-radius: var(--fm-radius) !important; }
+:root[fm-theme="latte"][fm-theme] menupopup::part(content), :root[fm-theme="latte"][fm-theme] panel::part(content) {
+  border-radius: 14px !important; background-color: var(--fm-menu) !important; background-image: none !important;
+}
+:root[fm-theme="latte"][fm-theme] menupopup > :is(menuitem, menu), :root[fm-theme="latte"][fm-theme] .subviewbutton, :root[fm-theme="latte"][fm-theme] #appMenu-mainView .subviewbutton { border-radius: 8px !important; }
+:root[fm-theme="latte"][fm-theme] .tabbrowser-tab > .tab-stack > .tab-background { border-radius: 8px !important; }
+:root[fm-theme="latte"][fm-theme] #urlbar-background, :root[fm-theme="latte"][fm-theme] .urlbar-background { border-radius: 10px !important; }
+:root[fm-theme="latte"][fm-theme] #urlbar[open] > :is(#urlbar-background, .urlbar-background) { border-radius: 14px !important; }
+:root[fm-theme="latte"][fm-theme] toolbar .toolbarbutton-1 > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack, .toolbarbutton-text), :root[fm-theme="latte"][fm-theme] #PlacesToolbarItems > .bookmark-item, :root[fm-theme="latte"][fm-theme] .urlbarView-row-inner, :root[fm-theme="latte"][fm-theme] .tab-close-button { border-radius: 10px !important; }
+:root[fm-theme="latte"][fm-theme] .urlbarView-favicon { border-radius: 10px !important; }
+:root[fm-theme="latte"][fm-theme] #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon {
+  border-radius: 50% !important; background: var(--fm-accent) !important;
+}
+:root[fm-theme="latte"][fm-theme] moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
+:root[fm-theme="latte"][fm-theme] .fm-nowbar, :root[fm-theme="latte"][fm-theme] .fm-toast { border-radius: 14px !important; }
+:root[fm-theme="latte"][fm-theme] { color-scheme: light !important; }
+:root[fm-theme="latte"][fm-theme] #navigator-toolbox, :root[fm-theme="latte"][fm-theme] #nav-bar, :root[fm-theme="latte"][fm-theme] #TabsToolbar, :root[fm-theme="latte"][fm-theme] #sidebar-main { color: var(--fm-ink) !important; }
+:root[fm-theme="latte"][fm-theme] .tabbrowser-tab[selected] > .tab-stack > .tab-background {
+  background: var(--fm-soft) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fm-accent) 30%, transparent) !important;
+}
+:root[fm-theme="latte"][fm-theme] .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; }
+}
+
+
+/* ---------------- Тема: Latte ---------------- */
+@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+  :root[fm-theme="latte"][fm-theme] {
+    --fm-accent: var(--fm-user-accent, #8B5E3C) !important;
+    --fm-on-accent: #ffffff !important;
+    --fm-frame: #f2ebe3 !important;
+    --fm-bar: #fbf7f2 !important;
+    --fm-field: #fffdfa !important;
+    --fm-menu: rgb(251 247 242 / .97) !important;
+    --fm-ink: #33261c !important;
+    --fm-muted: #7d6a5a !important;
+    --fm-line: rgb(0 0 0 / .1) !important;
+    --fm-hover: rgb(0 0 0 / .05) !important;
+    --fm-press: rgb(0 0 0 / .09) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #8B5E3C) 16%, transparent) !important;
+    --fm-radius: 14px !important;
+    --fm-font: "Segoe UI Variable Display", "Segoe UI", sans-serif !important;
+    --color-accent-primary: var(--fm-accent) !important;
+    --button-background-color-primary: var(--fm-accent) !important;
+    --button-text-color-primary: var(--fm-on-accent) !important;
+    --link-color: var(--fm-accent) !important;
+    --focus-outline-color: var(--fm-accent) !important;
+    --toggle-background-color-pressed: var(--fm-accent) !important;
+    --page-nav-button-background-color-selected: var(--fm-soft) !important;
+    --page-nav-button-text-color-selected: var(--fm-accent) !important;
+    --card-border-radius: 14px !important;
+    --box-border-radius: 14px !important;
+    --button-border-radius: 10px !important;
+    --input-text-border-radius: 10px !important;
+    --select-border-radius: 10px !important;
+    --page-nav-button-border-radius: 8px !important;
+  }
+  :root[fm-theme="latte"][fm-theme] :is(setting-group, groupbox):not([hidden]), :root[fm-theme="latte"][fm-theme] .card, :root[fm-theme="latte"][fm-theme] .addon.card, :root[fm-theme="latte"][fm-theme] moz-card { border-radius: 14px !important; }
+  :root[fm-theme="latte"][fm-theme] button:not(.ghost-button):not([type="icon"]), :root[fm-theme="latte"][fm-theme] select, :root[fm-theme="latte"][fm-theme] menulist, :root[fm-theme="latte"][fm-theme] input[type="search"], :root[fm-theme="latte"][fm-theme] input[type="text"] { border-radius: 10px !important; }
+  :root[fm-theme="latte"][fm-theme] .category, :root[fm-theme="latte"][fm-theme] .page-nav-button { border-radius: 8px !important; }
+}
+
+@-moz-document url-prefix("chrome://noraneko-settings/") {
+  :root[fm-theme="latte"][fm-theme], :root[fm-theme="latte"][fm-theme][data-theme], :root[fm-theme="latte"][fm-theme] .floorp-standard-ui {
+    --fm-accent: var(--fm-user-accent, #8B5E3C) !important;
+    --fm-on-accent: #ffffff !important;
+    --fm-frame: #f2ebe3 !important;
+    --fm-bar: #fbf7f2 !important;
+    --fm-field: #fffdfa !important;
+    --fm-menu: rgb(251 247 242 / .97) !important;
+    --fm-ink: #33261c !important;
+    --fm-muted: #7d6a5a !important;
+    --fm-line: rgb(0 0 0 / .1) !important;
+    --fm-hover: rgb(0 0 0 / .05) !important;
+    --fm-press: rgb(0 0 0 / .09) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #8B5E3C) 16%, transparent) !important;
+    --fm-radius: 14px !important;
+    --fm-font: "Segoe UI Variable Display", "Segoe UI", sans-serif !important;
+    --floorp-brand: var(--fm-accent) !important;
+    --floorp-action: var(--fm-accent) !important;
+    --floorp-focus: var(--fm-accent) !important;
+    --floorp-switch-on: var(--fm-accent) !important;
+    --chakra-colors-purple-solid: var(--fm-accent) !important;
+    --chakra-colors-purple-fg: var(--fm-accent) !important;
+    --chakra-colors-purple-focus-ring: var(--fm-accent) !important;
+    --chakra-colors-purple-subtle: var(--fm-soft) !important;
+  }
+}
+
+@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
+
+  html[fm-theme="latte"][fm-theme] { background: #f2ebe3 !important; }
+  :root[fm-theme="latte"][fm-theme] #root::before { animation: none !important; inset: 0 !important; background: radial-gradient(80% 70% at 50% 0%, #f0e2d2, transparent 70%), #f6efe7 !important; }
+  :root[fm-theme="latte"][fm-theme] #root::after { display: none !important; }
+  :root[fm-theme="latte"][fm-theme] .absolute.top-4.right-4 .tabular-nums {
+    font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif !important; font-weight: 500 !important;
+    font-size: clamp(100px, 12vw, 180px) !important; color: #5a3e28 !important; text-shadow: none !important;
+  }
+  :root[fm-theme="latte"][fm-theme] .absolute.top-4.right-4 .flex-col.text-right > div { color: #7d6a5a !important; }
+  :root[fm-theme="latte"][fm-theme] .group.cursor-pointer:has(input[readonly]) {
+    background: rgb(255 255 255 / .72) !important; border: 1px solid rgb(0 0 0 / .1) !important;
+    backdrop-filter: blur(18px) !important; box-shadow: 0 16px 40px rgb(0 0 0 / .08) !important;
+  }
+  :root[fm-theme="latte"][fm-theme] .group.cursor-pointer:has(input[readonly]) :is(input, svg) { color: #33261c !important; }
+  :root[fm-theme="latte"][fm-theme] .inline-block.backdrop-blur-sm.p-3 { background: rgb(255 255 255 / .72) !important; border-color: rgb(0 0 0 / .1) !important; }
+  :root[fm-theme="latte"][fm-theme] .inline-block.backdrop-blur-sm.p-3 * { color: #33261c !important; }
+
+}
+
+
+/* ---------------- Тема: Latte ---------------- */
+:root[fm-theme="latte"][fm-theme]:has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #8B5E3C) !important;
+    --x-on-accent: #ffffff !important;
+    --x-ground: #f2ebe3 !important;
+    --x-rail: #f2ebe3 !important;
+    --x-bar: #fbf7f2 !important;
+    --x-well: #fffdfa !important;
+    --x-field: #fffdfa !important;
+    --x-line: rgb(0 0 0 / .1) !important;
+    --x-ink: #33261c !important;
+    --x-muted: #7d6a5a !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 10px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 10px !important; }
+}
+

@@ -1,0 +1,56 @@
+/* FM-THEME BEGIN sakura chrome */
+/* ---------------- Тема: Sakura ---------------- */
+:root:not([fm-theme]:not([fm-theme="sakura"])), :root:not([fm-theme]:not([fm-theme="sakura"])) menupopup, :root:not([fm-theme]:not([fm-theme="sakura"])) panel, :root:not([fm-theme]:not([fm-theme="sakura"])) tooltip, :root:not([fm-theme]:not([fm-theme="sakura"])) #urlbar, :root:not([fm-theme]:not([fm-theme="sakura"])) .urlbarView {
+  --fm-accent: var(--fm-user-accent, #E0567F) !important;
+  --fm-on-accent: #ffffff !important;
+  --fm-frame: #fbf0f3 !important;
+  --fm-bar: #fffafb !important;
+  --fm-field: #ffffff !important;
+  --fm-menu: rgb(255 250 251 / .96) !important;
+  --fm-ink: #3a1d27 !important;
+  --fm-muted: #8a6672 !important;
+  --fm-line: rgb(0 0 0 / .1) !important;
+  --fm-hover: rgb(0 0 0 / .05) !important;
+  --fm-press: rgb(0 0 0 / .09) !important;
+  --fm-soft: color-mix(in srgb, var(--fm-user-accent, #E0567F) 16%, transparent) !important;
+  --fm-radius: 22px !important;
+  --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+  --fm-ring: color-mix(in srgb, var(--fm-accent) 40%, transparent) !important;
+  --fm-ring-focus: color-mix(in srgb, var(--fm-accent) 65%, transparent) !important;
+  --fm-ring-glow: color-mix(in srgb, var(--fm-accent) 10%, transparent) !important;
+  --panel-background-color: var(--fm-menu) !important;
+  --arrowpanel-background: var(--fm-menu) !important;
+  --panel-border-radius: 22px !important;
+  --arrowpanel-border-radius: 22px !important;
+  --menuitem-border-radius: 12px !important;
+  --arrowpanel-menuitem-border-radius: 12px !important;
+  --urlbarview-border-radius: 22px !important;
+  --toolbarbutton-border-radius: 999px !important;
+  --tab-border-radius: 14px !important;
+  --urlbarview-background-color-selected: var(--fm-soft) !important;
+}
+:root:not([fm-theme]:not([fm-theme="sakura"])):not([inDOMFullscreen], [inFullscreen]) #tabbrowser-tabpanels .browserContainer { border-radius: var(--fm-radius) !important; }
+:root:not([fm-theme]:not([fm-theme="sakura"])) menupopup::part(content), :root:not([fm-theme]:not([fm-theme="sakura"])) panel::part(content) {
+  border-radius: 22px !important; background-color: var(--fm-menu) !important; background-image: none !important;
+}
+:root:not([fm-theme]:not([fm-theme="sakura"])) menupopup > :is(menuitem, menu), :root:not([fm-theme]:not([fm-theme="sakura"])) .subviewbutton, :root:not([fm-theme]:not([fm-theme="sakura"])) #appMenu-mainView .subviewbutton { border-radius: 12px !important; }
+:root:not([fm-theme]:not([fm-theme="sakura"])) .tabbrowser-tab > .tab-stack > .tab-background { border-radius: 14px !important; }
+:root:not([fm-theme]:not([fm-theme="sakura"])) #urlbar-background, :root:not([fm-theme]:not([fm-theme="sakura"])) .urlbar-background { border-radius: 14px !important; }
+:root:not([fm-theme]:not([fm-theme="sakura"])) #urlbar[open] > :is(#urlbar-background, .urlbar-background) { border-radius: 22px !important; }
+:root:not([fm-theme]:not([fm-theme="sakura"])) toolbar .toolbarbutton-1 > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack, .toolbarbutton-text), :root:not([fm-theme]:not([fm-theme="sakura"])) #PlacesToolbarItems > .bookmark-item, :root:not([fm-theme]:not([fm-theme="sakura"])) .urlbarView-row-inner, :root:not([fm-theme]:not([fm-theme="sakura"])) .tab-close-button { border-radius: 999px !important; }
+:root:not([fm-theme]:not([fm-theme="sakura"])) .urlbarView-favicon { border-radius: 999px !important; }
+:root:not([fm-theme]:not([fm-theme="sakura"])) #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon {
+  border-radius: 50% !important; background: var(--fm-accent) !important;
+}
+:root:not([fm-theme]:not([fm-theme="sakura"])) moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
+:root:not([fm-theme]:not([fm-theme="sakura"])) .fm-nowbar, :root:not([fm-theme]:not([fm-theme="sakura"])) .fm-toast { border-radius: 999px !important; }
+
+
+
+:root:not([fm-theme]:not([fm-theme="sakura"])) { color-scheme: light !important; }
+:root:not([fm-theme]:not([fm-theme="sakura"])) #navigator-toolbox, :root:not([fm-theme]:not([fm-theme="sakura"])) #nav-bar, :root:not([fm-theme]:not([fm-theme="sakura"])) #TabsToolbar, :root:not([fm-theme]:not([fm-theme="sakura"])) #sidebar-main { color: var(--fm-ink) !important; }
+:root:not([fm-theme]:not([fm-theme="sakura"])) .tabbrowser-tab[selected] > .tab-stack > .tab-background {
+  background: var(--fm-soft) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fm-accent) 30%, transparent) !important;
+}
+:root:not([fm-theme]:not([fm-theme="sakura"])) .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; }
+/* FM-THEME END chrome */

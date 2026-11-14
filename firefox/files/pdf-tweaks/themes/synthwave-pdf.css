@@ -1,0 +1,23 @@
+/* FM-THEME BEGIN synthwave pdf */
+/* ---------------- Тема: Synthwave ---------------- */
+:root:not([fm-theme]:not([fm-theme="synthwave"])):has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #FF4FD8) !important;
+    --x-on-accent: #14041d !important;
+    --x-ground: #140a24 !important;
+    --x-rail: #140a24 !important;
+    --x-bar: #1f1033 !important;
+    --x-well: #26143d !important;
+    --x-field: #26143d !important;
+    --x-line: rgb(255 255 255 / .09) !important;
+    --x-ink: #fbeaff !important;
+    --x-muted: #b195c9 !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 999px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 999px !important; }
+}
+/* FM-THEME END pdf */

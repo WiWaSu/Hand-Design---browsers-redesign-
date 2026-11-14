@@ -1,0 +1,162 @@
+/* Hand Design — тема «Rosé», подключается на лету */
+@-moz-document url-prefix("chrome://") {
+:root[fm-theme="rose"][fm-theme], :root[fm-theme="rose"][fm-theme] menupopup, :root[fm-theme="rose"][fm-theme] panel, :root[fm-theme="rose"][fm-theme] tooltip, :root[fm-theme="rose"][fm-theme] #urlbar, :root[fm-theme="rose"][fm-theme] .urlbarView {
+  --fm-accent: var(--fm-user-accent, #EBBCBA) !important;
+  --fm-on-accent: #1f1d2e !important;
+  --fm-frame: #191724 !important;
+  --fm-bar: #1f1d2e !important;
+  --fm-field: #26233a !important;
+  --fm-menu: rgb(31 29 46 / .96) !important;
+  --fm-ink: #e0def4 !important;
+  --fm-muted: #908caa !important;
+  --fm-line: rgb(255 255 255 / .09) !important;
+  --fm-hover: rgb(255 255 255 / .07) !important;
+  --fm-press: rgb(255 255 255 / .12) !important;
+  --fm-soft: color-mix(in srgb, var(--fm-user-accent, #EBBCBA) 20%, transparent) !important;
+  --fm-radius: 20px !important;
+  --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+  --fm-ring: color-mix(in srgb, var(--fm-accent) 40%, transparent) !important;
+  --fm-ring-focus: color-mix(in srgb, var(--fm-accent) 65%, transparent) !important;
+  --fm-ring-glow: color-mix(in srgb, var(--fm-accent) 10%, transparent) !important;
+  --panel-background-color: var(--fm-menu) !important;
+  --arrowpanel-background: var(--fm-menu) !important;
+  --panel-border-radius: 20px !important;
+  --arrowpanel-border-radius: 20px !important;
+  --menuitem-border-radius: 12px !important;
+  --arrowpanel-menuitem-border-radius: 12px !important;
+  --urlbarview-border-radius: 20px !important;
+  --toolbarbutton-border-radius: 999px !important;
+  --tab-border-radius: 12px !important;
+  --urlbarview-background-color-selected: var(--fm-soft) !important;
+}
+:root[fm-theme="rose"][fm-theme]:not([inDOMFullscreen], [inFullscreen]) #tabbrowser-tabpanels .browserContainer { border-radius: var(--fm-radius) !important; }
+:root[fm-theme="rose"][fm-theme] menupopup::part(content), :root[fm-theme="rose"][fm-theme] panel::part(content) {
+  border-radius: 20px !important; background-color: var(--fm-menu) !important; background-image: none !important;
+}
+:root[fm-theme="rose"][fm-theme] menupopup > :is(menuitem, menu), :root[fm-theme="rose"][fm-theme] .subviewbutton, :root[fm-theme="rose"][fm-theme] #appMenu-mainView .subviewbutton { border-radius: 12px !important; }
+:root[fm-theme="rose"][fm-theme] .tabbrowser-tab > .tab-stack > .tab-background { border-radius: 12px !important; }
+:root[fm-theme="rose"][fm-theme] #urlbar-background, :root[fm-theme="rose"][fm-theme] .urlbar-background { border-radius: 14px !important; }
+:root[fm-theme="rose"][fm-theme] #urlbar[open] > :is(#urlbar-background, .urlbar-background) { border-radius: 20px !important; }
+:root[fm-theme="rose"][fm-theme] toolbar .toolbarbutton-1 > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack, .toolbarbutton-text), :root[fm-theme="rose"][fm-theme] #PlacesToolbarItems > .bookmark-item, :root[fm-theme="rose"][fm-theme] .urlbarView-row-inner, :root[fm-theme="rose"][fm-theme] .tab-close-button { border-radius: 999px !important; }
+:root[fm-theme="rose"][fm-theme] .urlbarView-favicon { border-radius: 999px !important; }
+:root[fm-theme="rose"][fm-theme] #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon {
+  border-radius: 50% !important; background: var(--fm-accent) !important;
+}
+:root[fm-theme="rose"][fm-theme] moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
+:root[fm-theme="rose"][fm-theme] .fm-nowbar, :root[fm-theme="rose"][fm-theme] .fm-toast { border-radius: 999px !important; }
+:root[fm-theme="rose"][fm-theme] { color-scheme: dark !important; }
+:root[fm-theme="rose"][fm-theme] #navigator-toolbox, :root[fm-theme="rose"][fm-theme] #nav-bar, :root[fm-theme="rose"][fm-theme] #TabsToolbar, :root[fm-theme="rose"][fm-theme] #sidebar-main { color: var(--fm-ink) !important; }
+:root[fm-theme="rose"][fm-theme] .tabbrowser-tab[selected] > .tab-stack > .tab-background {
+  background: var(--fm-soft) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fm-accent) 30%, transparent) !important;
+}
+:root[fm-theme="rose"][fm-theme] .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; }
+}
+
+
+/* ---------------- Тема: Rosé ---------------- */
+@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+  :root[fm-theme="rose"][fm-theme] {
+    --fm-accent: var(--fm-user-accent, #EBBCBA) !important;
+    --fm-on-accent: #1f1d2e !important;
+    --fm-frame: #191724 !important;
+    --fm-bar: #1f1d2e !important;
+    --fm-field: #26233a !important;
+    --fm-menu: rgb(31 29 46 / .96) !important;
+    --fm-ink: #e0def4 !important;
+    --fm-muted: #908caa !important;
+    --fm-line: rgb(255 255 255 / .09) !important;
+    --fm-hover: rgb(255 255 255 / .07) !important;
+    --fm-press: rgb(255 255 255 / .12) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #EBBCBA) 20%, transparent) !important;
+    --fm-radius: 20px !important;
+    --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+    --color-accent-primary: var(--fm-accent) !important;
+    --button-background-color-primary: var(--fm-accent) !important;
+    --button-text-color-primary: var(--fm-on-accent) !important;
+    --link-color: var(--fm-accent) !important;
+    --focus-outline-color: var(--fm-accent) !important;
+    --toggle-background-color-pressed: var(--fm-accent) !important;
+    --page-nav-button-background-color-selected: var(--fm-soft) !important;
+    --page-nav-button-text-color-selected: var(--fm-accent) !important;
+    --card-border-radius: 20px !important;
+    --box-border-radius: 20px !important;
+    --button-border-radius: 999px !important;
+    --input-text-border-radius: 14px !important;
+    --select-border-radius: 999px !important;
+    --page-nav-button-border-radius: 12px !important;
+  }
+  :root[fm-theme="rose"][fm-theme] :is(setting-group, groupbox):not([hidden]), :root[fm-theme="rose"][fm-theme] .card, :root[fm-theme="rose"][fm-theme] .addon.card, :root[fm-theme="rose"][fm-theme] moz-card { border-radius: 20px !important; }
+  :root[fm-theme="rose"][fm-theme] button:not(.ghost-button):not([type="icon"]), :root[fm-theme="rose"][fm-theme] select, :root[fm-theme="rose"][fm-theme] menulist, :root[fm-theme="rose"][fm-theme] input[type="search"], :root[fm-theme="rose"][fm-theme] input[type="text"] { border-radius: 999px !important; }
+  :root[fm-theme="rose"][fm-theme] .category, :root[fm-theme="rose"][fm-theme] .page-nav-button { border-radius: 12px !important; }
+}
+
+@-moz-document url-prefix("chrome://noraneko-settings/") {
+  :root[fm-theme="rose"][fm-theme], :root[fm-theme="rose"][fm-theme][data-theme], :root[fm-theme="rose"][fm-theme] .floorp-standard-ui {
+    --fm-accent: var(--fm-user-accent, #EBBCBA) !important;
+    --fm-on-accent: #1f1d2e !important;
+    --fm-frame: #191724 !important;
+    --fm-bar: #1f1d2e !important;
+    --fm-field: #26233a !important;
+    --fm-menu: rgb(31 29 46 / .96) !important;
+    --fm-ink: #e0def4 !important;
+    --fm-muted: #908caa !important;
+    --fm-line: rgb(255 255 255 / .09) !important;
+    --fm-hover: rgb(255 255 255 / .07) !important;
+    --fm-press: rgb(255 255 255 / .12) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #EBBCBA) 20%, transparent) !important;
+    --fm-radius: 20px !important;
+    --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+    --floorp-brand: var(--fm-accent) !important;
+    --floorp-action: var(--fm-accent) !important;
+    --floorp-focus: var(--fm-accent) !important;
+    --floorp-switch-on: var(--fm-accent) !important;
+    --chakra-colors-purple-solid: var(--fm-accent) !important;
+    --chakra-colors-purple-fg: var(--fm-accent) !important;
+    --chakra-colors-purple-focus-ring: var(--fm-accent) !important;
+    --chakra-colors-purple-subtle: var(--fm-soft) !important;
+  }
+}
+
+@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
+
+  html[fm-theme="rose"][fm-theme] { background: #191724 !important; }
+  :root[fm-theme="rose"][fm-theme] #root::before { animation: none !important; inset: 0 !important; background: radial-gradient(60% 50% at 80% 10%, rgb(235 188 186 / .18), transparent 70%), radial-gradient(60% 50% at 10% 90%, rgb(196 167 231 / .16), transparent 70%), #191724 !important; }
+  :root[fm-theme="rose"][fm-theme] #root::after { display: none !important; }
+  :root[fm-theme="rose"][fm-theme] .absolute.top-4.right-4 .tabular-nums {
+    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; font-weight: 300 !important;
+    font-size: clamp(100px, 12vw, 180px) !important; color: #ebbcba !important; text-shadow: none !important;
+  }
+  :root[fm-theme="rose"][fm-theme] .absolute.top-4.right-4 .flex-col.text-right > div { color: #908caa !important; }
+  :root[fm-theme="rose"][fm-theme] .group.cursor-pointer:has(input[readonly]) {
+    background: rgb(255 255 255 / .08) !important; border: 1px solid rgb(255 255 255 / .14) !important;
+    backdrop-filter: blur(18px) !important; box-shadow: 0 16px 40px rgb(0 0 0 / .35) !important;
+  }
+  :root[fm-theme="rose"][fm-theme] .group.cursor-pointer:has(input[readonly]) :is(input, svg) { color: #e0def4 !important; }
+  :root[fm-theme="rose"][fm-theme] .inline-block.backdrop-blur-sm.p-3 { background: rgb(255 255 255 / .08) !important; border-color: rgb(255 255 255 / .14) !important; }
+  :root[fm-theme="rose"][fm-theme] .inline-block.backdrop-blur-sm.p-3 * { color: #e0def4 !important; }
+
+}
+
+
+/* ---------------- Тема: Rosé ---------------- */
+:root[fm-theme="rose"][fm-theme]:has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #EBBCBA) !important;
+    --x-on-accent: #1f1d2e !important;
+    --x-ground: #191724 !important;
+    --x-rail: #191724 !important;
+    --x-bar: #1f1d2e !important;
+    --x-well: #26233a !important;
+    --x-field: #26233a !important;
+    --x-line: rgb(255 255 255 / .09) !important;
+    --x-ink: #e0def4 !important;
+    --x-muted: #908caa !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 999px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 999px !important; }
+}
+

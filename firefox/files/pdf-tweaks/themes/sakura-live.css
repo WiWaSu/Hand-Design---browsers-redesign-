@@ -1,0 +1,162 @@
+/* Hand Design — тема «Sakura», подключается на лету */
+@-moz-document url-prefix("chrome://") {
+:root[fm-theme="sakura"][fm-theme], :root[fm-theme="sakura"][fm-theme] menupopup, :root[fm-theme="sakura"][fm-theme] panel, :root[fm-theme="sakura"][fm-theme] tooltip, :root[fm-theme="sakura"][fm-theme] #urlbar, :root[fm-theme="sakura"][fm-theme] .urlbarView {
+  --fm-accent: var(--fm-user-accent, #E0567F) !important;
+  --fm-on-accent: #ffffff !important;
+  --fm-frame: #fbf0f3 !important;
+  --fm-bar: #fffafb !important;
+  --fm-field: #ffffff !important;
+  --fm-menu: rgb(255 250 251 / .96) !important;
+  --fm-ink: #3a1d27 !important;
+  --fm-muted: #8a6672 !important;
+  --fm-line: rgb(0 0 0 / .1) !important;
+  --fm-hover: rgb(0 0 0 / .05) !important;
+  --fm-press: rgb(0 0 0 / .09) !important;
+  --fm-soft: color-mix(in srgb, var(--fm-user-accent, #E0567F) 16%, transparent) !important;
+  --fm-radius: 22px !important;
+  --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+  --fm-ring: color-mix(in srgb, var(--fm-accent) 40%, transparent) !important;
+  --fm-ring-focus: color-mix(in srgb, var(--fm-accent) 65%, transparent) !important;
+  --fm-ring-glow: color-mix(in srgb, var(--fm-accent) 10%, transparent) !important;
+  --panel-background-color: var(--fm-menu) !important;
+  --arrowpanel-background: var(--fm-menu) !important;
+  --panel-border-radius: 22px !important;
+  --arrowpanel-border-radius: 22px !important;
+  --menuitem-border-radius: 12px !important;
+  --arrowpanel-menuitem-border-radius: 12px !important;
+  --urlbarview-border-radius: 22px !important;
+  --toolbarbutton-border-radius: 999px !important;
+  --tab-border-radius: 14px !important;
+  --urlbarview-background-color-selected: var(--fm-soft) !important;
+}
+:root[fm-theme="sakura"][fm-theme]:not([inDOMFullscreen], [inFullscreen]) #tabbrowser-tabpanels .browserContainer { border-radius: var(--fm-radius) !important; }
+:root[fm-theme="sakura"][fm-theme] menupopup::part(content), :root[fm-theme="sakura"][fm-theme] panel::part(content) {
+  border-radius: 22px !important; background-color: var(--fm-menu) !important; background-image: none !important;
+}
+:root[fm-theme="sakura"][fm-theme] menupopup > :is(menuitem, menu), :root[fm-theme="sakura"][fm-theme] .subviewbutton, :root[fm-theme="sakura"][fm-theme] #appMenu-mainView .subviewbutton { border-radius: 12px !important; }
+:root[fm-theme="sakura"][fm-theme] .tabbrowser-tab > .tab-stack > .tab-background { border-radius: 14px !important; }
+:root[fm-theme="sakura"][fm-theme] #urlbar-background, :root[fm-theme="sakura"][fm-theme] .urlbar-background { border-radius: 14px !important; }
+:root[fm-theme="sakura"][fm-theme] #urlbar[open] > :is(#urlbar-background, .urlbar-background) { border-radius: 22px !important; }
+:root[fm-theme="sakura"][fm-theme] toolbar .toolbarbutton-1 > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack, .toolbarbutton-text), :root[fm-theme="sakura"][fm-theme] #PlacesToolbarItems > .bookmark-item, :root[fm-theme="sakura"][fm-theme] .urlbarView-row-inner, :root[fm-theme="sakura"][fm-theme] .tab-close-button { border-radius: 999px !important; }
+:root[fm-theme="sakura"][fm-theme] .urlbarView-favicon { border-radius: 999px !important; }
+:root[fm-theme="sakura"][fm-theme] #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon {
+  border-radius: 50% !important; background: var(--fm-accent) !important;
+}
+:root[fm-theme="sakura"][fm-theme] moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
+:root[fm-theme="sakura"][fm-theme] .fm-nowbar, :root[fm-theme="sakura"][fm-theme] .fm-toast { border-radius: 999px !important; }
+:root[fm-theme="sakura"][fm-theme] { color-scheme: light !important; }
+:root[fm-theme="sakura"][fm-theme] #navigator-toolbox, :root[fm-theme="sakura"][fm-theme] #nav-bar, :root[fm-theme="sakura"][fm-theme] #TabsToolbar, :root[fm-theme="sakura"][fm-theme] #sidebar-main { color: var(--fm-ink) !important; }
+:root[fm-theme="sakura"][fm-theme] .tabbrowser-tab[selected] > .tab-stack > .tab-background {
+  background: var(--fm-soft) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fm-accent) 30%, transparent) !important;
+}
+:root[fm-theme="sakura"][fm-theme] .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; }
+}
+
+
+/* ---------------- Тема: Sakura ---------------- */
+@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+  :root[fm-theme="sakura"][fm-theme] {
+    --fm-accent: var(--fm-user-accent, #E0567F) !important;
+    --fm-on-accent: #ffffff !important;
+    --fm-frame: #fbf0f3 !important;
+    --fm-bar: #fffafb !important;
+    --fm-field: #ffffff !important;
+    --fm-menu: rgb(255 250 251 / .96) !important;
+    --fm-ink: #3a1d27 !important;
+    --fm-muted: #8a6672 !important;
+    --fm-line: rgb(0 0 0 / .1) !important;
+    --fm-hover: rgb(0 0 0 / .05) !important;
+    --fm-press: rgb(0 0 0 / .09) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #E0567F) 16%, transparent) !important;
+    --fm-radius: 22px !important;
+    --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+    --color-accent-primary: var(--fm-accent) !important;
+    --button-background-color-primary: var(--fm-accent) !important;
+    --button-text-color-primary: var(--fm-on-accent) !important;
+    --link-color: var(--fm-accent) !important;
+    --focus-outline-color: var(--fm-accent) !important;
+    --toggle-background-color-pressed: var(--fm-accent) !important;
+    --page-nav-button-background-color-selected: var(--fm-soft) !important;
+    --page-nav-button-text-color-selected: var(--fm-accent) !important;
+    --card-border-radius: 22px !important;
+    --box-border-radius: 22px !important;
+    --button-border-radius: 999px !important;
+    --input-text-border-radius: 14px !important;
+    --select-border-radius: 999px !important;
+    --page-nav-button-border-radius: 12px !important;
+  }
+  :root[fm-theme="sakura"][fm-theme] :is(setting-group, groupbox):not([hidden]), :root[fm-theme="sakura"][fm-theme] .card, :root[fm-theme="sakura"][fm-theme] .addon.card, :root[fm-theme="sakura"][fm-theme] moz-card { border-radius: 22px !important; }
+  :root[fm-theme="sakura"][fm-theme] button:not(.ghost-button):not([type="icon"]), :root[fm-theme="sakura"][fm-theme] select, :root[fm-theme="sakura"][fm-theme] menulist, :root[fm-theme="sakura"][fm-theme] input[type="search"], :root[fm-theme="sakura"][fm-theme] input[type="text"] { border-radius: 999px !important; }
+  :root[fm-theme="sakura"][fm-theme] .category, :root[fm-theme="sakura"][fm-theme] .page-nav-button { border-radius: 12px !important; }
+}
+
+@-moz-document url-prefix("chrome://noraneko-settings/") {
+  :root[fm-theme="sakura"][fm-theme], :root[fm-theme="sakura"][fm-theme][data-theme], :root[fm-theme="sakura"][fm-theme] .floorp-standard-ui {
+    --fm-accent: var(--fm-user-accent, #E0567F) !important;
+    --fm-on-accent: #ffffff !important;
+    --fm-frame: #fbf0f3 !important;
+    --fm-bar: #fffafb !important;
+    --fm-field: #ffffff !important;
+    --fm-menu: rgb(255 250 251 / .96) !important;
+    --fm-ink: #3a1d27 !important;
+    --fm-muted: #8a6672 !important;
+    --fm-line: rgb(0 0 0 / .1) !important;
+    --fm-hover: rgb(0 0 0 / .05) !important;
+    --fm-press: rgb(0 0 0 / .09) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #E0567F) 16%, transparent) !important;
+    --fm-radius: 22px !important;
+    --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+    --floorp-brand: var(--fm-accent) !important;
+    --floorp-action: var(--fm-accent) !important;
+    --floorp-focus: var(--fm-accent) !important;
+    --floorp-switch-on: var(--fm-accent) !important;
+    --chakra-colors-purple-solid: var(--fm-accent) !important;
+    --chakra-colors-purple-fg: var(--fm-accent) !important;
+    --chakra-colors-purple-focus-ring: var(--fm-accent) !important;
+    --chakra-colors-purple-subtle: var(--fm-soft) !important;
+  }
+}
+
+@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
+
+  html[fm-theme="sakura"][fm-theme] { background: #fbf0f3 !important; }
+  :root[fm-theme="sakura"][fm-theme] #root::before { animation: none !important; inset: 0 !important; background: radial-gradient(60% 60% at 15% 20%, #ffd3e0, transparent 70%), radial-gradient(60% 60% at 85% 80%, #ffe6ee, transparent 70%), #fdf3f6 !important; }
+  :root[fm-theme="sakura"][fm-theme] #root::after { display: none !important; }
+  :root[fm-theme="sakura"][fm-theme] .absolute.top-4.right-4 .tabular-nums {
+    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; font-weight: 300 !important;
+    font-size: clamp(100px, 12vw, 180px) !important; color: #c23a64 !important; text-shadow: none !important;
+  }
+  :root[fm-theme="sakura"][fm-theme] .absolute.top-4.right-4 .flex-col.text-right > div { color: #8a6672 !important; }
+  :root[fm-theme="sakura"][fm-theme] .group.cursor-pointer:has(input[readonly]) {
+    background: rgb(255 255 255 / .72) !important; border: 1px solid rgb(0 0 0 / .1) !important;
+    backdrop-filter: blur(18px) !important; box-shadow: 0 16px 40px rgb(0 0 0 / .08) !important;
+  }
+  :root[fm-theme="sakura"][fm-theme] .group.cursor-pointer:has(input[readonly]) :is(input, svg) { color: #3a1d27 !important; }
+  :root[fm-theme="sakura"][fm-theme] .inline-block.backdrop-blur-sm.p-3 { background: rgb(255 255 255 / .72) !important; border-color: rgb(0 0 0 / .1) !important; }
+  :root[fm-theme="sakura"][fm-theme] .inline-block.backdrop-blur-sm.p-3 * { color: #3a1d27 !important; }
+
+}
+
+
+/* ---------------- Тема: Sakura ---------------- */
+:root[fm-theme="sakura"][fm-theme]:has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #E0567F) !important;
+    --x-on-accent: #ffffff !important;
+    --x-ground: #fbf0f3 !important;
+    --x-rail: #fbf0f3 !important;
+    --x-bar: #fffafb !important;
+    --x-well: #ffffff !important;
+    --x-field: #ffffff !important;
+    --x-line: rgb(0 0 0 / .1) !important;
+    --x-ink: #3a1d27 !important;
+    --x-muted: #8a6672 !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 999px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 999px !important; }
+}
+

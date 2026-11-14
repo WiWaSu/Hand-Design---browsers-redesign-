@@ -1,0 +1,23 @@
+/* FM-THEME BEGIN ember pdf */
+/* ---------------- Тема: Ember ---------------- */
+:root:not([fm-theme]:not([fm-theme="ember"])):has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #FE8019) !important;
+    --x-on-accent: #1d1a17 !important;
+    --x-ground: #1d1a17 !important;
+    --x-rail: #1d1a17 !important;
+    --x-bar: #282420 !important;
+    --x-well: #302b26 !important;
+    --x-field: #302b26 !important;
+    --x-line: rgb(255 255 255 / .09) !important;
+    --x-ink: #ebdbb2 !important;
+    --x-muted: #a89984 !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 8px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 8px !important; }
+}
+/* FM-THEME END pdf */

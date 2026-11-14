@@ -1,0 +1,23 @@
+/* FM-THEME BEGIN forest pdf */
+/* ---------------- Тема: Forest ---------------- */
+:root:not([fm-theme]:not([fm-theme="forest"])):has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #7BC47F) !important;
+    --x-on-accent: #0c1a0f !important;
+    --x-ground: #0f1a13 !important;
+    --x-rail: #0f1a13 !important;
+    --x-bar: #17241b !important;
+    --x-well: #1c2c21 !important;
+    --x-field: #1c2c21 !important;
+    --x-line: rgb(255 255 255 / .09) !important;
+    --x-ink: #e2efe3 !important;
+    --x-muted: #8fa894 !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 999px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 999px !important; }
+}
+/* FM-THEME END pdf */

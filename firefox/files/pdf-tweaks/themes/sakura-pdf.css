@@ -1,0 +1,23 @@
+/* FM-THEME BEGIN sakura pdf */
+/* ---------------- Тема: Sakura ---------------- */
+:root:not([fm-theme]:not([fm-theme="sakura"])):has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #E0567F) !important;
+    --x-on-accent: #ffffff !important;
+    --x-ground: #fbf0f3 !important;
+    --x-rail: #fbf0f3 !important;
+    --x-bar: #fffafb !important;
+    --x-well: #ffffff !important;
+    --x-field: #ffffff !important;
+    --x-line: rgb(0 0 0 / .1) !important;
+    --x-ink: #3a1d27 !important;
+    --x-muted: #8a6672 !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 999px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 999px !important; }
+}
+/* FM-THEME END pdf */

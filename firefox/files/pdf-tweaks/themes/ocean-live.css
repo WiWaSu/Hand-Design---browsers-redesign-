@@ -1,0 +1,164 @@
+/* Hand Design — тема «Ocean», подключается на лету */
+@-moz-document url-prefix("chrome://") {
+:root[fm-theme="ocean"][fm-theme], :root[fm-theme="ocean"][fm-theme] menupopup, :root[fm-theme="ocean"][fm-theme] panel, :root[fm-theme="ocean"][fm-theme] tooltip, :root[fm-theme="ocean"][fm-theme] #urlbar, :root[fm-theme="ocean"][fm-theme] .urlbarView {
+  --fm-accent: var(--fm-user-accent, #22C3E6) !important;
+  --fm-on-accent: #03141a !important;
+  --fm-frame: #06161d !important;
+  --fm-bar: #0d222b !important;
+  --fm-field: #112a35 !important;
+  --fm-menu: rgb(13 34 43 / .95) !important;
+  --fm-ink: #dff6fb !important;
+  --fm-muted: #83aab5 !important;
+  --fm-line: rgb(255 255 255 / .09) !important;
+  --fm-hover: rgb(255 255 255 / .07) !important;
+  --fm-press: rgb(255 255 255 / .12) !important;
+  --fm-soft: color-mix(in srgb, var(--fm-user-accent, #22C3E6) 20%, transparent) !important;
+  --fm-radius: 18px !important;
+  --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+  --fm-ring: color-mix(in srgb, var(--fm-accent) 40%, transparent) !important;
+  --fm-ring-focus: color-mix(in srgb, var(--fm-accent) 65%, transparent) !important;
+  --fm-ring-glow: color-mix(in srgb, var(--fm-accent) 10%, transparent) !important;
+  --panel-background-color: var(--fm-menu) !important;
+  --arrowpanel-background: var(--fm-menu) !important;
+  --panel-border-radius: 18px !important;
+  --arrowpanel-border-radius: 18px !important;
+  --menuitem-border-radius: 10px !important;
+  --arrowpanel-menuitem-border-radius: 10px !important;
+  --urlbarview-border-radius: 18px !important;
+  --toolbarbutton-border-radius: 999px !important;
+  --tab-border-radius: 10px !important;
+  --urlbarview-background-color-selected: var(--fm-soft) !important;
+}
+:root[fm-theme="ocean"][fm-theme]:not([inDOMFullscreen], [inFullscreen]) #tabbrowser-tabpanels .browserContainer { border-radius: var(--fm-radius) !important; }
+:root[fm-theme="ocean"][fm-theme] menupopup::part(content), :root[fm-theme="ocean"][fm-theme] panel::part(content) {
+  border-radius: 18px !important; background-color: var(--fm-menu) !important; background-image: none !important;
+}
+:root[fm-theme="ocean"][fm-theme] menupopup > :is(menuitem, menu), :root[fm-theme="ocean"][fm-theme] .subviewbutton, :root[fm-theme="ocean"][fm-theme] #appMenu-mainView .subviewbutton { border-radius: 10px !important; }
+:root[fm-theme="ocean"][fm-theme] .tabbrowser-tab > .tab-stack > .tab-background { border-radius: 10px !important; }
+:root[fm-theme="ocean"][fm-theme] #urlbar-background, :root[fm-theme="ocean"][fm-theme] .urlbar-background { border-radius: 14px !important; }
+:root[fm-theme="ocean"][fm-theme] #urlbar[open] > :is(#urlbar-background, .urlbar-background) { border-radius: 18px !important; }
+:root[fm-theme="ocean"][fm-theme] toolbar .toolbarbutton-1 > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack, .toolbarbutton-text), :root[fm-theme="ocean"][fm-theme] #PlacesToolbarItems > .bookmark-item, :root[fm-theme="ocean"][fm-theme] .urlbarView-row-inner, :root[fm-theme="ocean"][fm-theme] .tab-close-button { border-radius: 999px !important; }
+:root[fm-theme="ocean"][fm-theme] .urlbarView-favicon { border-radius: 999px !important; }
+:root[fm-theme="ocean"][fm-theme] #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon {
+  border-radius: 50% !important; background: var(--fm-accent) !important;
+}
+:root[fm-theme="ocean"][fm-theme] moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
+:root[fm-theme="ocean"][fm-theme] .fm-nowbar, :root[fm-theme="ocean"][fm-theme] .fm-toast { border-radius: 999px !important; }
+:root[fm-theme="ocean"][fm-theme] { color-scheme: dark !important; }
+:root[fm-theme="ocean"][fm-theme] #navigator-toolbox, :root[fm-theme="ocean"][fm-theme] #nav-bar, :root[fm-theme="ocean"][fm-theme] #TabsToolbar, :root[fm-theme="ocean"][fm-theme] #sidebar-main { color: var(--fm-ink) !important; }
+:root[fm-theme="ocean"][fm-theme] .tabbrowser-tab[selected] > .tab-stack > .tab-background {
+  background: var(--fm-soft) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fm-accent) 30%, transparent) !important;
+}
+:root[fm-theme="ocean"][fm-theme] .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; }
+:root[fm-theme="ocean"][fm-theme] menupopup::part(content), :root[fm-theme="ocean"][fm-theme] panel::part(content) { backdrop-filter: blur(26px) saturate(1.6) !important; }
+:root[fm-theme="ocean"][fm-theme] #urlbar-background, :root[fm-theme="ocean"][fm-theme] .urlbar-background { backdrop-filter: blur(18px) !important; }
+}
+
+
+/* ---------------- Тема: Ocean ---------------- */
+@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+  :root[fm-theme="ocean"][fm-theme] {
+    --fm-accent: var(--fm-user-accent, #22C3E6) !important;
+    --fm-on-accent: #03141a !important;
+    --fm-frame: #06161d !important;
+    --fm-bar: #0d222b !important;
+    --fm-field: #112a35 !important;
+    --fm-menu: rgb(13 34 43 / .95) !important;
+    --fm-ink: #dff6fb !important;
+    --fm-muted: #83aab5 !important;
+    --fm-line: rgb(255 255 255 / .09) !important;
+    --fm-hover: rgb(255 255 255 / .07) !important;
+    --fm-press: rgb(255 255 255 / .12) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #22C3E6) 20%, transparent) !important;
+    --fm-radius: 18px !important;
+    --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+    --color-accent-primary: var(--fm-accent) !important;
+    --button-background-color-primary: var(--fm-accent) !important;
+    --button-text-color-primary: var(--fm-on-accent) !important;
+    --link-color: var(--fm-accent) !important;
+    --focus-outline-color: var(--fm-accent) !important;
+    --toggle-background-color-pressed: var(--fm-accent) !important;
+    --page-nav-button-background-color-selected: var(--fm-soft) !important;
+    --page-nav-button-text-color-selected: var(--fm-accent) !important;
+    --card-border-radius: 18px !important;
+    --box-border-radius: 18px !important;
+    --button-border-radius: 999px !important;
+    --input-text-border-radius: 14px !important;
+    --select-border-radius: 999px !important;
+    --page-nav-button-border-radius: 10px !important;
+  }
+  :root[fm-theme="ocean"][fm-theme] :is(setting-group, groupbox):not([hidden]), :root[fm-theme="ocean"][fm-theme] .card, :root[fm-theme="ocean"][fm-theme] .addon.card, :root[fm-theme="ocean"][fm-theme] moz-card { border-radius: 18px !important; }
+  :root[fm-theme="ocean"][fm-theme] button:not(.ghost-button):not([type="icon"]), :root[fm-theme="ocean"][fm-theme] select, :root[fm-theme="ocean"][fm-theme] menulist, :root[fm-theme="ocean"][fm-theme] input[type="search"], :root[fm-theme="ocean"][fm-theme] input[type="text"] { border-radius: 999px !important; }
+  :root[fm-theme="ocean"][fm-theme] .category, :root[fm-theme="ocean"][fm-theme] .page-nav-button { border-radius: 10px !important; }
+}
+
+@-moz-document url-prefix("chrome://noraneko-settings/") {
+  :root[fm-theme="ocean"][fm-theme], :root[fm-theme="ocean"][fm-theme][data-theme], :root[fm-theme="ocean"][fm-theme] .floorp-standard-ui {
+    --fm-accent: var(--fm-user-accent, #22C3E6) !important;
+    --fm-on-accent: #03141a !important;
+    --fm-frame: #06161d !important;
+    --fm-bar: #0d222b !important;
+    --fm-field: #112a35 !important;
+    --fm-menu: rgb(13 34 43 / .95) !important;
+    --fm-ink: #dff6fb !important;
+    --fm-muted: #83aab5 !important;
+    --fm-line: rgb(255 255 255 / .09) !important;
+    --fm-hover: rgb(255 255 255 / .07) !important;
+    --fm-press: rgb(255 255 255 / .12) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #22C3E6) 20%, transparent) !important;
+    --fm-radius: 18px !important;
+    --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+    --floorp-brand: var(--fm-accent) !important;
+    --floorp-action: var(--fm-accent) !important;
+    --floorp-focus: var(--fm-accent) !important;
+    --floorp-switch-on: var(--fm-accent) !important;
+    --chakra-colors-purple-solid: var(--fm-accent) !important;
+    --chakra-colors-purple-fg: var(--fm-accent) !important;
+    --chakra-colors-purple-focus-ring: var(--fm-accent) !important;
+    --chakra-colors-purple-subtle: var(--fm-soft) !important;
+  }
+}
+
+@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
+
+  html[fm-theme="ocean"][fm-theme] { background: #06161d !important; }
+  :root[fm-theme="ocean"][fm-theme] #root::before { animation: none !important; inset: 0 !important; background: radial-gradient(80% 60% at 50% 110%, #0a5a73, transparent 70%), radial-gradient(40% 40% at 10% 10%, #0b3a4f, transparent 70%), #041015 !important; }
+  :root[fm-theme="ocean"][fm-theme] #root::after { display: none !important; }
+  :root[fm-theme="ocean"][fm-theme] .absolute.top-4.right-4 .tabular-nums {
+    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; font-weight: 200 !important;
+    font-size: clamp(100px, 12vw, 180px) !important; color: #bff1fb !important; text-shadow: none !important;
+  }
+  :root[fm-theme="ocean"][fm-theme] .absolute.top-4.right-4 .flex-col.text-right > div { color: #83aab5 !important; }
+  :root[fm-theme="ocean"][fm-theme] .group.cursor-pointer:has(input[readonly]) {
+    background: rgb(255 255 255 / .08) !important; border: 1px solid rgb(255 255 255 / .14) !important;
+    backdrop-filter: blur(18px) !important; box-shadow: 0 16px 40px rgb(0 0 0 / .35) !important;
+  }
+  :root[fm-theme="ocean"][fm-theme] .group.cursor-pointer:has(input[readonly]) :is(input, svg) { color: #dff6fb !important; }
+  :root[fm-theme="ocean"][fm-theme] .inline-block.backdrop-blur-sm.p-3 { background: rgb(255 255 255 / .08) !important; border-color: rgb(255 255 255 / .14) !important; }
+  :root[fm-theme="ocean"][fm-theme] .inline-block.backdrop-blur-sm.p-3 * { color: #dff6fb !important; }
+
+}
+
+
+/* ---------------- Тема: Ocean ---------------- */
+:root[fm-theme="ocean"][fm-theme]:has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #22C3E6) !important;
+    --x-on-accent: #03141a !important;
+    --x-ground: #06161d !important;
+    --x-rail: #06161d !important;
+    --x-bar: #0d222b !important;
+    --x-well: #112a35 !important;
+    --x-field: #112a35 !important;
+    --x-line: rgb(255 255 255 / .09) !important;
+    --x-ink: #dff6fb !important;
+    --x-muted: #83aab5 !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 999px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 999px !important; }
+}
+

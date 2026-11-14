@@ -1,0 +1,85 @@
+/* FM-THEME BEGIN mint content */
+/* ---------------- Тема: Mint ---------------- */
+@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+  :root:not([fm-theme]:not([fm-theme="mint"])) {
+    --fm-accent: var(--fm-user-accent, #16A37A) !important;
+    --fm-on-accent: #ffffff !important;
+    --fm-frame: #eef7f3 !important;
+    --fm-bar: #fbfffd !important;
+    --fm-field: #ffffff !important;
+    --fm-menu: rgb(251 255 253 / .96) !important;
+    --fm-ink: #12302a !important;
+    --fm-muted: #5c7a71 !important;
+    --fm-line: rgb(0 0 0 / .1) !important;
+    --fm-hover: rgb(0 0 0 / .05) !important;
+    --fm-press: rgb(0 0 0 / .09) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #16A37A) 16%, transparent) !important;
+    --fm-radius: 18px !important;
+    --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+    --color-accent-primary: var(--fm-accent) !important;
+    --button-background-color-primary: var(--fm-accent) !important;
+    --button-text-color-primary: var(--fm-on-accent) !important;
+    --link-color: var(--fm-accent) !important;
+    --focus-outline-color: var(--fm-accent) !important;
+    --toggle-background-color-pressed: var(--fm-accent) !important;
+    --page-nav-button-background-color-selected: var(--fm-soft) !important;
+    --page-nav-button-text-color-selected: var(--fm-accent) !important;
+    --card-border-radius: 18px !important;
+    --box-border-radius: 18px !important;
+    --button-border-radius: 999px !important;
+    --input-text-border-radius: 14px !important;
+    --select-border-radius: 999px !important;
+    --page-nav-button-border-radius: 10px !important;
+  }
+  :root:not([fm-theme]:not([fm-theme="mint"])) :is(setting-group, groupbox):not([hidden]), :root:not([fm-theme]:not([fm-theme="mint"])) .card, :root:not([fm-theme]:not([fm-theme="mint"])) .addon.card, :root:not([fm-theme]:not([fm-theme="mint"])) moz-card { border-radius: 18px !important; }
+  :root:not([fm-theme]:not([fm-theme="mint"])) button:not(.ghost-button):not([type="icon"]), :root:not([fm-theme]:not([fm-theme="mint"])) select, :root:not([fm-theme]:not([fm-theme="mint"])) menulist, :root:not([fm-theme]:not([fm-theme="mint"])) input[type="search"], :root:not([fm-theme]:not([fm-theme="mint"])) input[type="text"] { border-radius: 999px !important; }
+  :root:not([fm-theme]:not([fm-theme="mint"])) .category, :root:not([fm-theme]:not([fm-theme="mint"])) .page-nav-button { border-radius: 10px !important; }
+}
+
+@-moz-document url-prefix("chrome://noraneko-settings/") {
+  :root:not([fm-theme]:not([fm-theme="mint"])), :root:not([fm-theme]:not([fm-theme="mint"]))[data-theme], :root:not([fm-theme]:not([fm-theme="mint"])) .floorp-standard-ui {
+    --fm-accent: var(--fm-user-accent, #16A37A) !important;
+    --fm-on-accent: #ffffff !important;
+    --fm-frame: #eef7f3 !important;
+    --fm-bar: #fbfffd !important;
+    --fm-field: #ffffff !important;
+    --fm-menu: rgb(251 255 253 / .96) !important;
+    --fm-ink: #12302a !important;
+    --fm-muted: #5c7a71 !important;
+    --fm-line: rgb(0 0 0 / .1) !important;
+    --fm-hover: rgb(0 0 0 / .05) !important;
+    --fm-press: rgb(0 0 0 / .09) !important;
+    --fm-soft: color-mix(in srgb, var(--fm-user-accent, #16A37A) 16%, transparent) !important;
+    --fm-radius: 18px !important;
+    --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+    --floorp-brand: var(--fm-accent) !important;
+    --floorp-action: var(--fm-accent) !important;
+    --floorp-focus: var(--fm-accent) !important;
+    --floorp-switch-on: var(--fm-accent) !important;
+    --chakra-colors-purple-solid: var(--fm-accent) !important;
+    --chakra-colors-purple-fg: var(--fm-accent) !important;
+    --chakra-colors-purple-focus-ring: var(--fm-accent) !important;
+    --chakra-colors-purple-subtle: var(--fm-soft) !important;
+  }
+}
+
+@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
+
+  html:not([fm-theme]:not([fm-theme="mint"])) { background: #eef7f3 !important; }
+  :root:not([fm-theme]:not([fm-theme="mint"])) #root::before { animation: none !important; inset: 0 !important; background: radial-gradient(70% 60% at 80% 15%, #c9f1e2, transparent 70%), radial-gradient(60% 60% at 10% 90%, #e2f7ef, transparent 70%), #f3faf7 !important; }
+  :root:not([fm-theme]:not([fm-theme="mint"])) #root::after { display: none !important; }
+  :root:not([fm-theme]:not([fm-theme="mint"])) .absolute.top-4.right-4 .tabular-nums {
+    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; font-weight: 300 !important;
+    font-size: clamp(100px, 12vw, 180px) !important; color: #12302a !important; text-shadow: none !important;
+  }
+  :root:not([fm-theme]:not([fm-theme="mint"])) .absolute.top-4.right-4 .flex-col.text-right > div { color: #5c7a71 !important; }
+  :root:not([fm-theme]:not([fm-theme="mint"])) .group.cursor-pointer:has(input[readonly]) {
+    background: rgb(255 255 255 / .72) !important; border: 1px solid rgb(0 0 0 / .1) !important;
+    backdrop-filter: blur(18px) !important; box-shadow: 0 16px 40px rgb(0 0 0 / .08) !important;
+  }
+  :root:not([fm-theme]:not([fm-theme="mint"])) .group.cursor-pointer:has(input[readonly]) :is(input, svg) { color: #12302a !important; }
+  :root:not([fm-theme]:not([fm-theme="mint"])) .inline-block.backdrop-blur-sm.p-3 { background: rgb(255 255 255 / .72) !important; border-color: rgb(0 0 0 / .1) !important; }
+  :root:not([fm-theme]:not([fm-theme="mint"])) .inline-block.backdrop-blur-sm.p-3 * { color: #12302a !important; }
+
+}
+/* FM-THEME END content */

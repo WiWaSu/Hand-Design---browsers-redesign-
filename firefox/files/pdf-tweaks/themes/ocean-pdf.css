@@ -1,0 +1,23 @@
+/* FM-THEME BEGIN ocean pdf */
+/* ---------------- Тема: Ocean ---------------- */
+:root:not([fm-theme]:not([fm-theme="ocean"])):has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #22C3E6) !important;
+    --x-on-accent: #03141a !important;
+    --x-ground: #06161d !important;
+    --x-rail: #06161d !important;
+    --x-bar: #0d222b !important;
+    --x-well: #112a35 !important;
+    --x-field: #112a35 !important;
+    --x-line: rgb(255 255 255 / .09) !important;
+    --x-ink: #dff6fb !important;
+    --x-muted: #83aab5 !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 999px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 999px !important; }
+}
+/* FM-THEME END pdf */

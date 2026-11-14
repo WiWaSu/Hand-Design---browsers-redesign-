@@ -1,0 +1,23 @@
+/* FM-THEME BEGIN contrast pdf */
+/* ---------------- Тема: High Contrast ---------------- */
+:root:not([fm-theme]:not([fm-theme="contrast"])):has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #FFE600) !important;
+    --x-on-accent: #000000 !important;
+    --x-ground: #000000 !important;
+    --x-rail: #000000 !important;
+    --x-bar: #000000 !important;
+    --x-well: #0a0a0a !important;
+    --x-field: #0a0a0a !important;
+    --x-line: #ffffff !important;
+    --x-ink: #ffffff !important;
+    --x-muted: #e0e0e0 !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 6px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 6px !important; }
+}
+/* FM-THEME END pdf */

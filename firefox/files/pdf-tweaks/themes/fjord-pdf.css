@@ -1,0 +1,23 @@
+/* FM-THEME BEGIN fjord pdf */
+/* ---------------- Тема: Fjord ---------------- */
+:root:not([fm-theme]:not([fm-theme="fjord"])):has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #88C0D0) !important;
+    --x-on-accent: #1d2430 !important;
+    --x-ground: #242b37 !important;
+    --x-rail: #242b37 !important;
+    --x-bar: #2e3644 !important;
+    --x-well: #343d4c !important;
+    --x-field: #343d4c !important;
+    --x-line: rgb(255 255 255 / .09) !important;
+    --x-ink: #e5e9f0 !important;
+    --x-muted: #9aa5b8 !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 8px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 8px !important; }
+}
+/* FM-THEME END pdf */

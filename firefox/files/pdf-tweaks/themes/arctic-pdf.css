@@ -1,0 +1,23 @@
+/* FM-THEME BEGIN arctic pdf */
+/* ---------------- Тема: Arctic ---------------- */
+:root:not([fm-theme]:not([fm-theme="arctic"])):has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #2F7DF6) !important;
+    --x-on-accent: #ffffff !important;
+    --x-ground: #eef3f9 !important;
+    --x-rail: #eef3f9 !important;
+    --x-bar: #ffffff !important;
+    --x-well: #ffffff !important;
+    --x-field: #ffffff !important;
+    --x-line: rgb(0 0 0 / .1) !important;
+    --x-ink: #14202e !important;
+    --x-muted: #5b6b80 !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 999px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 999px !important; }
+}
+/* FM-THEME END pdf */

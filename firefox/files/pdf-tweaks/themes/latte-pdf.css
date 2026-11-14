@@ -1,0 +1,23 @@
+/* FM-THEME BEGIN latte pdf */
+/* ---------------- Тема: Latte ---------------- */
+:root:not([fm-theme]:not([fm-theme="latte"])):has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: var(--fm-user-accent, #8B5E3C) !important;
+    --x-on-accent: #ffffff !important;
+    --x-ground: #f2ebe3 !important;
+    --x-rail: #f2ebe3 !important;
+    --x-bar: #fbf7f2 !important;
+    --x-well: #fffdfa !important;
+    --x-field: #fffdfa !important;
+    --x-line: rgb(0 0 0 / .1) !important;
+    --x-ink: #33261c !important;
+    --x-muted: #7d6a5a !important;
+    --x-radius: 10px !important;
+  }
+  & #toolbarViewerLeft,
+  & #toolbarViewerMiddle,
+  & #editorModeButtons,
+  & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) { border-radius: 10px !important; }
+  & .toolbarButton:not(.labeled) { border-radius: 10px !important; }
+}
+/* FM-THEME END pdf */
