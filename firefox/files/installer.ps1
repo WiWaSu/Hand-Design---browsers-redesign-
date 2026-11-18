@@ -23,7 +23,7 @@
   # или путь к своей картинке (jpg, png, webp)
   [string]$Wall = "keep",
   # включённые функции через запятую
-  [string]$Features = "nowbar,progress,center,clock,wallpaper",
+  [string]$Features = "nowbar,progress,center,clock,wallpaper,notes",
   # язык установщика и всего Hand Design в браузере: ask — как в Windows (в окне есть кнопка языка)
   [ValidateSet("ask", "ru", "en", "uk", "de", "fr", "es", "pt", "pl", "tr", "zh")]
   [string]$Lang = "ask",
@@ -40,7 +40,7 @@ $ErrorActionPreference = "Stop"
 try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch {}
 
 # версия установщика (меняется вместе с файлом VERSION и CHANGELOG.md)
-$Version = "1.23.0"
+$Version = "2.0.0"
 $Here = $PSScriptRoot
 $Utf8 = New-Object System.Text.UTF8Encoding($false)
 # ---------------------------------------------------------------- языки
@@ -296,7 +296,7 @@ function Set-PrefLine($text, $name, $literal) {
 function New-Options {
   return @{
     Theme = "oneui"; Pdf = $true; Accent = "windows"; Mode = "keep"; Corners = "theme"; Motion = "apple"; Wall = "keep"; WallFile = ""
-    NowBar = $true; Progress = $true; Center = $true; Clock = $true; Wallpaper = $true
+    NowBar = $true; Progress = $true; Center = $true; Clock = $true; Wallpaper = $true; Notes = $true
   }
 }
 function Get-OnAccent($hex) {
@@ -569,6 +569,7 @@ function Invoke-Modern($action, $keys, $o) {
           $prefs = [regex]::Replace($prefs, '(?m)^user_pref\("widget\.windows\.mica[a-z.-]*",[^\n]*\n', '')
           if ($o.Motion -eq "system") { $prefs = [regex]::Replace($prefs, '(?m)^user_pref\("(ui\.prefersReducedMotion|sidebar\.animation\.[a-z.-]+)",[^\n]*\n', '') }
           $prefs = Set-PrefLine $prefs "floorp.modern.nowbar" $(if ($o.NowBar) { "true" } else { "false" })
+          $prefs = Set-PrefLine $prefs "floorp.modern.notes" $(if ($o.Notes) { "true" } else { "false" })
           if ($action -ne "update") { $prefs = Set-Wallpaper $o $chrome $prefs }
           $prefs = Set-PrefLine $prefs "floorp.modern.version" ('"' + $Version + '"')
           $prefs = Set-PrefLine $prefs "floorp.modern.theme" ('"' + $o.Theme + '"')
@@ -1412,6 +1413,7 @@ public static extern int DwmSetWindowAttribute(System.IntPtr hwnd, int attr, ref
     @("Center",    (T "Адрес по центру" "Centered address"),      (T "Пока адресная строка не в фокусе" "While the address bar is not focused")),
     @("Clock",     (T "Часы на новой вкладке" "New tab clock"),   (T "Большие часы и дата на стартовой странице" "Big clock and date on the start page")),
     @("Wallpaper", (T "Живые обои" "Animated wallpaper"),         (T "Медленное движение фона новой вкладки" "Slow motion of the new tab background")),
+    @("Notes",     (T "Заметки" "Notes"),                       (T "Свой блокнот: Alt+Shift+N или меню ☰, заметки — файлы .md в выбранной папке" "Notebook: Alt+Shift+N or the ☰ menu, notes are .md files in a folder you pick")),
     @("Pdf",       (T "Новый просмотрщик PDF" "New PDF viewer"),  (T "Панель, темы страниц, рисование как в Edge, своя палитра" "Toolbar, page themes, Edge-style ink, own palette"))
   )
   $first = $true
@@ -1661,7 +1663,7 @@ if ($Action -eq "install") {
   if ($Wall -match '[\\/.]') { $o.WallFile = $Wall; $o.Wall = "custom" } else { $o.Wall = $Wall }
   $on = @($Features -split "," | ForEach-Object { $_.Trim().ToLower() })
   $o.NowBar = $on -contains "nowbar"; $o.Progress = $on -contains "progress"; $o.Center = $on -contains "center"
-  $o.Clock = $on -contains "clock"; $o.Wallpaper = $on -contains "wallpaper"
+  $o.Clock = $on -contains "clock"; $o.Wallpaper = $on -contains "wallpaper"; $o.Notes = $on -contains "notes"
 }
 $ok = Invoke-Modern $Action $keys $(if ($installed) { $installed } else { $o })
 Say ""

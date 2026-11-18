@@ -13,7 +13,7 @@ const mk = (tag, cls, text) => {
   return e;
 };
 // значения по умолчанию для переключателей (null = как в теме)
-const BOOL_DEFAULT = { ctrlTabPreview: false, square: false, pdfAutoParams: false, pdfInkSelect: false };
+const BOOL_DEFAULT = { ctrlTabPreview: false, square: false, pdfAutoParams: false, pdfInkSelect: false, notesSpell: false, notesToolbar: false, notesCompact: false };
 
 let cfg = {};
 let connected = false;
@@ -173,6 +173,7 @@ const PALETTE = [
 const THEME_SLOT = { accent: 2, frame: 0, bar: 1, menuBg: 1, ink: 3 };
 function themeColor(key) {
   try {
+    if (!(key in THEME_SLOT) && !key.startsWith("notes")) return "";
     const t = THEMES.find(x => x[0] === theme) || THEMES[0];
     return t[2][THEME_SLOT[key] ?? 2];
   } catch {
@@ -462,7 +463,7 @@ function buildControl(it) {
     };
   } else if (it.type === "text") {
     const input = mk("input", "text");
-    input.placeholder = tr("например, JetBrains Mono");
+    input.placeholder = tr(it.placeholder || "например, JetBrains Mono");
     const tText = touchable(input);
     input.addEventListener("change", () => tText() && set(it.key, input.value.trim() || null));
     r.append(input);
@@ -666,6 +667,18 @@ $("#import").addEventListener("click", () => {
     setTimeout(() => location.reload(), 150);
   });
   $(".actions").prepend(sel);
+}
+
+/* chrome://fmstudio открыта с правами браузера: ссылки с target="_blank" там сами не открываются */
+if (direct) {
+  document.addEventListener("click", e => {
+    const a = e.target.closest?.('a[target="_blank"]');
+    if (!a || !/^https?:/.test(a.href) || e.button !== 0) return;
+    e.preventDefault();
+    try {
+      Services.wm.getMostRecentWindow("navigator:browser").openWebLinkIn(a.href, "tab");
+    } catch {}
+  }, true);
 }
 
 /* ---------- проверка обновлений вручную ---------- */

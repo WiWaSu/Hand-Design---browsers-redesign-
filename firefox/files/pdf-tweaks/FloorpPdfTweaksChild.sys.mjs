@@ -151,6 +151,10 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
     if (msg.name === "FM:callbtn") {
       return this.#callButton(msg.data || {});
     }
+    if (msg.name === "HDNotes:changed") {
+      this.contentWindow?.dispatchEvent(new this.contentWindow.CustomEvent("hd-notes-settings"));
+      return null;
+    }
     if (msg.name !== "FM:media") {
       return null;
     }
@@ -293,6 +297,10 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
     try {
       if (doc.documentURI === "resource://pdftweaks/docs.html") {
         this.#setupDocs();
+        return;
+      }
+      if (doc.documentURI === "resource://pdftweaks/notes.html" && Services.prefs.getBoolPref("floorp.modern.notes", true)) {
+        this.#setupNotes();
         return;
       }
       if (this.#isMarkdown(doc)) {
@@ -516,6 +524,24 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       openRecent: path => this.sendQuery("HDDocs:recent", { path }),
       forget: path => this.sendQuery("HDDocs:forget", { path }),
     });
+  }
+
+  #setupNotes() {
+    const win = this.contentWindow;
+    win.windowUtils.loadSheetUsingURIString("resource://pdftweaks/markdown.css", win.windowUtils.AUTHOR_SHEET);
+    // мост для notes-app.mjs: только строки туда и обратно
+    const api = Cu.createObjectIn(win, { defineAs: "hdNotes" });
+    Cu.exportFunction((op, json, done) => {
+      let data = null;
+      try {
+        data = JSON.parse(String(json));
+      } catch {}
+      this.sendQuery("HDNotes:" + String(op), data)
+        .catch(e => ({ ok: false, error: String(e) }))
+        .then(r => done(JSON.stringify(r ?? null)));
+    }, api, { defineAs: "call" });
+    Cu.exportFunction((s, ...a) => t(String(s), ...a.map(String)), api, { defineAs: "t" });
+    win.dispatchEvent(new win.CustomEvent("hd-notes-ready"));
   }
 
   async #setupMarkdown() {

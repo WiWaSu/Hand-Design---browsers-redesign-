@@ -42,11 +42,15 @@ text = f"""<div align="center">
 
 ## Установка / Install
 
-1. Скачайте **Hand-Design-v{ver}.zip** ниже и распакуйте. / Download **Hand-Design-v{ver}.zip** below and unzip.
-2. Запустите **Setup.cmd**, выберите тему и браузеры, нажмите «Установить». / Run **Setup.cmd**, pick a theme and browsers, press Install.
+1. Скачайте **Hand-Design-Setup-v{ver}.exe** ниже и запустите. / Download **Hand-Design-Setup-v{ver}.exe** below and run it.
+2. Выберите тему и браузеры, нажмите «Установить». / Pick a theme and browsers, press Install.
 3. Перезапустите браузер. / Restart the browser.
 
-Уже стоит более старая версия — запустите **Setup.cmd** и нажмите «Обновить», настройки сохранятся. / Already installed — run **Setup.cmd** and press Update, your settings are kept.
+Если SmartScreen пишет «Система Windows защитила ваш компьютер», нажмите «Подробнее» → «Выполнить в любом случае»: у файла нет платной подписи. / If SmartScreen says "Windows protected your PC", click "More info" → "Run anyway": the file is not signed with a paid certificate.
+
+Уже стоит более старая версия — запустите установщик и нажмите «Обновить», настройки сохранятся. / Already installed — run the installer and press Update, your settings are kept.
+
+Без .exe: **Hand-Design-v{ver}.zip** — распакуйте и запустите **Setup.cmd**. / Without the .exe: unzip **Hand-Design-v{ver}.zip** and run **Setup.cmd**.
 
 [Все изменения / Full changelog](https://github.com/{REPO}/blob/main/firefox/CHANGELOG.md)
 """

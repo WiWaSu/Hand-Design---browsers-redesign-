@@ -431,7 +431,7 @@
       }
     }, true);
 
-    /* ---------- проверка обновлений (раз в сутки) ---------- */
+    /* ---------- проверка обновлений (при запуске браузера) ---------- */
     let update = null;
     try {
       update = ChromeUtils.importESModule("resource://pdftweaks/FloorpModernUpdate.sys.mjs");
@@ -841,6 +841,51 @@
         e.preventDefault();
         e.stopPropagation();
         openOnce(win);
+      }
+    }, true);
+  });
+  safe("notes", () => {
+    const parent = () => ChromeUtils.importESModule("resource://pdftweaks/FloorpPdfTweaksParent.sys.mjs");
+    if (!parent().notesEnabled()) {
+      return;
+    }
+    const open = () => parent().openNotes(win);
+    const CustomizableUI = win.CustomizableUI;
+    const WIDGET = "fm-notes-button";
+    if (CustomizableUI.getWidget(WIDGET)?.provider !== CustomizableUI.PROVIDER_API) {
+      try {
+        CustomizableUI.createWidget({
+          id: WIDGET,
+          type: "button",
+          label: T("Заметки"),
+          tooltiptext: T("Заметки") + " (Alt+Shift+N)",
+          onCommand: e => parent().openNotes(e.target.ownerGlobal),
+        });
+      } catch (e) {}
+    }
+    const addMenuItem = () => {
+      const anchor = doc.getElementById("appMenu-settings-button");
+      if (!anchor || doc.getElementById("appMenu-fm-notes")) {
+        return;
+      }
+      const item = doc.createXULElement("toolbarbutton");
+      item.id = "appMenu-fm-notes";
+      item.className = "subviewbutton";
+      item.setAttribute("label", T("Заметки"));
+      item.setAttribute("shortcut", "Alt+Shift+N");
+      item.addEventListener("command", () => {
+        win.PanelUI?.hide();
+        open();
+      });
+      anchor.before(item);
+    };
+    addMenuItem();
+    doc.getElementById("appMenu-popup")?.addEventListener("popupshowing", addMenuItem);
+    win.addEventListener("keydown", e => {
+      if (e.altKey && e.shiftKey && !e.ctrlKey && !e.metaKey && e.code === "KeyN") {
+        e.preventDefault();
+        e.stopPropagation();
+        open();
       }
     }, true);
   });
@@ -1811,6 +1856,123 @@
         toast(on ? T("Режим фокуса: Alt+Shift+Z — выйти") : T("Режим фокуса выключен"), "info");
       }
     }, true);
+  });
+  safe("share picker", () => {
+    /* выбор, что показать: вместо выпадающего списка Firefox — вкладки и карточки.
+       Карточки только выбирают пункт в том же списке, превью и разрешение делает сам Firefox. */
+    const CSS = `
+      #webRTC-shareDevices-notification:has(#webRTC-selectWindowOrScreen[fm-share]:not([hidden])) { width: 640px; max-width: calc(100vw - 32px); }
+      #webRTC-selectWindowOrScreen[fm-share] #webRTC-selectWindow-menulist { display: none; }
+      .fm-share-tabs { display: flex; gap: 2px; width: fit-content; margin: 6px 0 10px; padding: 3px; border-radius: 999px; background: var(--fm-hover, rgb(128 128 128 / .14)); }
+      .fm-share-tabs[hidden] { display: none; }
+      .fm-share-tab { appearance: none; border: 0; border-radius: 999px; padding: 6px 14px; background: none; color: inherit; font: 500 13px var(--fm-font, system-ui); opacity: .72; cursor: pointer; }
+      .fm-share-tab:hover { opacity: 1; }
+      .fm-share-tab[selected] { background: var(--fm-menu, Canvas); opacity: 1; font-weight: 600; }
+      .fm-share-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; max-height: 300px; overflow: auto; padding: 2px; }
+      .fm-share-card { appearance: none; display: flex; flex-direction: column; gap: 8px; padding: 8px; border: 1px solid var(--fm-line, rgb(128 128 128 / .2)); border-radius: 14px; background: none; color: inherit; text-align: start; font: 500 12.5px var(--fm-font, system-ui); cursor: pointer; }
+      .fm-share-card:hover { background: var(--fm-hover, rgb(128 128 128 / .1)); }
+      .fm-share-card[selected] { border-color: var(--fm-accent, AccentColor); background: var(--fm-soft, rgb(128 128 128 / .14)); }
+      .fm-share-icon { display: grid; place-items: center; aspect-ratio: 16 / 10; border-radius: 10px; background: var(--fm-hover, rgb(128 128 128 / .12)); }
+      .fm-share-card[selected] .fm-share-icon { color: var(--fm-accent, AccentColor); }
+      .fm-share-icon svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+      .fm-share-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .fm-share-sub { margin-top: -6px; color: var(--fm-muted, GrayText); font-size: 11.5px; }
+      #webRTC-preview-section webrtc-preview { border-radius: 14px; overflow: hidden; }
+    `;
+    win.windowUtils.loadSheetUsingURIString("data:text/css;charset=utf-8," + encodeURIComponent(CSS), win.windowUtils.AUTHOR_SHEET);
+    const SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">';
+    const ICON = {
+      screen: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
+      window: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M6 7h.01M8.5 7h.01"/>',
+      browser: '<path d="M3 8.5a2 2 0 0 1 2-2h4.5l2 2.5H19a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+      application: '<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+    };
+    const TYPES = [["window", T("Окна")], ["screen", T("Экраны")], ["browser", T("Вкладки")], ["application", T("Приложения")]];
+    let tab = null;
+    let observed = null;
+
+    const build = () => {
+      const box = doc.getElementById("webRTC-selectWindowOrScreen");
+      const list = doc.getElementById("webRTC-selectWindow-menulist");
+      if (!box || !list) {
+        return;
+      }
+      if (observed !== list.menupopup) {
+        observed = list.menupopup;
+        new win.MutationObserver(() => build()).observe(observed, { childList: true });
+      }
+      let ui = box.querySelector(".fm-share");
+      try {
+        const items = [...list.menupopup.children].filter(i => i.localName === "menuitem" && ICON[i.getAttribute("devicetype")]);
+        const present = TYPES.filter(([k]) => items.some(i => i.getAttribute("devicetype") === k));
+        if (box.hidden || items.length < 2 || !present.length) {
+          box.removeAttribute("fm-share");
+          if (ui) {
+            ui.hidden = true;
+          }
+          return;
+        }
+        if (!ui) {
+          ui = el("div", "fm-share");
+          ui.append(el("div", "fm-share-tabs"), el("div", "fm-share-grid"));
+          list.after(ui);
+        }
+        const sel = list.selectedItem;
+        if (sel && present.some(([k]) => k === sel.getAttribute("devicetype"))) {
+          tab = sel.getAttribute("devicetype");
+        }
+        if (!present.some(([k]) => k === tab)) {
+          tab = present[0][0];
+        }
+        const [tabs, grid] = ui.children;
+        tabs.textContent = "";
+        for (const [k, label] of present) {
+          const b = el("button", "fm-share-tab");
+          b.textContent = label;
+          b.toggleAttribute("selected", k === tab);
+          b.addEventListener("click", () => {
+            tab = k;
+            build();
+          });
+          tabs.append(b);
+        }
+        tabs.hidden = present.length < 2;
+        grid.textContent = "";
+        for (const item of items.filter(i => i.getAttribute("devicetype") === tab)) {
+          const card = el("button", "fm-share-card");
+          card.toggleAttribute("selected", item === sel);
+          card.title = item.getAttribute("label");
+          const icon = el("span", "fm-share-icon");
+          icon.innerHTML = SVG + ICON[tab] + "</svg>";
+          const name = el("span", "fm-share-name");
+          name.textContent = item.getAttribute("label");
+          card.append(icon, name);
+          if (tab === "window" && item.scary) {
+            const sub = el("span", "fm-share-sub");
+            sub.textContent = Services.appinfo.name;
+            card.append(sub);
+          }
+          card.addEventListener("click", () => {
+            list.selectedItem = item;
+            item.doCommand();
+            build();
+          });
+          grid.append(card);
+        }
+        ui.hidden = false;
+        box.setAttribute("fm-share", "");
+      } catch (e) {
+        box.removeAttribute("fm-share");
+        if (ui) {
+          ui.hidden = true;
+        }
+        log("share picker", e);
+      }
+    };
+    const popup = doc.getElementById("notification-popup");
+    const onShow = () => win.setTimeout(build, 0);
+    popup?.addEventListener("popupshowing", onShow);
+    onUnload.push(() => popup?.removeEventListener("popupshowing", onShow));
   });
   safe("gpu switch", () => {
     /* ---- переключение видеокарты (встроенная ↔ дискретная) ----

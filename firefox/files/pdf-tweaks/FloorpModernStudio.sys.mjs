@@ -8,22 +8,40 @@
  * отсюда же, поэтому на верхнем уровне модуля нет обращений к Services).
  */
 
+import { PARTS } from "resource://pdftweaks/themes/parts.sys.mjs";
+
 export const PREF = "floorp.modern.studio";
 // версия Hand Design — меняется вместе с VERSION (tools/build.sh проверяет)
-export const APP_VERSION = "1.23.0";
+export const APP_VERSION = "2.0.0";
 
 /* Описание всех настроек: из него рисуется страница, проверяются значения
    и собирается CSS. null = «как в теме». */
 /* цвета, которые сбрасываются при смене темы (они перекрывают тему целиком) */
-export const THEME_COLOR_KEYS = ["accent", "frame", "bar", "menuBg", "ink", "menuAlpha", "menuBlur"];
+export const THEME_COLOR_KEYS = ["accent", "frame", "bar", "menuBg", "ink", "onAccent", "field", "muted", "line", "hover", "press", "soft", "toggle", "tileColor", "pdfBar", "pdfWell", "menuAlpha", "menuBlur"];
+
+const DETAIL_THEMES = [["none", "Без особенностей"], ["ios", "iOS Liquid Glass"], ["material", "Material You"], ["fluent", "Windows 11"], ["macos", "macOS"], ["nothing", "Nothing"], ["nightdrive", "Night Drive"], ["aero", "Aero"], ["retro", "Retro 98"], ["terminal", "Terminal"], ["paper", "Paper"], ["cyber", "Cyberpunk"], ["arctic", "Arctic"], ["sakura", "Sakura"], ["mint", "Mint"], ["latte", "Latte"], ["midnight", "Midnight"], ["fjord", "Fjord"], ["ember", "Ember"], ["forest", "Forest"], ["ocean", "Ocean"], ["rose", "Rosé"], ["synthwave", "Synthwave"], ["contrast", "High Contrast"]];
 
 export const SCHEMA = [
+  { group: "details", title: "Детали тем", items: [
+    { key: "dWindow", type: "select", label: "Окно и меню", hint: "Выделенная вкладка, пункты меню, плитки главного меню, стекло, кнопки окна — как в выбранной теме. Не выбрано — как в текущей теме", options: DETAIL_THEMES },
+    { key: "dClock", type: "select", label: "Часы на новой вкладке", hint: "Шрифт, размер, точки Nothing, окно Retro 98, фосфор Terminal, неон и т. д.", options: DETAIL_THEMES },
+    { key: "dWall", type: "select", label: "Фон новой вкладки", hint: "Огни Night Drive, точечная сетка Nothing, строки развёртки, бумага, неоновая сетка и т. д. Обои из Studio остаются поверх", options: DETAIL_THEMES },
+    { key: "dSearch", type: "select", label: "Поиск и ярлыки на новой вкладке", options: DETAIL_THEMES },
+  ] },
   { group: "colors", title: "Цвета", items: [
     { key: "accent", type: "color", label: "Акцент", hint: "Кнопки, выделение, ползунки" },
     { key: "frame", type: "color", label: "Фон окна", hint: "Вокруг страницы и под вкладками" },
     { key: "bar", type: "color", label: "Поля и адресная строка" },
     { key: "menuBg", type: "color", label: "Фон меню и панелей" },
     { key: "ink", type: "color", label: "Текст интерфейса" },
+    { key: "muted", type: "color", label: "Второстепенный текст", hint: "Подписи, подсказки, неактивные пункты" },
+    { key: "onAccent", type: "color", label: "Текст на акценте", hint: "Надписи на кнопках цвета акцента. Не выбрано — чёрный или белый по яркости акцента" },
+    { key: "field", type: "color", label: "Поля ввода", hint: "Поиск и поля в меню и на страницах. Не выбрано — как «Поля и адресная строка»" },
+    { key: "line", type: "color", label: "Линии и рамки" },
+    { key: "hover", type: "color", label: "Наведение", hint: "Подсветка под мышью, полупрозрачная" },
+    { key: "press", type: "color", label: "Нажатие", hint: "Полупрозрачное" },
+    { key: "soft", type: "color", label: "Мягкий акцент", hint: "Выбранная вкладка, пункт меню, строка в подсказках адреса. Полупрозрачный" },
+    { key: "toggle", type: "color", label: "Переключатели", hint: "Включённые переключатели в меню и настройках" },
     { key: "menuAlpha", type: "range", label: "Прозрачность меню", min: 0, max: 60, step: 5, unit: "%" },
     { key: "menuBlur", type: "range", label: "Размытие под меню", min: 0, max: 40, step: 2, unit: "px" },
   ] },
@@ -33,6 +51,7 @@ export const SCHEMA = [
     { key: "gap", type: "range", label: "Отступ вокруг страницы", min: 0, max: 24, step: 1, unit: "px" },
     { key: "pageShadow", type: "range", label: "Тень под страницей", min: 0, max: 100, step: 5, unit: "%" },
     { key: "menuRadius", type: "range", label: "Скругление меню", min: 0, max: 32, step: 1, unit: "px" },
+    { key: "menuItemRadius", type: "range", label: "Скругление пунктов меню", min: 0, max: 24, step: 1, unit: "px" },
     { key: "buttonShape", type: "select", label: "Кнопки панели", options: [["round", "Круглые"], ["rounded", "Скруглённые"], ["square", "Квадратные"]] },
     { key: "density", type: "select", label: "Плотность", options: [["compact", "Компактно"], ["normal", "Обычно"], ["touch", "Крупно (сенсор)"]] },
   ] },
@@ -65,6 +84,10 @@ export const SCHEMA = [
     { key: "menuFont", type: "range", label: "Размер текста", min: 11, max: 17, step: 0.5, unit: "px" },
     { key: "menuIcons", type: "bool", label: "Значки в меню" },
   ] },
+  { group: "appmenu", title: "Главное меню ☰", items: [
+    { key: "tileShape", type: "select", label: "Плитки под значками", options: [["circle", "Круглые"], ["rounded", "Скруглённые"], ["square", "Квадратные"], ["none", "Без плиток"]] },
+    { key: "tileColor", type: "color", label: "Цвет плиток", hint: "Не выбрано — как в теме" },
+  ] },
   { group: "ctrltab", title: "Переключатель Ctrl+Tab", items: [
     { key: "ctrlTabPreview", type: "bool", label: "Показывать окно с превью", hint: "Ctrl+Tab переключает по недавно открытым и показывает миниатюры" },
     { key: "ctrlTabStyle", type: "cards", label: "Стиль", options: [
@@ -96,6 +119,8 @@ export const SCHEMA = [
   { group: "pdf", title: "Просмотрщик PDF", items: [
     { key: "pdfUi", type: "select", label: "Оформление просмотрщика", options: [["auto", "Как в системе"], ["light", "Светлое"], ["dark", "Тёмное"]] },
     { key: "pdfPage", type: "select", label: "Цвет страниц", options: [["auto", "Как есть"], ["paper", "Бумага"], ["sepia", "Сепия"], ["night", "Ночь"]] },
+    { key: "pdfBar", type: "color", label: "Цвет панели" },
+    { key: "pdfWell", type: "color", label: "Фон групп кнопок на панели" },
     { key: "pdfAutoParams", type: "bool", label: "Панель инструмента открывается сама", hint: "Выкл.: нажатие на карандаш / текст только выбирает инструмент, настройки — по стрелочке ▾ рядом" },
     { key: "pdfSteppers", type: "bool", label: "Кнопки − / + и готовые размеры", hint: "В панели «Толщина / Размер»" },
     { key: "pdfColors", type: "bool", label: "Своя палитра цветов", hint: "Выкл.: системное окно «Цвет» Windows" },
@@ -122,8 +147,51 @@ export const SCHEMA = [
   { group: "docs", title: "Документы", items: [
     { key: "mdEditor", type: "bool", label: "Редактор Markdown", hint: "Файлы .md открываются оформленными: просмотр, правка рядом, сохранение по Ctrl+S" },
   ] },
+  { group: "notes", title: "Заметки", items: [
+    { key: "notesLive", type: "bool", label: "Live Preview", hint: "Разметка (#, **, [ ]) видна только в строке с курсором. Выкл.: видна всегда" },
+    { key: "notesSpell", type: "bool", label: "Проверка орфографии" },
+    { key: "notesTitle", type: "bool", label: "Название над заметкой", hint: "Это имя файла: поменяли — файл переименовался" },
+    { key: "notesWords", type: "bool", label: "Счётчик слов" },
+    { key: "notesSelBar", type: "bool", label: "Панелька при выделении текста", hint: "Жирный, курсив, выделение цветом, код, ссылка, заголовки" },
+    { key: "notesSlash", type: "bool", label: "Меню по «/»", hint: "/ в начале строки — заголовок, список, задача, таблица и другие блоки" },
+    { key: "notesToolbar", type: "bool", label: "Панель инструментов сверху" },
+    { key: "notesMenu", type: "bool", label: "Своё меню правой кнопки", hint: "Выкл.: обычное меню браузера" },
+    { key: "notesSort", type: "select", label: "Сортировка", options: [["modified", "По изменению"], ["name", "По имени"], ["created", "По созданию"]] },
+    { key: "notesPreview", type: "bool", label: "Начало текста в списке" },
+    { key: "notesNewName", type: "select", label: "Название новой заметки", options: [["untitled", "«Без названия»"], ["date", "Дата и время"]] },
+    { key: "notesAttach", type: "select", label: "Куда сохранять картинки", hint: "Вставленные (Ctrl+V) и перетащенные в заметку картинки", options: [["root", "В папку attachments"], ["near", "Рядом с заметкой"]] },
+    { key: "notesDaily", type: "text", label: "Папка заметок дня", placeholder: "например, Дневник", hint: "Кнопка с календарём в списке открывает заметку на сегодня. Пусто — в корне папки заметок" },
+    { key: "notesDailyFormat", type: "select", label: "Название заметки дня", options: [["ymd", "2026-11-17"], ["dmy", "17.11.2026"], ["long", "17 ноября 2026"]] },
+    { key: "notesTemplates", type: "text", label: "Папка шаблонов", placeholder: "например, Шаблоны", hint: "Заметки из этой папки вставляются через «/» → «Шаблон». {{title}}, {{date}}, {{time}} заменяются на название, дату и время" },
+    { key: "notesDailyTemplate", type: "text", label: "Шаблон заметки дня", placeholder: "название шаблона", hint: "Новая заметка дня начнётся с этого шаблона" },
+    { key: "notesAutosave", type: "range", label: "Автосохранение через", min: 300, max: 5000, step: 100, unit: " мс", def: 600 },
+  ] },
+  { group: "notesLook", title: "Заметки — оформление", items: [
+    { key: "notesFont", type: "select", label: "Шрифт текста", options: [["ui", "Обычный"], ["serif", "С засечками"], ["mono", "Моноширинный"], ["custom", "Свой…"]] },
+    { key: "notesFontCustom", type: "text", label: "Свой шрифт текста", hint: "Название шрифта, установленного в Windows" },
+    { key: "notesSize", type: "range", label: "Размер текста", min: 13, max: 24, step: 0.5, unit: " px", def: 16.5 },
+    { key: "notesLine", type: "range", label: "Межстрочный интервал", min: 1.2, max: 2.2, step: 0.05, unit: "", def: 1.7 },
+    { key: "notesWidth", type: "select", label: "Ширина строки", options: [["narrow", "Узко"], ["normal", "Обычно"], ["wide", "Широко"], ["full", "Во всю ширину"]] },
+    { key: "notesHeadFont", type: "select", label: "Шрифт заголовков", options: [["head", "Как в интерфейсе"], ["text", "Как текст"], ["serif", "С засечками"], ["mono", "Моноширинный"]] },
+    { key: "notesHeadScale", type: "range", label: "Размер заголовков", min: 80, max: 140, step: 5, unit: "%", def: 100 },
+    { key: "notesTitleSize", type: "range", label: "Размер названия", min: 20, max: 56, step: 1, unit: " px", def: 34 },
+    { key: "notesAccent", type: "color", label: "Акцент заметок", hint: "Ссылки, теги, галочки, курсор, выделение" },
+    { key: "notesText", type: "color", label: "Цвет текста" },
+    { key: "notesHead", type: "color", label: "Цвет заголовков" },
+    { key: "notesBg", type: "select", label: "Фон заметок", options: [["theme", "Как в теме"], ["paper", "Бумага"], ["dark", "Тёмный"]] },
+    { key: "notesBgColor", type: "color", label: "Свой цвет фона", hint: "Перекрывает «Фон заметок»" },
+    { key: "notesSideColor", type: "color", label: "Фон списка" },
+    { key: "notesRadius", type: "range", label: "Скругления", min: 0, max: 24, step: 1, unit: " px", def: 12, hint: "Таблицы, код, блоки, картинки, свойства" },
+    { key: "notesCheck", type: "select", label: "Галочки задач", options: [["round", "Круглые"], ["square", "Квадратные"]] },
+    { key: "notesBullet", type: "select", label: "Маркер списка", options: [["dot", "Точка"], ["dash", "Тире"], ["square", "Квадрат"]] },
+    { key: "notesTags", type: "select", label: "Теги", options: [["pill", "Плашкой"], ["plain", "Просто цветом"]] },
+    { key: "notesCallout", type: "select", label: "Блоки [!note]", options: [["fill", "С фоном"], ["line", "Только полоса"]] },
+    { key: "notesTable", type: "select", label: "Таблицы", options: [["lines", "Линии"], ["zebra", "Полосами"], ["minimal", "Без рамок"]] },
+    { key: "notesSide", type: "range", label: "Ширина списка", min: 200, max: 460, step: 10, unit: " px", def: 300 },
+    { key: "notesCompact", type: "bool", label: "Компактный список" },
+  ] },
   { group: "update", title: "Обновления", items: [
-    { key: "checkUpdates", type: "bool", label: "Проверять обновления", hint: "Раз в сутки смотрит на github.com/WiWaSu/Hand-Design---browsers-redesign- — есть ли новая версия. Ничего не скачивает сам" },
+    { key: "checkUpdates", type: "bool", label: "Проверять обновления", hint: "При каждом запуске браузера смотрит на github.com/WiWaSu/Hand-Design---browsers-redesign- — есть ли новая версия. Ничего не скачивает сам" },
   ] },
   { group: "hide", title: "Показать / скрыть", items: [
     { key: "showBookmarks", type: "bool", label: "Панель закладок" },
@@ -406,6 +474,7 @@ const SQUARE_CONTENT = "/* Hand Design: «Без скруглений» — ст
 // SQUARE-CSS END
 
 const px = n => `${n}px`;
+const TILE_SEL = "#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2";
 
 /* Слои CSS (@layer) внутри @-moz-document браузер учитывает не всегда, и тогда правила
    темы с более «сильными» селекторами перебивали Studio (особенно iOS — у неё правил больше всего).
@@ -430,6 +499,7 @@ function boostSelector(sel) {
     const t = x.trim();
     if (!t) return t;
     if (t.startsWith(":root")) return ":root" + BOOST + t.slice(5);
+    if (/^html(?![\w-])/.test(t)) return ":root" + BOOST + t.slice(4);
     return ":root" + BOOST + " " + t;
   }).join(", ");
 }
@@ -495,11 +565,37 @@ export function buildCss(cfgRaw) {
   const chrome = [];
   const newtab = [];
 
+  // «Детали тем»: особенности окна и новой вкладки из любой темы (по умолчанию — из текущей)
+  let theme = "oneui";
+  try {
+    theme = Services.prefs.getStringPref("floorp.modern.theme", "oneui");
+  } catch (e) {}
+  const detail = (key, part) => (c[key] === "none" ? "" : PARTS[part][c[key] || theme] || "");
+  chrome.push(detail("dWindow", "window"));
+  newtab.push(detail("dWall", "wall"), detail("dClock", "clock"), detail("dSearch", "search"));
+
   // ---- цвета и общие переменные (действуют и в окне, и на новой вкладке)
   if (has("accent")) {
     const r = parseInt(c.accent.slice(1, 3), 16), g = parseInt(c.accent.slice(3, 5), 16), b = parseInt(c.accent.slice(5, 7), 16);
     const on = 0.299 * r + 0.587 * g + 0.114 * b > 160 ? "#000000" : "#ffffff";
     root.push(`--fm-user-accent: ${c.accent} !important; --fm-user-on-accent: ${on} !important;`);
+  }
+  if (has("onAccent")) {
+    root.push(`--fm-user-on-accent: ${c.onAccent} !important; --fm-on-accent: ${c.onAccent} !important; --button-text-color-primary: ${c.onAccent} !important;`);
+  }
+  for (const [key, prop] of [["field", "--fm-field"], ["muted", "--fm-muted"], ["line", "--fm-line"]]) {
+    if (has(key)) {
+      root.push(`${prop}: ${c[key]} !important;`);
+    }
+  }
+  for (const [key, prop, pct] of [["hover", "--fm-hover", 12], ["press", "--fm-press", 20], ["soft", "--fm-soft", 24]]) {
+    if (has(key)) {
+      root.push(`${prop}: color-mix(in srgb, ${c[key]} ${pct}%, transparent) !important;`);
+    }
+  }
+  if (has("toggle")) {
+    root.push(`--toggle-background-color-pressed: ${c.toggle} !important;`);
+    chrome.push(`moz-toggle { --toggle-background-color-pressed: ${c.toggle} !important; }`);
   }
   if (has("speed")) {
     root.push(`--fm-k: ${c.speed} !important;`);
@@ -520,7 +616,7 @@ export function buildCss(cfgRaw) {
     chrome.push(`body, #navigator-toolbox { background-image: none !important; }`);
   }
   if (has("bar")) {
-    v.push(`--fm-bar: ${c.bar} !important; --fm-field: ${c.bar} !important; --toolbar-field-background-color: ${c.bar} !important; --urlbar-background-color: ${c.bar} !important;`);
+    v.push(`--fm-bar: ${c.bar} !important; --fm-field: ${c.field || c.bar} !important; --toolbar-field-background-color: ${c.bar} !important; --urlbar-background-color: ${c.bar} !important;`);
   }
   if (has("ink")) {
     v.push(`--fm-ink: ${c.ink} !important; --toolbar-color: ${c.ink} !important; --toolbox-text-color: ${c.ink} !important; --toolbarbutton-icon-fill: ${c.ink} !important;`);
@@ -562,6 +658,23 @@ export function buildCss(cfgRaw) {
   if (has("menuRadius")) {
     chrome.push(`:is(menupopup, panel)::part(content) { border-radius: ${px(c.menuRadius)} !important; }`);
     chrome.push(`menupopup :is(menuitem, menu), .subviewbutton { border-radius: ${px(Math.max(0, Math.round(c.menuRadius * 0.6)))} !important; }`);
+  }
+  if (has("menuItemRadius")) {
+    chrome.push(`:root, menupopup, panel { --menuitem-border-radius: ${px(c.menuItemRadius)} !important; --arrowpanel-menuitem-border-radius: ${px(c.menuItemRadius)} !important; }`);
+    chrome.push(`menupopup :is(menuitem, menu), .subviewbutton { border-radius: ${px(c.menuItemRadius)} !important; }`);
+  }
+  if (has("tileShape") || has("tileColor")) {
+    const tile = `#appMenu-mainView .subviewbutton:is(${TILE_SEL}) > .toolbarbutton-icon`;
+    if (c.tileShape === "none") {
+      chrome.push(`${tile} { background: transparent !important; box-shadow: none !important; }`);
+    } else {
+      if (has("tileShape")) {
+        chrome.push(`${tile} { border-radius: ${{ circle: "50%", rounded: "10px", square: "3px" }[c.tileShape]} !important; }`);
+      }
+      if (has("tileColor")) {
+        chrome.push(`${tile} { background: ${c.tileColor} !important; }`);
+      }
+    }
   }
   if (has("menuItemHeight")) {
     chrome.push(`menupopup :is(menuitem, menu) { min-height: ${px(c.menuItemHeight)} !important; padding-block: 0 !important; }`);
@@ -732,6 +845,15 @@ export function buildCss(cfgRaw) {
     // PDF и встроенные страницы тоже берут акцент и скорость анимаций
     out.push(`@-moz-document url-prefix("resource://pdf.js/"), url-prefix("about:"), url-prefix("resource://pdftweaks/"), url-prefix("chrome://fmstudio/") {\n${boost(R)}\n}`);
   }
+  const pdfVars = [];
+  for (const [key, prop] of [["pdfBar", "--x-bar"], ["pdfWell", "--x-well"]]) {
+    if (has(key)) {
+      pdfVars.push(`${prop}: ${c[key]} !important;`);
+    }
+  }
+  if (pdfVars.length) {
+    out.push(`@-moz-document url-prefix("resource://pdf.js/") {\n${boost(`:root:has(#outerContainer #viewerContainer) { ${pdfVars.join(" ")} }`)}\n}`);
+  }
   if (c.square === true) {
     out.push(SQUARE_CHROME.replaceAll("@layer LAYER", "@media all"));
     out.push(SQUARE_CONTENT.replaceAll("@layer LAYER", "@media all"));
@@ -774,7 +896,7 @@ function apply() {
   }
   registered = null;
   const cfg = readConfig();
-  lastCss = Object.keys(cfg).length ? buildCss(cfg) : "";
+  lastCss = buildCss(cfg);
   // копия собранного CSS — для проверки, что именно применилось
   try {
     const dir = PathUtils.join(Services.dirsvc.get("UChrm", Ci.nsIFile).path, "pdf-tweaks");
@@ -832,11 +954,13 @@ export function init() {
   } catch (e) {
     console.error("[floorp-modern] studio:", e);
   }
-  Services.prefs.addObserver(PREF, () => {
+  const reapply = () => {
     try {
       apply();
     } catch (e) {
       console.error("[floorp-modern] studio:", e);
     }
-  });
+  };
+  Services.prefs.addObserver(PREF, reapply);
+  Services.prefs.addObserver("floorp.modern.theme", reapply);
 }

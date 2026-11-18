@@ -203,6 +203,40 @@ def live_lock(tid):
     return f'[fm-theme="{tid}"][fm-theme]'
 
 
+CLOCK_SEL = (".absolute.top-4.right-4", "#fm-clock")
+SEARCH_SEL = (".group.cursor-pointer", "search", ".inline-block.backdrop-blur-sm", "top-site", "a[href]")
+
+
+def split_newtab(text):
+    """Особенности новой вкладки: часы, поиск с ярлыками, остальное — фон."""
+    out = {"clock": [], "search": [], "wall": []}
+    for node in split_top(text):
+        if node[0] not in ("rule", "at-block"):
+            continue
+        css = node[1].strip() + " {" + node[2] + "}"
+        sel = node[1]
+        kind = "clock" if any(k in sel for k in CLOCK_SEL) else "search" if node[0] == "rule" and any(k in sel for k in SEARCH_SEL) else "wall"
+        out[kind].append(css)
+    return {k: "\n".join(v) for k, v in out.items()}
+
+
+def write_parts():
+    """themes/parts.sys.mjs — «Детали тем» для Studio."""
+    parts = {"window": {}, "clock": {}, "wall": {}, "search": {}}
+    for tid, _name, _sw in THEMES:
+        src = SRC / f"{tid}-parts.json"
+        if not src.exists():
+            continue
+        data = json.loads(src.read_text(encoding="utf-8"))
+        if data.get("window", "").strip():
+            parts["window"][tid] = data["window"].strip()
+        for k, v in split_newtab(data.get("newtab", "")).items():
+            if v.strip():
+                parts[k][tid] = v
+    js = "/* Hand Design — «Детали тем»: особенности каждой темы отдельно. Собирается tools/pack_themes.py */\nexport const PARTS = " + json.dumps(parts, ensure_ascii=False, indent=1) + ";\n"
+    (OUT / "parts.sys.mjs").write_text(js, encoding="utf-8")
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     for old in OUT.glob("*.css"):
@@ -237,6 +271,7 @@ def main():
     block += "// SQUARE-CSS END"
     js = re.sub(r"// SQUARE-CSS BEGIN[\s\S]*?// SQUARE-CSS END", lambda m: block, js)
     studio.write_text(js, encoding="utf-8")
+    write_parts()
     (OUT / "themes.json").write_text(json.dumps(listing, ensure_ascii=False, indent=1), encoding="utf-8")
     print("ok:", ", ".join(t[0] for t in THEMES))
 

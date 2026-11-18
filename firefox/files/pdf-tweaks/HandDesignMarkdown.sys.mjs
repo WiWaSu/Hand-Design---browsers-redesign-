@@ -91,7 +91,32 @@ function splitRow(line) {
   return s.split(/(?<!\\)\|/).map(c => c.trim().replace(/\\\|/g, "|"));
 }
 
-function parseBlocks(lines, ctx) {
+export function parseTable(lines) {
+  const head = splitRow(lines[0]);
+  const marks = splitRow(lines[1]);
+  const align = head.map((_, k) => {
+    const m = marks[k] || "";
+    return /^:-*:$/.test(m) ? "center" : /^-*:$/.test(m) ? "right" : /^:-*$/.test(m) ? "left" : "";
+  });
+  const rows = [head, ...lines.slice(2).map(splitRow)].map(r => head.map((_, k) => r[k] ?? ""));
+  return { align, rows };
+}
+
+const WIDE = /[ᄀ-ᅟ⺀-꓏가-힣豈-﫿︰-﹏＀-｠￠-￦]|\p{Extended_Pictographic}/u;
+const width = s => [...s].reduce((w, ch) => w + (WIDE.test(ch) ? 2 : 1), 0);
+
+export function formatTable({ align, rows }) {
+  const cells = rows.map(r => r.map(c => c.trim().replace(/\\?\|/g, "\\|")));
+  const w = align.map((_, k) => Math.max(3, ...cells.map(r => width(r[k]))));
+  const line = r => "| " + r.map((c, k) => c + " ".repeat(w[k] - width(c))).join(" | ") + " |";
+  const sep = "| " + align.map((a, k) => {
+    const d = "-".repeat(w[k] - (a === "center" ? 2 : a ? 1 : 0));
+    return a === "center" ? `:${d}:` : a === "left" ? `:${d}` : a === "right" ? `${d}:` : d;
+  }).join(" | ") + " |";
+  return [line(cells[0]), sep, ...cells.slice(1).map(line)];
+}
+
+function parseBlocks(lines, ctx, nums = null) {
   const out = [];
   let i = 0;
   let para = [];
@@ -115,16 +140,18 @@ function parseBlocks(lines, ctx) {
       const open = new RegExp(`^\\s*<${tag}\\b`, "i");
       const close = new RegExp(`^\\s*</${tag}>\\s*$`, "i");
       const body = [];
+      const bodyNums = [];
       let depth = 1;
       i++;
       while (i < lines.length) {
         if (open.test(lines[i])) depth++;
         if (close.test(lines[i]) && --depth === 0) break;
         body.push(lines[i]);
+        bodyNums.push(nums?.[i]);
         i++;
       }
       i++;
-      out.push(`<div class="hd-md-align" data-align="${m[2].toLowerCase()}">${parseBlocks(body, ctx)}</div>`);
+      out.push(`<div class="hd-md-align" data-align="${m[2].toLowerCase()}">${parseBlocks(body, ctx, nums && bodyNums)}</div>`);
       continue;
     }
     if ((m = line.match(RE.fence))) {
@@ -184,13 +211,15 @@ function parseBlocks(lines, ctx) {
       const align = splitRow(lines[i + 1]).map(c => c.startsWith(":") && c.endsWith(":") ? "center" : c.endsWith(":") ? "right" : "");
       const cell = (tag, text, k) => `<${tag}${align[k] ? ` data-align="${align[k]}"` : ""}>${inline(text, ctx.refs)}</${tag}>`;
       let html = `<thead><tr>${head.map((c, k) => cell("th", c, k)).join("")}</tr></thead><tbody>`;
+      const first = i;
       i += 2;
       while (i < lines.length && lines[i].trim() && lines[i].includes("|")) {
         const row = splitRow(lines[i]);
         html += `<tr>${head.map((_, k) => cell("td", row[k] ?? "", k)).join("")}</tr>`;
         i++;
       }
-      out.push(`<div class="hd-md-table"><table>${html}</tbody></table></div>`);
+      const src = nums && nums[i - 1] - nums[first] === i - 1 - first ? ` data-src="${nums[first]}:${nums[i - 1] + 1}"` : "";
+      out.push(`<div class="hd-md-table"${src}><table>${html}</tbody></table></div>`);
       continue;
     }
     if ((m = line.match(RE.list)) && (!para.length || m[2] === "-" || m[2] === "*" || m[2] === "+" || /^1[.)]/.test(m[2]))) {
@@ -277,19 +306,21 @@ function parseBlocks(lines, ctx) {
 export function render(text) {
   const refs = new Map();
   const lines = [];
+  const nums = [];
   let fence = null;
-  for (const line of String(text).replace(/\r\n?/g, "\n").split("\n")) {
+  String(text).replace(/\r\n?/g, "\n").split("\n").forEach((line, n) => {
     const f = line.match(RE.fence);
     if (f) fence = fence ? (line.trim().startsWith(fence) ? null : fence) : f[1];
     const r = !fence && line.match(RE.ref);
     if (r) {
       refs.set(r[1].trim().toLowerCase(), { url: r[2], title: r[3] ?? r[4] ?? r[5] });
-      continue;
+      return;
     }
     lines.push(line.replace(/\t/g, "    "));
-  }
+    nums.push(n);
+  });
   const ctx = { refs, ids: new Set(), headings: [], tasks: 0 };
-  return { html: parseBlocks(lines, ctx), headings: ctx.headings };
+  return { html: parseBlocks(lines, ctx, nums), headings: ctx.headings };
 }
 
 /* ------------------------- подсветка исходного текста ----------------------- */
@@ -405,10 +436,24 @@ const ICONS = {
   codeblock: `<rect x="3.5" y="4.5" width="17" height="15" rx="2"/>` + P("M10 10l-2 2 2 2M14 10l2 2-2 2"),
   hr: P("M4 12h16M7 7.5h10M7 16.5h10"),
 };
+const TABLE_ICONS = {
+  rowAdd: `<rect x="4" y="4.5" width="16" height="9" rx="2"/>` + P("M12 16.5v5M9.5 19h5"),
+  colAdd: `<rect x="4.5" y="4" width="9" height="16" rx="2"/>` + P("M16.5 12h5M19 9.5v5"),
+  rowDel: `<rect x="4" y="4.5" width="16" height="9" rx="2"/>` + P("M9.5 19h5"),
+  colDel: `<rect x="4.5" y="4" width="9" height="16" rx="2"/>` + P("M16.5 12h5"),
+  left: P("M4 6h16M4 10h10M4 14h16M4 18h10"),
+  center: P("M4 6h16M7 10h10M4 14h16M7 18h10"),
+  right: P("M4 6h16M10 10h10M4 14h16M10 18h10"),
+};
+const TABLE_BAR = [["rowAdd", "colAdd"], ["rowDel", "colDel"], ["left", "center", "right"]]
+  .map(g => g.map(k => `<button type="button" data-tact="${k}"><svg viewBox="0 0 24 24" aria-hidden="true">${TABLE_ICONS[k]}</svg></button>`).join(""))
+  .join("<i></i>");
 const TOOLS = [["heading"], ["bold", "italic", "strike", "code", "link"], ["list", "ordered", "task", "quote"], ["table", "codeblock", "hr"]]
   .map(g => g.map(k => `<button type="button" data-act="${k}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg></button>`).join(""))
   .join("<i></i>");
 
+
+const MD_ICON = "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Cdefs%3E%3ClinearGradient%20id='g'%20x1='0'%20y1='0'%20x2='1'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%238b6cff'/%3E%3Cstop%20offset='1'%20stop-color='%233e8bff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width='32'%20height='32'%20rx='8'%20fill='url(%23g)'/%3E%3Cg%20fill='none'%20stroke='white'%20stroke-width='3'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M7.5%2022V10l5%206%205-6v12M23.5%2010v11.5M20%2018.5l3.5%203.5%203.5-3.5'/%3E%3C/g%3E%3C/svg%3E";
 
 const MODES = ["read", "split", "edit"];
 
@@ -425,6 +470,10 @@ export function mount(win, doc, { text, mtime = 0, name, folder, t, save, stat, 
     link.href = cssUrl;
     doc.head.append(link);
   }
+  const icon = doc.createElement("link");
+  icon.rel = "icon";
+  icon.href = MD_ICON;
+  doc.head.append(icon);
   doc.body.innerHTML = `
     <div class="hd-md">
       <header class="hd-md-bar">
@@ -474,7 +523,7 @@ export function mount(win, doc, { text, mtime = 0, name, folder, t, save, stat, 
   $(".hd-md-path").title = folder;
   $(".hd-md-outline-title").textContent = t("Содержание");
   const labels = { read: t("Просмотр"), split: t("Рядом"), edit: t("Текст") };
-  for (const b of doc.querySelectorAll(".hd-md-modes button")) {
+  for (const b of app.querySelectorAll(".hd-md-modes button")) {
     b.textContent = labels[b.dataset.mode];
   }
   saveBtn.textContent = t("Сохранить");
@@ -533,7 +582,7 @@ export function mount(win, doc, { text, mtime = 0, name, folder, t, save, stat, 
   const setMode = mode => {
     if (!MODES.includes(mode)) return;
     app.dataset.mode = mode;
-    for (const b of doc.querySelectorAll(".hd-md-modes button")) {
+    for (const b of app.querySelectorAll(".hd-md-modes button")) {
       b.setAttribute("aria-pressed", String(b.dataset.mode === mode));
     }
     if (mode !== "read") area.focus();
@@ -557,6 +606,8 @@ export function mount(win, doc, { text, mtime = 0, name, folder, t, save, stat, 
   const reload = async () => {
     const r = await read();
     if (!r?.ok) return;
+    edit = null;
+    tableBar.remove();
     const top = docBox.scrollTop;
     const pos = Math.min(area.selectionStart, r.text.length);
     area.value = r.text;
@@ -750,6 +801,238 @@ export function mount(win, doc, { text, mtime = 0, name, folder, t, save, stat, 
     return true;
   };
 
+  /* таблицы: правка ячеек прямо в документе */
+  const tableBar = doc.createElement("div");
+  tableBar.className = "hd-md-tablebar";
+  tableBar.innerHTML = TABLE_BAR;
+  const tableTitles = {
+    rowAdd: t("Строка ниже") + " (Enter)",
+    colAdd: t("Столбец справа"),
+    rowDel: t("Удалить строку"),
+    colDel: t("Удалить столбец"),
+    left: t("По левому краю"),
+    center: t("По центру"),
+    right: t("По правому краю"),
+  };
+  for (const b of tableBar.querySelectorAll("button")) {
+    b.title = tableTitles[b.dataset.tact];
+    b.setAttribute("aria-label", tableTitles[b.dataset.tact]);
+  }
+  tableBar.addEventListener("mousedown", e => e.preventDefault());
+
+  let edit = null;
+  let applying = false;
+  const tables = () => [...page.querySelectorAll(".hd-md-table[data-src]")];
+  const lineOffset = (v, n) => {
+    let at = 0;
+    for (let k = 0; k < n; k++) at = v.indexOf("\n", at) + 1;
+    return at;
+  };
+  let tableTime = 0;
+  const putText = (a, b, s) => {
+    applying = true;
+    tableTime = Date.now();
+    if (app.dataset.mode !== "read") area.focus({ preventScroll: true });
+    if (doc.activeElement === area) {
+      area.setSelectionRange(a, b);
+      insert(s);
+    } else {
+      area.setRangeText(s, a, b, "end");
+    }
+    applying = false;
+    win.clearTimeout(drawTimer);
+    paint();
+    syncDirty();
+    showCount();
+  };
+  const applyTable = () => {
+    const { model, start, end } = edit;
+    const v = area.value;
+    const a = lineOffset(v, start);
+    let b = lineOffset(v, end) - 1;
+    if (b < a) b = v.length;
+    const text = formatTable(model).join("\n");
+    if (v.slice(a, b) !== text) putText(a, b, text);
+    edit.end = start + model.rows.length + 1;
+  };
+  const readCell = () => {
+    if (edit) edit.model.rows[edit.r][edit.c] = edit.cell.textContent.replace(/\s*\n\s*/g, " ").trim();
+  };
+  const openCell = (index, r, c, keep = false) => {
+    const box = tables()[index];
+    if (!box) return;
+    const [start, end] = box.dataset.src.split(":").map(Number);
+    const model = parseTable(area.value.split("\n").slice(start, end));
+    r = Math.max(0, Math.min(r, model.rows.length - 1));
+    c = Math.max(0, Math.min(c, model.align.length - 1));
+    const cell = box.querySelector("table").rows[r]?.cells[c];
+    if (!cell) return;
+    edit = { index, start, end, model, r, c, cell, box };
+    box.dataset.editing = "";
+    cell.dataset.edit = "";
+    cell.contentEditable = "plaintext-only";
+    cell.textContent = model.rows[r][c];
+    page.append(tableBar);
+    const gap = tableBar.offsetHeight + 10;
+    box.style.marginTop = `${gap}px`;
+    if (!keep) docBox.scrollTop += gap;
+    edit.gap = gap;
+    tableBar.style.top = `${box.offsetTop - gap + 2}px`;
+    tableBar.style.left = `${box.offsetLeft}px`;
+    tableBar.querySelector("[data-tact=rowDel]").disabled = r === 0;
+    tableBar.querySelector("[data-tact=colDel]").disabled = model.align.length < 2;
+    for (const k of ["left", "center", "right"]) {
+      tableBar.querySelector(`[data-tact=${k}]`).setAttribute("aria-pressed", String((model.align[c] || "left") === k));
+    }
+    cell.focus({ preventScroll: true });
+    const range = doc.createRange();
+    range.selectNodeContents(cell);
+    range.collapse(false);
+    win.getSelection().removeAllRanges();
+    win.getSelection().addRange(range);
+    cell.scrollIntoView({ block: "nearest", inline: "nearest" });
+  };
+  const goCell = (fn, r, c) => {
+    readCell();
+    fn?.(edit.model);
+    applyTable();
+    const index = edit.index;
+    edit = null;
+    draw();
+    openCell(index, r, c, true);
+  };
+  const leaveCell = () => {
+    if (!edit) return;
+    readCell();
+    applyTable();
+    const { gap } = edit;
+    edit = null;
+    tableBar.remove();
+    draw();
+    docBox.scrollTop -= gap;
+  };
+  const blank = n => Array(n).fill("");
+  const tableActs = {
+    rowAdd: () => goCell(m => m.rows.splice(edit.r + 1, 0, blank(m.align.length)), edit.r + 1, edit.c),
+    colAdd: () => goCell(m => {
+      m.rows.forEach(row => row.splice(edit.c + 1, 0, ""));
+      m.align.splice(edit.c + 1, 0, "");
+    }, edit.r, edit.c + 1),
+    rowDel: () => edit.r > 0 && goCell(m => m.rows.splice(edit.r, 1), edit.r - 1, edit.c),
+    colDel: () => edit.model.align.length > 1 && goCell(m => {
+      m.rows.forEach(row => row.splice(edit.c, 1));
+      m.align.splice(edit.c, 1);
+    }, edit.r, edit.c - (edit.c > 0 ? 1 : 0)),
+    left: () => goCell(m => (m.align[edit.c] = "left"), edit.r, edit.c),
+    center: () => goCell(m => (m.align[edit.c] = "center"), edit.r, edit.c),
+    right: () => goCell(m => (m.align[edit.c] = "right"), edit.r, edit.c),
+  };
+  tableBar.addEventListener("click", e => {
+    const b = e.target.closest("button");
+    if (b && edit) tableActs[b.dataset.tact]();
+  });
+  const cellKey = e => {
+    const { r, c, model } = edit;
+    const rows = model.rows.length;
+    const cols = model.align.length;
+    const mod = e.ctrlKey || e.metaKey || e.altKey;
+    if (e.key === "Tab" && !mod) {
+      e.preventDefault();
+      if (e.shiftKey) {
+        if (r > 0 || c > 0) goCell(null, c > 0 ? r : r - 1, c > 0 ? c - 1 : cols - 1);
+      } else if (c < cols - 1) {
+        goCell(null, r, c + 1);
+      } else if (r < rows - 1) {
+        goCell(null, r + 1, 0);
+      } else {
+        goCell(m => m.rows.push(blank(cols)), r + 1, 0);
+      }
+    } else if (e.key === "Enter" && !mod) {
+      e.preventDefault();
+      if (e.shiftKey) doc.execCommand("insertText", false, "<br>");
+      else if (r < rows - 1) goCell(null, r + 1, c);
+      else goCell(m => m.rows.push(blank(cols)), r + 1, c);
+    } else if ((e.key === "ArrowUp" && r > 0) || (e.key === "ArrowDown" && r < rows - 1)) {
+      if (mod || e.shiftKey) return;
+      e.preventDefault();
+      goCell(null, r + (e.key === "ArrowUp" ? -1 : 1), c);
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      leaveCell();
+    }
+  };
+  page.addEventListener("keydown", e => {
+    if (edit && e.target === edit.cell) cellKey(e);
+  });
+  page.addEventListener("mousedown", e => {
+    if (e.button !== 0 || e.target.closest("a")) return;
+    const cell = e.target.closest(".hd-md-table[data-src] :is(td, th)");
+    if (!cell || cell === edit?.cell) return;
+    e.preventDefault();
+    const index = tables().indexOf(cell.closest(".hd-md-table"));
+    const r = cell.parentElement.rowIndex;
+    const c = cell.cellIndex;
+    const keep = !!edit;
+    if (edit) {
+      readCell();
+      applyTable();
+      edit = null;
+      draw();
+    }
+    openCell(index, r, c, keep);
+  });
+  page.addEventListener("focusout", () => {
+    win.setTimeout(() => {
+      if (edit && !applying && doc.activeElement !== edit.cell) leaveCell();
+    }, 0);
+  });
+  const tableTab = back => {
+    const v = area.value;
+    const pos = area.selectionStart;
+    const lines = v.split("\n");
+    const ln = v.slice(0, pos).split("\n").length - 1;
+    const isRow = l => /^\s*\|/.test(l);
+    if (!isRow(lines[ln])) return false;
+    let s = ln;
+    while (s > 0 && isRow(lines[s - 1])) s--;
+    let e = ln + 1;
+    while (e < lines.length && isRow(lines[e])) e++;
+    if (e - s < 2 || !RE.tableSep.test(lines[s + 1])) return false;
+    const model = parseTable(lines.slice(s, e));
+    const cols = model.align.length;
+    const before = lines[ln].slice(0, pos - lineOffset(v, ln));
+    const col = Math.min(cols - 1, Math.max(0, (before.match(/(?<!\\)\|/g) || []).length - 1));
+    const d = ln - s;
+    let r = d < 2 ? 0 : d - 1;
+    let c = col + (back ? -1 : 1);
+    if (c >= cols) {
+      c = 0;
+      r++;
+    } else if (c < 0) {
+      c = cols - 1;
+      r--;
+    }
+    if (r < 0) {
+      r = 0;
+      c = 0;
+    }
+    if (r >= model.rows.length) model.rows.push(blank(cols));
+    const out = formatTable(model);
+    const a = lineOffset(v, s);
+    let b = lineOffset(v, e) - 1;
+    if (b < a) b = v.length;
+    area.setSelectionRange(a, b);
+    insert(out.join("\n"));
+    const li = r === 0 ? 0 : r + 1;
+    const row = out[li];
+    const base = a + out.slice(0, li).join("\n").length + (li ? 1 : 0);
+    const pipes = [...row.matchAll(/(?<!\\)\|/g)].map(m => m.index);
+    const from = pipes[c] + 2;
+    const to = Math.max(from, row.slice(0, pipes[c + 1]).trimEnd().length);
+    area.setSelectionRange(base + from, base + to);
+    return true;
+  };
+
   let hlFrame = 0;
   const paint = () => {
     hlFrame = 0;
@@ -769,7 +1052,7 @@ export function mount(win, doc, { text, mtime = 0, name, folder, t, save, stat, 
   area.addEventListener("scroll", () => {
     hl.scrollTop = area.scrollTop;
     hl.scrollLeft = area.scrollLeft;
-    if (app.dataset.mode !== "split") return;
+    if (app.dataset.mode !== "split" || Date.now() - tableTime < 400) return;
     const max = area.scrollHeight - area.clientHeight;
     docBox.scrollTop = max > 0 ? (area.scrollTop / max) * (docBox.scrollHeight - docBox.clientHeight) : 0;
   });
@@ -777,6 +1060,7 @@ export function mount(win, doc, { text, mtime = 0, name, folder, t, save, stat, 
     const mod = e.ctrlKey || e.metaKey;
     if (e.key === "Tab" && !mod && !e.altKey) {
       e.preventDefault();
+      if (!area.value.slice(area.selectionStart, area.selectionEnd).includes("\n") && tableTab(e.shiftKey)) return;
       if (e.shiftKey || area.selectionStart !== area.selectionEnd) indent(e.shiftKey);
       else insert("    ");
     } else if (e.key === "Enter" && !mod && !e.shiftKey && !e.altKey && area.selectionStart === area.selectionEnd) {
@@ -794,16 +1078,19 @@ export function mount(win, doc, { text, mtime = 0, name, folder, t, save, stat, 
     const mod = e.ctrlKey || e.metaKey;
     if (mod && !e.altKey && e.code === "KeyS") {
       e.preventDefault();
+      if (edit) goCell(null, edit.r, edit.c);
       doSave();
     } else if (mod && !e.altKey && !e.shiftKey && e.code === "KeyE") {
       e.preventDefault();
+      leaveCell();
       setMode(app.dataset.mode === "read" ? "edit" : "read");
     } else if (mod && e.altKey && /^Digit[123]$/.test(e.code)) {
       e.preventDefault();
+      leaveCell();
       setMode(MODES[+e.code.slice(5) - 1]);
     }
   }, true);
-  for (const b of doc.querySelectorAll(".hd-md-modes button")) {
+  for (const b of app.querySelectorAll(".hd-md-modes button")) {
     b.addEventListener("click", () => setMode(b.dataset.mode));
   }
   saveBtn.addEventListener("click", () => doSave());

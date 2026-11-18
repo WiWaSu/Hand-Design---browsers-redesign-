@@ -233,6 +233,24 @@
   & #numPages { color: var(--x-muted) !important; font-variant-numeric: tabular-nums !important; padding-inline: 4px 8px !important; }
   & #scaleSelectContainer { height: 32px !important; border-radius: 999px !important; display: flex !important; align-items: center !important; }
   & #scaleSelectContainer:hover { background: var(--x-hover) !important; }
+
+  /* узкое окно (разделённый экран): лишнее уходит в меню ⋯, чтобы оно не обрезалось */
+  @media (max-width: 1080px) {
+    & #toolbarViewerRight > .toolbarHorizontalGroup.hiddenMediumView:not(#editorModeButtons) { display: none !important; }
+    & #secondaryToolbar .visibleMediumView:not(.hidden, [hidden]) { display: contents !important; }
+  }
+  @media (max-width: 960px) {
+    & #toolbarViewerMiddle > .toolbarHorizontalGroup { display: none !important; }
+  }
+  @media (max-width: 860px) {
+    & #toolbarViewerLeft > .hiddenSmallView, & #numPages { display: none !important; }
+  }
+  @media (max-width: 760px) {
+    & #toolbarViewerRight > #xThemeWrap.toolbarHorizontalGroup:not(#editorModeButtons) { display: none !important; }
+  }
+  @media (max-width: 700px) {
+    & #toolbarViewerMiddle { display: none !important; }
+  }
   & #scaleSelect {
     height: 32px !important;
     border: 0 !important;
@@ -675,6 +693,27 @@
     background: var(--x-accent) !important; color: var(--x-on-accent) !important;
     font: 600 13px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
   }
+  & #editorUndoBar {
+    --message-bar-bg-color: var(--x-bar) !important;
+    --message-bar-fg-color: var(--x-ink) !important;
+    --message-bar-border-color: var(--x-line) !important;
+    --message-bar-icon-color: var(--x-accent) !important;
+    top: calc(var(--toolbar-height, 52px) + 12px) !important;
+    padding: 6px 6px 6px 16px !important;
+    border-radius: 999px !important;
+    box-shadow: var(--x-pop) !important;
+    font: 500 13.5px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+  }
+  & #editorUndoBar > div { gap: 10px !important; align-items: center !important; }
+  & #editorUndoBarUndoButton {
+    appearance: none !important; margin: 0 !important; height: 30px !important; padding: 0 14px !important;
+    border: 0 !important; border-radius: 999px !important;
+    background: var(--x-accent) !important; color: var(--x-on-accent) !important;
+    font: 600 13px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+  }
+  & #editorUndoBarUndoButton:hover { background: color-mix(in srgb, var(--x-accent) 88%, var(--x-ink)) !important; }
+  & #editorUndoBarCloseButton { width: 30px !important; height: 30px !important; border-radius: 50% !important; }
+  & #editorUndoBarCloseButton:hover { background: var(--x-hover) !important; }
   @keyframes x-pop { from { opacity: 0; transform: translateY(-8px) scale(.9); } }
 
   & .pdfViewer > .page:nth-child(-n+4) { animation: x-page calc(.6s * var(--fm-k, 1)) var(--fm-ease, cubic-bezier(.2, .8, .2, 1)) both; }

@@ -6,7 +6,7 @@
  *  1. latest.json в корне репозитория (ветки main, master):
  *     { "version": "1.21.1", "zip": "https://…/Hand-Design-v1.21.1.zip", "notes": "release-notes/firefox/v1.21.1.md" }
  *  2. GitHub Releases: самый новый релиз с тегом vX.Y.Z.
- * Проверка — не чаще раза в сутки (и по кнопке «Проверить»). Сеть делает окно браузера
+ * Проверка — один раз при каждом запуске браузера (и по кнопке «Проверить»). Сеть делает окно браузера
  * (его fetch и таймеры), модуль хранит результат и общий для всех окон статус.
  */
 import { APP_VERSION } from "resource://pdftweaks/FloorpModernStudio.sys.mjs";
@@ -14,7 +14,6 @@ import { APP_VERSION } from "resource://pdftweaks/FloorpModernStudio.sys.mjs";
 export const REPO = "WiWaSu/Hand-Design---browsers-redesign-";
 export const PAGE = `https://github.com/${REPO}`;
 const P = "floorp.modern.update.";
-const DAY = 24 * 3600;
 
 /* сравнить версии «1.18.0» и «1.19.2» */
 export function cmp(a, b) {
@@ -109,7 +108,8 @@ async function lookup(win) {
 }
 
 let running = null;
-/* проверить. force — без учёта «раз в сутки». Возвращает { latest, newer, error } */
+let checked = false;
+/* проверить. force — даже если в этом запуске браузера уже проверяли. Возвращает { latest, newer, error } */
 export function check(win, { force = false } = {}) {
   if (running) {
     return running;
@@ -119,11 +119,7 @@ export function check(win, { force = false } = {}) {
     if (!enabled()) {
       return Promise.resolve({ latest: null, newer: false, skipped: true });
     }
-    let last = 0;
-    try {
-      last = Services.prefs.getIntPref(P + "lastCheck", 0);
-    } catch (e) {}
-    if (now - last < DAY) {
+    if (checked) {
       const k = known();
       return Promise.resolve({ latest: k, newer: !!k, cached: true });
     }
@@ -131,6 +127,7 @@ export function check(win, { force = false } = {}) {
   running = (async () => {
     try {
       const r = await lookup(win);
+      checked = true;
       Services.prefs.setIntPref(P + "lastCheck", now);
       if (!r) {
         return { latest: null, newer: false, error: "нет ответа от GitHub" };

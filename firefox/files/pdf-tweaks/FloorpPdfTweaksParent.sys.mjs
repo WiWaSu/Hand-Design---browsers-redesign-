@@ -158,10 +158,208 @@ function pickFile(bc, mode, title, name) {
   });
 }
 
+/* запись .md: переводы строк и BOM как были в файле */
+async function writeMd(path, text, mtime) {
+  const stamp = async () => (await IOUtils.stat(path)).lastModified;
+  const old = await IOUtils.readUTF8(path).catch(() => null);
+  if (mtime && old !== null && (await stamp()) !== mtime) {
+    return { ok: false, conflict: true };
+  }
+  let out = old?.includes("\r\n") ? text.replace(/\r?\n/g, "\r\n") : text;
+  const head = await IOUtils.read(path, { maxBytes: 3 }).catch(() => null);
+  if (head?.length === 3 && head[0] === 0xef && head[1] === 0xbb && head[2] === 0xbf) {
+    out = "﻿" + out;
+  }
+  await IOUtils.writeUTF8(path, out, { tmpPath: path + ".hd-tmp" });
+  return { ok: true, mtime: await stamp() };
+}
+
+export const NOTES_URL = "resource://pdftweaks/notes.html";
+const NOTES_DIR_PREF = "floorp.modern.notes.dir";
+const NOTES_PIN_PREF = "floorp.modern.notes.pinned";
+
+export function notesEnabled() {
+  return Services.prefs.getBoolPref("floorp.modern.notes", true);
+}
+
+export function openNotes(win) {
+  if (!win || !win.gBrowser || !notesEnabled()) {
+    return;
+  }
+  const gB = win.gBrowser;
+  for (const tab of [...gB.tabs]) {
+    if (!tab.hidden && !tab.closing && tab.linkedBrowser?.currentURI?.spec === NOTES_URL) {
+      gB.selectedTab = tab;
+      return;
+    }
+  }
+  gB.selectedTab = gB.addTrustedTab(NOTES_URL, {
+    triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(),
+    inBackground: false,
+  });
+}
+
+const notesDir = () => Services.prefs.getStringPref(NOTES_DIR_PREF, "");
+const readPinned = () => {
+  try {
+    const list = JSON.parse(Services.prefs.getStringPref(NOTES_PIN_PREF, "[]"));
+    return Array.isArray(list) ? list.filter(x => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+};
+const writePinned = list => Services.prefs.setStringPref(NOTES_PIN_PREF, JSON.stringify([...new Set(list)]));
+
+function relPath(dir, rel, md) {
+  rel = String(rel ?? "");
+  if (!dir || (md && !MD_RE.test(rel))) {
+    return null;
+  }
+  if (!rel) {
+    return md ? null : dir;
+  }
+  const parts = rel.split("/");
+  if (/^[A-Za-z]:|^[\\/]|\\/.test(rel) || parts.some(p => !p || p === "." || p === ".." || p.startsWith("."))) {
+    return null;
+  }
+  return PathUtils.join(dir, ...parts);
+}
+
+const cleanName = s => String(s).replace(/[\\/:*?"<>|\u0000-\u001f]/g, " ").replace(/\s+/g, " ").trim().replace(/^\.+/, "").slice(0, 120);
+
+async function freePath(dir, base, ext = ".md") {
+  for (let n = 1; ; n++) {
+    const path = PathUtils.join(dir, (n === 1 ? base : `${base} ${n}`) + ext);
+    if (!(await IOUtils.exists(path))) {
+      return path;
+    }
+  }
+}
+
+function preview(text) {
+  return text
+    .replace(/^\uFEFF/, "")
+    .replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "")
+    .replace(/%%[\s\S]*?%%/g, "")
+    .replace(/^>\s*\[![\w-]+\][+-]?/gm, "")
+    .replace(/!\[\[[^\]\n]*\]\]|!\[[^\]\n]*\]\([^)\n]*\)/g, "")
+    .split("\n")
+    .map(l => l.replace(/^\s{0,3}(#{1,6}\s+|>\s?|[-*+]\s+(\[[ xX]\]\s+)?|\d+[.)]\s+)/, "").replace(/[*_`~]|!?\[([^\]]*)\]\([^)]*\)/g, "$1").trim())
+    .filter(l => l && !/^[-=|: ]+$/.test(l) && !l.startsWith("|"))
+    .join(" ")
+    .slice(0, 160);
+}
+
+const IMG_RE = /\.(png|jpe?g|gif|webp|avif|bmp|svg)$/i;
+const IMG_MIME = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", avif: "image/avif", bmp: "image/bmp", svg: "image/svg+xml" };
+
+async function findFile(dir, name) {
+  const want = name.toLowerCase();
+  let hit = null;
+  const visit = async (abs, depth) => {
+    let kids = [];
+    try {
+      kids = await IOUtils.getChildren(abs);
+    } catch {
+      return;
+    }
+    for (const child of kids) {
+      if (hit) {
+        return;
+      }
+      const n = PathUtils.filename(child);
+      if (n.startsWith(".")) {
+        continue;
+      }
+      if (n.toLowerCase() === want) {
+        hit = child;
+        return;
+      }
+      if (depth < 6 && (await IOUtils.stat(child).catch(() => null))?.type === "directory") {
+        await visit(child, depth + 1);
+      }
+    }
+  };
+  await visit(dir, 0);
+  return hit;
+}
+
+function toBase64(bytes) {
+  let out = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    out += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  }
+  return btoa(out);
+}
+
+/* [[ссылки]] на заметку name: [[name]], [[папка/name]], [[name#заголовок]], [[name|подпись]] */
+const linkRe = name => new RegExp(`(!?\\[\\[)((?:[^\\]|#\\n]*/)?)(${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})(\\.md)?((?:#[^\\]|\\n]*)?(?:\\|[^\\]\\n]*)?\\]\\])`, "gi");
+
+function noteTags(text) {
+  const tags = new Map();
+  const put = t => {
+    t = t.trim().replace(/^#/, "");
+    if (t && !tags.has(t.toLowerCase())) tags.set(t.toLowerCase(), t);
+  };
+  const fm = text.match(/^\uFEFF?---\r?\n([\s\S]*?)\r?\n---/);
+  if (fm) {
+    const m = fm[1].match(/^(?:tags?|теги):[ \t]*(.*)((?:\r?\n[ \t]+-.*)*)/im);
+    if (m) {
+      for (const t of m[1].replace(/^\[|\]$/g, "").split(",")) put(t.replace(/^["']|["']$/g, ""));
+      for (const t of m[2].matchAll(/-[ \t]*(.+)/g)) put(t[1].replace(/^["']|["']$/g, ""));
+    }
+  }
+  const body = (fm ? text.slice(fm[0].length) : text).replace(/```[\s\S]*?```|~~~[\s\S]*?~~~|`[^`\n]*`/g, " ");
+  for (const m of body.matchAll(/(^|[\s(])#([\p{L}\p{N}_\/-]*[\p{L}_\/-][\p{L}\p{N}_\/-]*)/gu)) put(m[2]);
+  return [...tags.values()];
+}
+
+async function walkNotes(dir) {
+  const notes = [];
+  const folders = [];
+  const visit = async (abs, rel, depth) => {
+    let kids = [];
+    try {
+      kids = await IOUtils.getChildren(abs);
+    } catch {
+      return;
+    }
+    for (const child of kids) {
+      const name = PathUtils.filename(child);
+      if (name.startsWith(".")) {
+        continue;
+      }
+      const r = rel ? `${rel}/${name}` : name;
+      const info = await IOUtils.stat(child).catch(() => null);
+      if (!info) {
+        continue;
+      }
+      if (info.type === "directory") {
+        folders.push(r);
+        if (depth < 6) {
+          await visit(child, r, depth + 1);
+        }
+      } else if (MD_RE.test(name) && notes.length < 3000) {
+        notes.push({ rel: r, path: child, mtime: info.lastModified, ctime: info.creationTime || info.lastModified, size: info.size });
+      }
+    }
+  };
+  await visit(dir, "", 0);
+  return { notes, folders };
+}
+
 const WALL_IDS = ["theme", "custom", "aurora", "iris", "sunset", "ocean", "forest", "night", "rose", "graphite", "bloom", "dune"];
 const WALL_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif", "image/bmp"];
 
 export class FloorpPdfTweaksParent extends JSWindowActorParent {
+  #notesObs = null;
+
+  didDestroy() {
+    if (this.#notesObs) {
+      Services.prefs.removeObserver("floorp.modern.studio", this.#notesObs);
+    }
+  }
+
   // обои разрешено менять только со страницы новой вкладки
   #fromNewtab() {
     try {
@@ -233,20 +431,278 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
         }
         return old === null ? { ok: false, error: "read failed" } : { ok: true, text: old.replace(/^\uFEFF/, ""), mtime: await mtime() };
       }
-      if (data?.mtime && old !== null && (await mtime()) !== data.mtime) {
-        return { ok: false, conflict: true };
-      }
-      const text = String(data?.text ?? "");
-      let out = old?.includes("\r\n") ? text.replace(/\r?\n/g, "\r\n") : text;
-      const head = await IOUtils.read(path, { maxBytes: 3 }).catch(() => null);
-      if (head?.length === 3 && head[0] === 0xef && head[1] === 0xbb && head[2] === 0xbf) {
-        out = "\uFEFF" + out;
-      }
-      await IOUtils.writeUTF8(path, out, { tmpPath: path + ".hd-tmp" });
-      return { ok: true, mtime: await mtime() };
+      return await writeMd(path, String(data?.text ?? ""), data?.mtime);
     } catch (e) {
       return { ok: false, error: e?.message || String(e) };
     }
+  }
+
+  /* страница «Заметки»: только файлы .md и папки внутри выбранной папки */
+  async #notes(op, data) {
+    if ((this.manager.documentURI?.spec || "") !== NOTES_URL || !notesEnabled()) {
+      return null;
+    }
+    const t = ChromeUtils.importESModule("resource://pdftweaks/FloorpModernL10n.sys.mjs").t;
+    const state = () => {
+      let suggested = "";
+      try {
+        suggested = PathUtils.join(Services.dirsvc.get("Docs", Ci.nsIFile).path, "Hand Design Notes");
+      } catch {}
+      return { dir: notesDir(), suggested };
+    };
+    try {
+      if (op === "state") {
+        if (!this.#notesObs) {
+          this.#notesObs = { observe: () => this.sendAsyncMessage("HDNotes:changed") };
+          Services.prefs.addObserver("floorp.modern.studio", this.#notesObs);
+        }
+        return state();
+      }
+      if (op === "settings") {
+        try {
+          const all = JSON.parse(Services.prefs.getStringPref("floorp.modern.studio", "{}"));
+          return Object.fromEntries(Object.entries(all).filter(([k]) => k.startsWith("notes")));
+        } catch {
+          return {};
+        }
+      }
+      if (op === "useDefault") {
+        const dir = state().suggested;
+        await IOUtils.makeDirectory(dir, { ignoreExisting: true });
+        Services.prefs.setStringPref(NOTES_DIR_PREF, dir);
+        return state();
+      }
+      if (op === "pick") {
+        const dir = await new Promise(resolve => {
+          const fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
+          fp.init(this.browsingContext, t("Папка для заметок"), Ci.nsIFilePicker.modeGetFolder);
+          fp.open(r => resolve(r === Ci.nsIFilePicker.returnOK ? fp.file.path : null));
+        });
+        if (dir) {
+          Services.prefs.setStringPref(NOTES_DIR_PREF, dir);
+        }
+        return state();
+      }
+      const dir = notesDir();
+      if (!dir || !(await IOUtils.exists(dir))) {
+        return { ok: false, error: "no folder" };
+      }
+      if (op === "list") {
+        const pinned = readPinned();
+        const q = String(data?.q || "").trim().toLowerCase();
+        const { notes, folders } = await walkNotes(dir);
+        const out = [];
+        for (const n of notes) {
+          const text = n.size < 2_000_000 ? await IOUtils.readUTF8(n.path).catch(() => "") : "";
+          const name = n.rel.split("/").pop().replace(MD_RE, "");
+          const tags = noteTags(text);
+          if (q.startsWith("#") && q.length > 1) {
+            const tag = q.slice(1);
+            if (!tags.some(t => t.toLowerCase() === tag || t.toLowerCase().startsWith(tag + "/"))) {
+              continue;
+            }
+          } else if (q && !name.toLowerCase().includes(q) && !text.toLowerCase().includes(q)) {
+            continue;
+          }
+          out.push({ rel: n.rel, name, mtime: n.mtime, ctime: n.ctime, preview: preview(text), pinned: pinned.includes(n.rel), tags });
+        }
+        return { ok: true, dir, notes: out, folders };
+      }
+      const folder = relPath(dir, data?.folder ?? "", false);
+      if (op === "reveal") {
+        const f = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
+        f.initWithPath(folder || dir);
+        f.launch();
+        return { ok: true };
+      }
+      if (op === "new" || op === "mkdir") {
+        if (!folder) {
+          return { ok: false, error: "bad path" };
+        }
+        const base = cleanName(data?.name) || cleanName(t(op === "new" ? "Без названия" : "Новая папка")) || "Note";
+        await IOUtils.makeDirectory(folder, { ignoreExisting: true });
+        const path = await freePath(folder, base, op === "new" ? ".md" : "");
+        if (op === "new") {
+          await IOUtils.writeUTF8(path, String(data?.text ?? ""));
+        } else {
+          await IOUtils.makeDirectory(path);
+        }
+        const rel = (data?.folder ? data.folder + "/" : "") + PathUtils.filename(path);
+        return { ok: true, rel };
+      }
+      if (op === "attach") {
+        const name = cleanName(data?.name);
+        const ext = (name.match(IMG_RE) || [])[1];
+        const b64 = String(data?.b64 || "");
+        if (!ext || !b64 || b64.length > 40_000_000) {
+          return { ok: false, error: "bad image" };
+        }
+        let near = false;
+        try {
+          near = JSON.parse(Services.prefs.getStringPref("floorp.modern.studio", "{}")).notesAttach === "near";
+        } catch {}
+        const noteDir = relPath(dir, String(data?.note || "").replace(/(^|\/)[^/]*$/, ""), false) || dir;
+        const target = near ? noteDir : PathUtils.join(dir, "attachments");
+        await IOUtils.makeDirectory(target, { ignoreExisting: true });
+        const path = await freePath(target, name.slice(0, -ext.length - 1), "." + ext.toLowerCase());
+        const bin = atob(b64);
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) {
+          bytes[i] = bin.charCodeAt(i);
+        }
+        await IOUtils.write(path, bytes);
+        return { ok: true, name: PathUtils.filename(path) };
+      }
+      if (op === "asset") {
+        const src = decodeURIComponent(String(data?.src || "")).replace(/\\/g, "/").replace(/^\.\//, "");
+        if (!IMG_RE.test(src) || /^[a-z]+:/i.test(src)) {
+          return { ok: false };
+        }
+        const noteFolder = String(data?.note || "").replace(/(^|\/)[^/]*$/, "");
+        let path = null;
+        for (const rel of [noteFolder ? `${noteFolder}/${src}` : src, src]) {
+          const p = relPath(dir, rel.split("/").reduce((a, part) => (part === ".." ? a.slice(0, -1) : [...a, part]), []).join("/"), false);
+          if (p && (await IOUtils.exists(p))) {
+            path = p;
+            break;
+          }
+        }
+        path ||= await findFile(dir, src.split("/").pop());
+        if (!path) {
+          return { ok: false };
+        }
+        const info = await IOUtils.stat(path);
+        if (info.size > 30_000_000) {
+          return { ok: false };
+        }
+        const mime = IMG_MIME[path.match(IMG_RE)[1].toLowerCase()];
+        return { ok: true, url: `data:${mime};base64,${toBase64(await IOUtils.read(path))}` };
+      }
+      if (op === "graph") {
+        const list = (await walkNotes(dir)).notes;
+        const index = new Map();
+        list.forEach((n, i) => {
+          const full = n.rel.replace(MD_RE, "").toLowerCase();
+          index.set(full, i);
+          const leaf = full.split("/").pop();
+          if (!index.has(leaf)) index.set(leaf, i);
+        });
+        const edges = new Set();
+        for (let i = 0; i < list.length; i++) {
+          if (list[i].size > 2_000_000) continue;
+          const text = await IOUtils.readUTF8(list[i].path).catch(() => "");
+          for (const m of text.matchAll(/(?<!!)\[\[([^\]|#\n]+)/g)) {
+            const want = m[1].trim().toLowerCase().replace(/\.md$/, "");
+            const j = index.get(want) ?? index.get(want.split("/").pop());
+            if (j !== undefined && j !== i) edges.add(i < j ? `${i}:${j}` : `${j}:${i}`);
+          }
+        }
+        return {
+          ok: true,
+          nodes: list.map(n => ({ rel: n.rel, name: n.rel.split("/").pop().replace(MD_RE, "") })),
+          edges: [...edges].map(e => e.split(":").map(Number)),
+        };
+      }
+      if (op === "backlinks") {
+        const self = String(data?.rel || "");
+        const name = self.split("/").pop().replace(MD_RE, "");
+        if (!name) {
+          return { ok: false };
+        }
+        const out = [];
+        for (const n of (await walkNotes(dir)).notes) {
+          if (n.rel === self || n.size > 2_000_000) {
+            continue;
+          }
+          const text = await IOUtils.readUTF8(n.path).catch(() => "");
+          const re = linkRe(name);
+          const line = text.split("\n").find(l => (re.lastIndex = 0, re.test(l)));
+          if (line !== undefined) {
+            out.push({ rel: n.rel, name: n.rel.split("/").pop().replace(MD_RE, ""), line: line.trim().slice(0, 200) });
+          }
+          if (out.length >= 100) {
+            break;
+          }
+        }
+        return { ok: true, links: out };
+      }
+      const isFolder = !!data?.isFolder;
+      const rel = String(data?.rel ?? "");
+      const path = relPath(dir, rel, !isFolder);
+      if (!path || path === dir) {
+        return { ok: false, error: "bad path" };
+      }
+      if (op === "read") {
+        const text = await IOUtils.readUTF8(path);
+        return { ok: true, text: text.replace(/^\uFEFF/, ""), mtime: (await IOUtils.stat(path)).lastModified };
+      }
+      if (op === "stat") {
+        return { ok: true, mtime: (await IOUtils.stat(path)).lastModified };
+      }
+      if (op === "save") {
+        return await writeMd(path, String(data?.text ?? ""), data?.mtime);
+      }
+      const repin = (from, to) => writePinned(readPinned().flatMap(x => {
+        if (x === from || x.startsWith(from + "/")) {
+          return to ? [to + x.slice(from.length)] : [];
+        }
+        return [x];
+      }));
+      if (op === "pin") {
+        writePinned(data?.on ? [...readPinned(), rel] : readPinned().filter(x => x !== rel));
+        return { ok: true };
+      }
+      const moveTo = async (next, nextRel) => {
+        if (next.toLowerCase() !== path.toLowerCase() && (await IOUtils.exists(next))) {
+          return { ok: false, error: t(isFolder ? "Папка с таким названием уже есть" : "Заметка с таким названием уже есть") };
+        }
+        await IOUtils.move(path, next);
+        repin(rel, nextRel);
+        return { ok: true, rel: nextRel, name: nextRel.split("/").pop().replace(MD_RE, "") };
+      };
+      if (op === "rename") {
+        const base = cleanName(data?.name);
+        if (!base) {
+          return { ok: false, error: t("Пустое название") };
+        }
+        const file = base + (isFolder ? "" : ".md");
+        const res = await moveTo(PathUtils.join(PathUtils.parent(path), file), rel.replace(/[^/]+$/, file));
+        if (res.ok && !isFolder) {
+          const oldName = rel.split("/").pop().replace(MD_RE, "");
+          res.updated = 0;
+          for (const n of (await walkNotes(dir)).notes) {
+            const text = await IOUtils.readUTF8(n.path).catch(() => null);
+            if (text === null || !text.includes("[[")) {
+              continue;
+            }
+            const next = text.replace(linkRe(oldName), (m, open, folderPart, _name, ext, rest) => open + folderPart + base + (ext || "") + rest);
+            if (next !== text) {
+              await writeMd(n.path, next.replace(/^\uFEFF/, ""), 0);
+              res.updated++;
+            }
+          }
+        }
+        return res;
+      }
+      if (op === "move") {
+        if (!folder || (isFolder && (data.folder === rel || String(data.folder).startsWith(rel + "/")))) {
+          return { ok: false, error: "bad path" };
+        }
+        const file = rel.split("/").pop();
+        return await moveTo(PathUtils.join(folder, file), (data.folder ? data.folder + "/" : "") + file);
+      }
+      if (op === "delete") {
+        const trash = PathUtils.join(dir, ".trash");
+        await IOUtils.makeDirectory(trash, { ignoreExisting: true });
+        const file = PathUtils.filename(path);
+        await IOUtils.move(path, await freePath(trash, isFolder ? file : file.replace(MD_RE, ""), isFolder ? "" : ".md"));
+        repin(rel, null);
+        return { ok: true };
+      }
+    } catch (e) {
+      return { ok: false, error: e?.message || String(e) };
+    }
+    return null;
   }
 
   #openFile(path) {
@@ -333,6 +789,9 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
     }
     if (msg.name.startsWith("HDDocs:")) {
       return this.#docs(msg.name.slice(7), msg.data);
+    }
+    if (msg.name.startsWith("HDNotes:")) {
+      return this.#notes(msg.name.slice(8), msg.data);
     }
     if (msg.name === "PdfTweaks:studio-save") {
       // принимаем только со страницы Studio

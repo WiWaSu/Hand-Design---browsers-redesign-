@@ -12,7 +12,7 @@
   4. светящийся кант по краю (inset-тени) и мягкая тень снизу.
 Размытие стоит только на маленьких элементах: на больших слоях Firefox тормозит."""
 
-import sys, pathlib
+import json, sys, pathlib
 
 # системные цвета iOS (тёмные варианты)
 BLUE, GREEN, ORANGE, RED, PURPLE, GRAY, TEAL, PINK, YELLOW, INDIGO = (
@@ -593,8 +593,22 @@ def build(t):
 if __name__ == "__main__":
     out = pathlib.Path(sys.argv[1])
     out.mkdir(parents=True, exist_ok=True)
-    for name, text in (("ios-chrome.css", CHROME), ("ios-content.css", CONTENT), ("ios-pdf.css", PDF)):
-        css = build(text)
+    chrome = build(CHROME)
+    head_end = chrome.index("}", chrome.index("@GLASS@") if "@GLASS@" in chrome else chrome.index("--fm-ring:")) + 1
+    lg = GLASS_TOKENS[GLASS_TOKENS.index("/* материал"):]
+    window = ":root, menupopup, panel, tooltip, #urlbar, .urlbarView {\n" + lg + "}\n" + chrome[head_end:]
+    chrome = chrome[:head_end] + "\n"
+    content = build(CONTENT)
+    nt_start = content.index('@-moz-document url-prefix("chrome://noraneko-newtab/")')
+    nt_open = content.index("{", nt_start)
+    depth, k = 1, nt_open + 1
+    while depth:
+        depth += {"{": 1, "}": -1}.get(content[k], 0)
+        k += 1
+    newtab = content[nt_open + 1:k - 1]
+    content = content[:nt_start] + content[k:]
+    for name, css in (("ios-chrome.css", chrome), ("ios-content.css", content), ("ios-pdf.css", build(PDF))):
         assert css.count("{") == css.count("}"), name
         (out / name).write_text(css, encoding="utf-8")
+    (out / "ios-parts.json").write_text(json.dumps({"window": window, "newtab": newtab}, ensure_ascii=False), encoding="utf-8")
     print("ok")

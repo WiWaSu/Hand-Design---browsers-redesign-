@@ -12,7 +12,7 @@ Night Drive, Aero, Retro 98, Terminal, Paper, Cyberpunk и палитры 1.20
 Цвет акцента везде берётся как var(--fm-user-accent, ...), чтобы установщик
 мог заменить его выбранным пользователем."""
 
-import sys, pathlib
+import json, sys, pathlib
 
 UA = "var(--fm-user-accent, AccentColor)"   # акцент Windows (или выбранный в установщике)
 
@@ -849,11 +849,25 @@ toolbar .toolbarbutton-1 > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack, 
 }}
 moz-toggle {{ --toggle-background-color-pressed: {t['toggle']} !important; }}
 .fm-nowbar, .fm-toast {{ border-radius: {t['r_menu'] if t['r_btn'] != '999px' else '999px'} !important; }}
-{tiles}
-{mono}
-{t['chrome_extra']}
 """
     return css.replace("@TILESEL@", TILE_SEL)
+
+
+def parts(tid, t):
+    """Особенности темы, которые Studio подключает отдельно («Детали тем»)."""
+    tiles = ""
+    if t.get("tiles"):
+        tiles = "\n".join(f"{sel} {{ --fm-tile-color: {c}; }}" for sel, c in t["tiles"].items())
+        tiles = "#appMenu-mainView { --fm-tile-color: #8E8E93; }\n" + tiles
+    mono = ""
+    if t["tile_mono"]:
+        mono = """
+#appMenu-mainView .subviewbutton:is(@TILESEL@) > .toolbarbutton-icon { box-shadow: none !important; }
+@media (prefers-color-scheme: light) {
+  #appMenu-mainView .subviewbutton:is(@TILESEL@) > .toolbarbutton-icon { filter: invert(1) !important; }
+}"""
+    window = f"{tiles}\n{mono}\n{t['chrome_extra']}".replace("@TILESEL@", TILE_SEL)
+    return {"window": window, "newtab": t.get("newtab", "")}
 
 
 def content(tid, t):
@@ -898,9 +912,6 @@ def content(tid, t):
   }}
 }}
 
-{NEWTAB} {{
-{t['newtab']}
-}}
 """
 
 
@@ -937,4 +948,5 @@ if __name__ == "__main__":
         for name, text in ((f"{tid}-chrome.css", chrome(tid, t)), (f"{tid}-content.css", content(tid, t)), (f"{tid}-pdf.css", pdf(tid, t))):
             assert text.count("{") == text.count("}"), name
             (out / name).write_text(text, encoding="utf-8")
+        (out / f"{tid}-parts.json").write_text(json.dumps(parts(tid, t), ensure_ascii=False), encoding="utf-8")
     print("ok:", ", ".join(THEMES))
