@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="docs/hero.jpg" alt="Hand Design" width="100%">
-
 # Hand Design
 
 **A redesign for Floorp, Firefox and Firefox forks on Windows.**<br>
