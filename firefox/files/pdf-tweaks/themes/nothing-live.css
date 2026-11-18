@@ -44,25 +44,6 @@
 }
 :root[fm-theme="nothing"][fm-theme] moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
 :root[fm-theme="nothing"][fm-theme] .fm-nowbar, :root[fm-theme="nothing"][fm-theme] .fm-toast { border-radius: 999px !important; }
-:root[fm-theme="nothing"][fm-theme] #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon { box-shadow: none !important; }
-@media (prefers-color-scheme: light) {
-  :root[fm-theme="nothing"][fm-theme] #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon { filter: invert(1) !important; }
-}
-:root[fm-theme="nothing"][fm-theme] .tabbrowser-tab[selected] > .tab-stack > .tab-background {
-  background: var(--fm-ink) !important; box-shadow: none !important;
-}
-:root[fm-theme="nothing"][fm-theme] .tabbrowser-tab[selected] :is(.tab-label, .tab-close-button) { color: var(--fm-frame) !important; fill: var(--fm-frame) !important; }
-:root[fm-theme="nothing"][fm-theme] #urlbar-background, :root[fm-theme="nothing"][fm-theme] .urlbar-background {
-  background-color: var(--fm-field) !important;
-  box-shadow: inset 0 0 0 1px var(--fm-line) !important;
-}
-:root[fm-theme="nothing"][fm-theme] #PlacesToolbarItems > .bookmark-item { background: transparent !important; box-shadow: inset 0 0 0 1px var(--fm-line) !important; }
-:root[fm-theme="nothing"][fm-theme] #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon { box-shadow: inset 0 0 0 1px var(--fm-line) !important; }
-:root[fm-theme="nothing"][fm-theme] .panel-header > h1, :root[fm-theme="nothing"][fm-theme] #appMenu-popup .panel-header h1 {
-  font-family: "Cascadia Mono", Consolas, ui-monospace, monospace !important;
-  text-transform: uppercase !important; letter-spacing: .12em !important; font-size: 13px !important;
-}
-:root[fm-theme="nothing"][fm-theme] .fm-toast-dot, :root[fm-theme="nothing"][fm-theme] .fm-nowbar-eq { background: var(--fm-accent) !important; }
 }
 
 
@@ -130,40 +111,6 @@
   }
 }
 
-@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
-
-  html[fm-theme="nothing"][fm-theme] { background: #000 !important; }
-  /* чёрный фон с еле заметной точечной сеткой */
-  :root[fm-theme="nothing"][fm-theme] #root::before {
-    animation: none !important; inset: 0 !important;
-    background: radial-gradient(circle, rgb(255 255 255 / .07) 1px, transparent 1.5px) 0 0 / 22px 22px, #000 !important;
-  }
-  :root[fm-theme="nothing"][fm-theme] #root::after { display: none !important; }
-  /* часы точками, как на экране Nothing Phone */
-  :root[fm-theme="nothing"][fm-theme] .absolute.top-4.right-4 .tabular-nums {
-    font-family: "Segoe UI Black", "Arial Black", "Segoe UI", sans-serif !important;
-    font-weight: 900 !important; font-size: clamp(120px, 15vw, 230px) !important; letter-spacing: .04em !important;
-    color: transparent !important;
-    background: radial-gradient(circle, #fff 42%, transparent 46%) 0 0 / 11px 11px !important;
-    -webkit-background-clip: text !important; background-clip: text !important;
-    text-shadow: none !important;
-  }
-  :root[fm-theme="nothing"][fm-theme] .absolute.top-4.right-4 .tabular-nums > .animate-pulse { animation: none !important; opacity: 1 !important; }
-  :root[fm-theme="nothing"][fm-theme] .absolute.top-4.right-4 .flex-col.text-right > div {
-    font-family: "Cascadia Mono", Consolas, monospace !important; text-transform: uppercase !important;
-    letter-spacing: .2em !important; font-size: 15px !important; color: #fff !important;
-  }
-  :root[fm-theme="nothing"][fm-theme] .absolute.top-4.right-4 .flex-col.text-right > div:first-child::before {
-    content: ""; display: inline-block; width: 8px; height: 8px; margin-inline-end: 10px;
-    border-radius: 50%; background: var(--fm-user-accent, #D71921); vertical-align: middle;
-  }
-  :root[fm-theme="nothing"][fm-theme] .group.cursor-pointer:has(input[readonly]) {
-    border-radius: 999px !important; background: #000 !important;
-    border: 1px solid rgb(255 255 255 / .35) !important; box-shadow: none !important;
-  }
-  :root[fm-theme="nothing"][fm-theme] .group.cursor-pointer:has(input[readonly]) input { font-family: "Cascadia Mono", Consolas, monospace !important; }
-
-}
 
 
 /* ---------------- Тема: Nothing ---------------- */

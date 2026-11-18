@@ -44,15 +44,6 @@
 }
 :root[fm-theme="material"][fm-theme] moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
 :root[fm-theme="material"][fm-theme] .fm-nowbar, :root[fm-theme="material"][fm-theme] .fm-toast { border-radius: 999px !important; }
-:root[fm-theme="material"][fm-theme] .tabbrowser-tab[selected] > .tab-stack > .tab-background {
-  background: var(--fm-soft) !important; box-shadow: none !important;
-}
-:root[fm-theme="material"][fm-theme] .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; font-weight: 600 !important; }
-:root[fm-theme="material"][fm-theme] #urlbar-background, :root[fm-theme="material"][fm-theme] .urlbar-background { background-color: var(--fm-field) !important; box-shadow: none !important; }
-:root[fm-theme="material"][fm-theme] #urlbar { --urlbar-min-height: 42px !important; }
-:root[fm-theme="material"][fm-theme] #nav-bar { padding-block: 6px !important; }
-:root[fm-theme="material"][fm-theme] menupopup > :is(menuitem, menu):is([_moz-menuactive], :hover):not([disabled]) { background-color: var(--fm-soft) !important; }
-:root[fm-theme="material"][fm-theme] #appMenu-mainView .subviewbutton:not([disabled]):hover { background: var(--fm-soft) !important; }
 }
 
 
@@ -120,34 +111,6 @@
   }
 }
 
-@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
-
-  html[fm-theme="material"][fm-theme] { background: color-mix(in srgb, var(--fm-user-accent, AccentColor) 25%, #0d0f14) !important; }
-  :root[fm-theme="material"][fm-theme] #root::before {
-    background:
-      radial-gradient(60% 60% at 20% 20%, color-mix(in srgb, var(--fm-user-accent, AccentColor) 70%, transparent), transparent 70%),
-      radial-gradient(55% 55% at 85% 80%, color-mix(in srgb, var(--fm-user-accent, AccentColor) 45%, #ff9e80), transparent 70%),
-      color-mix(in srgb, var(--fm-user-accent, AccentColor) 22%, #0d0f14) !important;
-  }
-  /* часы Pixel: часы над минутами */
-  :root[fm-theme="material"][fm-theme] .absolute.top-4.right-4 .tabular-nums {
-    display: block !important; width: 2.4ch !important; font-variant-numeric: tabular-nums !important; margin-inline: auto !important;
-    text-align: center !important; word-break: break-all !important;
-    font-size: clamp(84px, 10.5vw, 160px) !important; font-weight: 400 !important;
-    line-height: .86 !important; letter-spacing: 0 !important;
-    color: color-mix(in srgb, var(--fm-user-accent, AccentColor) 35%, white) !important; text-shadow: none !important;
-  }
-  :root[fm-theme="material"][fm-theme] .absolute.top-4.right-4 .tabular-nums > .animate-pulse { display: none !important; }
-  :root[fm-theme="material"][fm-theme] .absolute.top-4.right-4 > div > .flex { flex-direction: column-reverse !important; gap: 14px !important; }
-  :root[fm-theme="material"][fm-theme] .absolute.top-4.right-4 { top: 7vh !important; }
-  :root[fm-theme="material"][fm-theme] .w-full.min-h-screen.flex.flex-col.justify-center.items-center { padding-top: 38vh !important; }
-  :root[fm-theme="material"][fm-theme] .group.cursor-pointer:has(input[readonly]) {
-    border-radius: 999px !important; border: 0 !important;
-    background: color-mix(in srgb, var(--fm-user-accent, AccentColor) 30%, #1b1d22) !important;
-    box-shadow: 0 10px 30px rgb(0 0 0 / .25) !important;
-  }
-
-}
 
 
 /* ---------------- Тема: Material You ---------------- */

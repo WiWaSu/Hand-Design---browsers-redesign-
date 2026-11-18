@@ -44,20 +44,6 @@
 }
 :root[fm-theme="paper"][fm-theme] moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
 :root[fm-theme="paper"][fm-theme] .fm-nowbar, :root[fm-theme="paper"][fm-theme] .fm-toast { border-radius: 6px !important; }
-:root[fm-theme="paper"][fm-theme] #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon { box-shadow: none !important; }
-@media (prefers-color-scheme: light) {
-  :root[fm-theme="paper"][fm-theme] #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon { filter: invert(1) !important; }
-}
-:root[fm-theme="paper"][fm-theme] { color-scheme: light !important; }
-:root[fm-theme="paper"][fm-theme] #navigator-toolbox, :root[fm-theme="paper"][fm-theme] #nav-bar, :root[fm-theme="paper"][fm-theme] #TabsToolbar { color: var(--fm-ink) !important; }
-:root[fm-theme="paper"][fm-theme] toolbar .toolbarbutton-1 > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack) { fill: var(--fm-ink) !important; }
-:root[fm-theme="paper"][fm-theme] .tabbrowser-tab[selected] > .tab-stack > .tab-background {
-  background: var(--fm-bar) !important; box-shadow: inset 0 -2px 0 var(--fm-accent), 0 0 0 1px var(--fm-line) !important;
-}
-:root[fm-theme="paper"][fm-theme] .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; font-style: italic; }
-:root[fm-theme="paper"][fm-theme] #urlbar-background, :root[fm-theme="paper"][fm-theme] .urlbar-background { background: var(--fm-field) !important; box-shadow: 0 0 0 1px var(--fm-line) !important; }
-:root[fm-theme="paper"][fm-theme] #tabbrowser-tabpanels .browserContainer { box-shadow: 0 0 0 1px var(--fm-line), 0 2px 8px rgb(60 40 20 / .08) !important; }
-:root[fm-theme="paper"][fm-theme] menupopup::part(content), :root[fm-theme="paper"][fm-theme] panel::part(content) { box-shadow: 0 0 0 1px var(--fm-line), 0 8px 24px rgb(60 40 20 / .12) !important; }
 }
 
 
@@ -125,35 +111,6 @@
   }
 }
 
-@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
-
-  html[fm-theme="paper"][fm-theme] { background: #f1ebdf !important; }
-  /* бумага: тёплый тон, лёгкие волокна и линейка */
-  :root[fm-theme="paper"][fm-theme] #root::before {
-    animation: none !important; inset: 0 !important;
-    background:
-      repeating-linear-gradient(180deg, transparent 0 35px, rgb(120 90 60 / .06) 35px 36px),
-      radial-gradient(90% 70% at 50% 40%, #fbf7ef, #ece4d5) !important;
-  }
-  :root[fm-theme="paper"][fm-theme] #root::after { display: none !important; }
-  :root[fm-theme="paper"][fm-theme] .absolute.top-4.right-4 .tabular-nums {
-    font-family: Georgia, "Times New Roman", serif !important; font-weight: 400 !important;
-    font-size: clamp(100px, 12vw, 170px) !important; color: #2b2622 !important; text-shadow: none !important;
-  }
-  :root[fm-theme="paper"][fm-theme] .absolute.top-4.right-4 .tabular-nums > .animate-pulse { animation: none !important; opacity: 1 !important; }
-  :root[fm-theme="paper"][fm-theme] .absolute.top-4.right-4 .flex-col.text-right > div { font-family: Georgia, serif !important; font-style: italic; color: #7a7066 !important; }
-  :root[fm-theme="paper"][fm-theme] .group.cursor-pointer:has(input[readonly]) {
-    border-radius: 0 !important; background: transparent !important; border: 0 !important;
-    box-shadow: inset 0 -2px 0 #2b2622 !important; backdrop-filter: none !important;
-  }
-  :root[fm-theme="paper"][fm-theme] .group.cursor-pointer:has(input[readonly]) input { font-family: Georgia, serif !important; color: #2b2622 !important; }
-  :root[fm-theme="paper"][fm-theme] .group.cursor-pointer:has(input[readonly]) input::placeholder { color: #8a7f74 !important; font-style: italic; }
-  :root[fm-theme="paper"][fm-theme] .group.cursor-pointer:has(input[readonly]) svg { color: #2b2622 !important; }
-  :root[fm-theme="paper"][fm-theme] .inline-block.backdrop-blur-sm.p-3 { border-radius: 4px !important; background: #faf6ee !important; border: 1px solid rgb(43 38 34 / .15) !important; box-shadow: none !important; }
-  :root[fm-theme="paper"][fm-theme] .inline-block.backdrop-blur-sm.p-3 * { color: #2b2622 !important; }
-  :root[fm-theme="paper"][fm-theme] button.fixed.bottom-4.right-4 { background: #faf6ee !important; color: #2b2622 !important; border-color: rgb(43 38 34 / .2) !important; }
-
-}
 
 
 /* ---------------- Тема: Paper ---------------- */

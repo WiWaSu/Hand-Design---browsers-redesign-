@@ -44,33 +44,4 @@
 }
 :root:not([fm-theme]:not([fm-theme="fluent"])) moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
 :root:not([fm-theme]:not([fm-theme="fluent"])) .fm-nowbar, :root:not([fm-theme]:not([fm-theme="fluent"])) .fm-toast { border-radius: 8px !important; }
-
-
-:root:not([fm-theme]:not([fm-theme="fluent"])) #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon { box-shadow: none !important; }
-@media (prefers-color-scheme: light) {
-  :root:not([fm-theme]:not([fm-theme="fluent"])) #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon { filter: invert(1) !important; }
-}
-
-/* Fluent: выделение — тонкий акцентный «индикатор» слева, как в меню Windows 11 */
-:root:not([fm-theme]:not([fm-theme="fluent"])) menupopup > :is(menuitem, menu):is([_moz-menuactive], :hover):not([disabled]), :root:not([fm-theme]:not([fm-theme="fluent"])) .subviewbutton:not([disabled]):hover, :root:not([fm-theme]:not([fm-theme="fluent"])) #appMenu-mainView .subviewbutton:not([disabled]):hover {
-  background-color: var(--fm-hover) !important; color: var(--fm-ink) !important;
-}
-:root:not([fm-theme]:not([fm-theme="fluent"])) .tabbrowser-tab[selected] > .tab-stack > .tab-background {
-  background: var(--fm-bar) !important;
-  box-shadow: 0 0 0 1px var(--fm-line), 0 1px 2px light-dark(rgb(0 0 0 / .06), rgb(0 0 0 / .4)) !important;
-}
-:root:not([fm-theme]:not([fm-theme="fluent"])) .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; }
-:root:not([fm-theme]:not([fm-theme="fluent"])) #tabbrowser-tabs[orient="vertical"] .tabbrowser-tab[selected] > .tab-stack > .tab-background {
-  box-shadow: inset 3px 0 0 var(--fm-accent), 0 0 0 1px var(--fm-line) !important;
-}
-:root:not([fm-theme]:not([fm-theme="fluent"])) #urlbar-background, :root:not([fm-theme]:not([fm-theme="fluent"])) .urlbar-background {
-  background-color: var(--fm-field) !important;
-  box-shadow: inset 0 -1px 0 light-dark(rgb(0 0 0 / .14), rgb(255 255 255 / .1)) !important;
-}
-:root:not([fm-theme]:not([fm-theme="fluent"])) #urlbar:is([focused], [open]) > :is(#urlbar-background, .urlbar-background) {
-  box-shadow: inset 0 -2px 0 var(--fm-accent) !important;
-}
-:root:not([fm-theme]:not([fm-theme="fluent"])) #PlacesToolbarItems > .bookmark-item { background: transparent !important; box-shadow: none !important; }
-:root:not([fm-theme]:not([fm-theme="fluent"])) #PlacesToolbarItems > .bookmark-item:hover { background: var(--fm-hover) !important; }
-:root:not([fm-theme]:not([fm-theme="fluent"])) .tabbrowser-tab .tab-label, :root:not([fm-theme]:not([fm-theme="fluent"])) #urlbar-input { font-size: 12.5px !important; }
 /* FM-THEME END chrome */

@@ -44,35 +44,6 @@
 }
 :root[fm-theme="retro"][fm-theme] moz-toggle { --toggle-background-color-pressed: #000080 !important; }
 :root[fm-theme="retro"][fm-theme] .fm-nowbar, :root[fm-theme="retro"][fm-theme] .fm-toast { border-radius: 0px !important; }
-:root[fm-theme="retro"][fm-theme] { color-scheme: light !important; }
-:root[fm-theme="retro"][fm-theme] #navigator-toolbox, :root[fm-theme="retro"][fm-theme] #nav-bar, :root[fm-theme="retro"][fm-theme] #TabsToolbar, :root[fm-theme="retro"][fm-theme] #PersonalToolbar { color: #000 !important; }
-:root[fm-theme="retro"][fm-theme] toolbar .toolbarbutton-1 > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack) {
-  background: #c0c0c0 !important;
-  box-shadow: inset -1px -1px #404040, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf !important;
-  fill: #000 !important;
-}
-:root[fm-theme="retro"][fm-theme] toolbar .toolbarbutton-1:not([disabled]):active > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack) {
-  box-shadow: inset 1px 1px #404040, inset -1px -1px #ffffff, inset 2px 2px #808080 !important;
-}
-:root[fm-theme="retro"][fm-theme] .tabbrowser-tab > .tab-stack > .tab-background {
-  background: #c0c0c0 !important;
-  box-shadow: inset -1px 0 #404040, inset 1px 1px #ffffff, inset -2px 0 #808080 !important;
-}
-:root[fm-theme="retro"][fm-theme] .tabbrowser-tab[selected] > .tab-stack > .tab-background { background: #d4d0c8 !important; }
-:root[fm-theme="retro"][fm-theme] .tabbrowser-tab[selected] .tab-label { color: #000 !important; font-weight: 700 !important; }
-:root[fm-theme="retro"][fm-theme] #urlbar-background, :root[fm-theme="retro"][fm-theme] .urlbar-background {
-  background: #fff !important;
-  box-shadow: inset 1px 1px #808080, inset -1px -1px #ffffff, inset 2px 2px #404040 !important; outline: none !important;
-}
-:root[fm-theme="retro"][fm-theme] #urlbar-input, :root[fm-theme="retro"][fm-theme] .urlbar-input { color: #000 !important; }
-:root[fm-theme="retro"][fm-theme] menupopup::part(content), :root[fm-theme="retro"][fm-theme] panel::part(content) {
-  border: 0 !important; box-shadow: inset -1px -1px #404040, inset 1px 1px #ffffff, 2px 2px 0 rgb(0 0 0 / .35) !important;
-}
-:root[fm-theme="retro"][fm-theme] menupopup > :is(menuitem, menu) { color: #000 !important; }
-:root[fm-theme="retro"][fm-theme] menupopup > :is(menuitem, menu):is([_moz-menuactive]):not([disabled]), :root[fm-theme="retro"][fm-theme] .subviewbutton:not([disabled]):hover { background: #000080 !important; color: #fff !important; }
-:root[fm-theme="retro"][fm-theme] #tabbrowser-tabpanels .browserContainer { box-shadow: inset 0 0 0 2px #808080 !important; }
-:root[fm-theme="retro"][fm-theme] .fm-toast, :root[fm-theme="retro"][fm-theme] .fm-nowbar { border-radius: 0 !important; background: #c0c0c0 !important; color: #000 !important;
-  box-shadow: inset -1px -1px #404040, inset 1px 1px #fff, 3px 3px 0 rgb(0 0 0 / .3) !important; }
 }
 
 
@@ -140,40 +111,6 @@
   }
 }
 
-@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
-
-  html[fm-theme="retro"][fm-theme] { background: #008080 !important; }
-  :root[fm-theme="retro"][fm-theme] #root::before { animation: none !important; inset: 0 !important; background: #008080 !important; }
-  :root[fm-theme="retro"][fm-theme] #root::after { display: none !important; }
-  /* часы в «окне» Windows 98 */
-  :root[fm-theme="retro"][fm-theme] .absolute.top-4.right-4 > div {
-    background: #c0c0c0 !important; padding: 34px 26px 18px !important; position: relative;
-    box-shadow: inset -1px -1px #000, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #fff, 4px 4px 0 rgb(0 0 0 / .35) !important;
-    border-radius: 0 !important; backdrop-filter: none !important; border: 0 !important;
-  }
-  :root[fm-theme="retro"][fm-theme] .absolute.top-4.right-4 > div::before {
-    content: "Clock"; position: absolute; left: 3px; right: 3px; top: 3px; height: 20px; line-height: 20px; padding-left: 6px;
-    background: linear-gradient(90deg, #000080, #1084d0); color: #fff; font: 700 12px Tahoma, sans-serif; text-align: left;
-  }
-  :root[fm-theme="retro"][fm-theme] .absolute.top-4.right-4 .tabular-nums {
-    font-family: "Courier New", Consolas, monospace !important; font-weight: 700 !important;
-    font-size: clamp(70px, 8vw, 110px) !important; color: #000 !important; text-shadow: none !important;
-    background: #fff; padding: 4px 14px; box-shadow: inset 1px 1px #808080, inset 2px 2px #404040;
-  }
-  :root[fm-theme="retro"][fm-theme] .absolute.top-4.right-4 .tabular-nums > .animate-pulse { animation: none !important; opacity: 1 !important; }
-  :root[fm-theme="retro"][fm-theme] .absolute.top-4.right-4 .flex-col.text-right > div { color: #000 !important; font: 12px Tahoma, sans-serif !important; }
-  :root[fm-theme="retro"][fm-theme] .group.cursor-pointer:has(input[readonly]) {
-    border-radius: 0 !important; background: #fff !important; border: 0 !important;
-    box-shadow: inset 1px 1px #808080, inset -1px -1px #fff, inset 2px 2px #404040, 3px 3px 0 rgb(0 0 0 / .3) !important;
-  }
-  :root[fm-theme="retro"][fm-theme] .group.cursor-pointer:has(input[readonly]) input, :root[fm-theme="retro"][fm-theme] .group.cursor-pointer:has(input[readonly]) input::placeholder { color: #000 !important; font-family: Tahoma, sans-serif !important; }
-  :root[fm-theme="retro"][fm-theme] .group.cursor-pointer:has(input[readonly]) svg { color: #000 !important; }
-  :root[fm-theme="retro"][fm-theme] .inline-block.backdrop-blur-sm.p-3 { border-radius: 0 !important; background: #c0c0c0 !important; border: 0 !important;
-    box-shadow: inset -1px -1px #404040, inset 1px 1px #fff, 3px 3px 0 rgb(0 0 0 / .3) !important; }
-  :root[fm-theme="retro"][fm-theme] .inline-block.backdrop-blur-sm.p-3 * { color: #000 !important; }
-  :root[fm-theme="retro"][fm-theme] a.group .overflow-hidden.bg-gray-700 { border-radius: 0 !important; }
-
-}
 
 
 /* ---------------- Тема: Retro 98 ---------------- */

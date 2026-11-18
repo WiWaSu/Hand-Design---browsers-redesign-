@@ -62,32 +62,4 @@
     --chakra-colors-purple-subtle: var(--fm-soft) !important;
   }
 }
-
-@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
-
-  html:not([fm-theme]:not([fm-theme="fluent"])) { background: #0b1a3a !important; }
-  /* обои в духе «Bloom» Windows 11 */
-  :root:not([fm-theme]:not([fm-theme="fluent"])) #root::before {
-    animation: none !important;
-    background:
-      radial-gradient(45% 55% at 52% 60%, rgb(120 170 255 / .9), transparent 62%),
-      radial-gradient(35% 40% at 40% 50%, rgb(40 100 230 / .9), transparent 70%),
-      radial-gradient(60% 60% at 70% 45%, rgb(80 60 200 / .7), transparent 70%),
-      linear-gradient(160deg, #07122b, #0b2a6b 60%, #0a1838) !important;
-  }
-  :root:not([fm-theme]:not([fm-theme="fluent"])) .absolute.top-4.right-4 > div > .flex { flex-direction: column !important; gap: 0 !important; }
-  :root:not([fm-theme]:not([fm-theme="fluent"])) .absolute.top-4.right-4 .tabular-nums {
-    font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif !important;
-    font-weight: 600 !important; font-size: clamp(90px, 11vw, 150px) !important;
-    letter-spacing: -0.01em !important; text-shadow: 0 2px 20px rgb(0 0 0 / .3) !important;
-  }
-  :root:not([fm-theme]:not([fm-theme="fluent"])) .absolute.top-4.right-4 .tabular-nums > .animate-pulse { animation: none !important; opacity: 1 !important; }
-  :root:not([fm-theme]:not([fm-theme="fluent"])) .absolute.top-4.right-4 .flex-col.text-right > div { font-size: 22px !important; font-weight: 500 !important; }
-  :root:not([fm-theme]:not([fm-theme="fluent"])) .group.cursor-pointer:has(input[readonly]) {
-    border-radius: 8px !important; border: 0 !important; min-height: 50px !important;
-    background: rgb(32 32 32 / .85) !important;
-    box-shadow: inset 0 -2px 0 var(--fm-user-accent, AccentColor), 0 16px 40px rgb(0 0 0 / .3) !important;
-  }
-
-}
 /* FM-THEME END content */

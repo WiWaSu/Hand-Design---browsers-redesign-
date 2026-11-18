@@ -44,15 +44,4 @@
 }
 :root:not([fm-theme]:not([fm-theme="synthwave"])) moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
 :root:not([fm-theme]:not([fm-theme="synthwave"])) .fm-nowbar, :root:not([fm-theme]:not([fm-theme="synthwave"])) .fm-toast { border-radius: 999px !important; }
-
-
-
-:root:not([fm-theme]:not([fm-theme="synthwave"])) { color-scheme: dark !important; }
-:root:not([fm-theme]:not([fm-theme="synthwave"])) #navigator-toolbox, :root:not([fm-theme]:not([fm-theme="synthwave"])) #nav-bar, :root:not([fm-theme]:not([fm-theme="synthwave"])) #TabsToolbar, :root:not([fm-theme]:not([fm-theme="synthwave"])) #sidebar-main { color: var(--fm-ink) !important; }
-:root:not([fm-theme]:not([fm-theme="synthwave"])) .tabbrowser-tab[selected] > .tab-stack > .tab-background {
-  background: var(--fm-soft) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fm-accent) 30%, transparent) !important;
-}
-:root:not([fm-theme]:not([fm-theme="synthwave"])) .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; }
-:root:not([fm-theme]:not([fm-theme="synthwave"])) menupopup::part(content), :root:not([fm-theme]:not([fm-theme="synthwave"])) panel::part(content) { backdrop-filter: blur(26px) saturate(1.6) !important; }
-:root:not([fm-theme]:not([fm-theme="synthwave"])) #urlbar-background, :root:not([fm-theme]:not([fm-theme="synthwave"])) .urlbar-background { backdrop-filter: blur(18px) !important; }
 /* FM-THEME END chrome */

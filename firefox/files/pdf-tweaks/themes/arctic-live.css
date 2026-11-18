@@ -44,12 +44,6 @@
 }
 :root[fm-theme="arctic"][fm-theme] moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
 :root[fm-theme="arctic"][fm-theme] .fm-nowbar, :root[fm-theme="arctic"][fm-theme] .fm-toast { border-radius: 999px !important; }
-:root[fm-theme="arctic"][fm-theme] { color-scheme: light !important; }
-:root[fm-theme="arctic"][fm-theme] #navigator-toolbox, :root[fm-theme="arctic"][fm-theme] #nav-bar, :root[fm-theme="arctic"][fm-theme] #TabsToolbar, :root[fm-theme="arctic"][fm-theme] #sidebar-main { color: var(--fm-ink) !important; }
-:root[fm-theme="arctic"][fm-theme] .tabbrowser-tab[selected] > .tab-stack > .tab-background {
-  background: var(--fm-soft) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fm-accent) 30%, transparent) !important;
-}
-:root[fm-theme="arctic"][fm-theme] .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; }
 }
 
 
@@ -117,25 +111,6 @@
   }
 }
 
-@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
-
-  html[fm-theme="arctic"][fm-theme] { background: #eef3f9 !important; }
-  :root[fm-theme="arctic"][fm-theme] #root::before { animation: none !important; inset: 0 !important; background: radial-gradient(80% 70% at 20% 10%, #dbe9ff, transparent 70%), radial-gradient(70% 60% at 90% 90%, #e3f6ff, transparent 70%), #f4f8fc !important; }
-  :root[fm-theme="arctic"][fm-theme] #root::after { display: none !important; }
-  :root[fm-theme="arctic"][fm-theme] .absolute.top-4.right-4 .tabular-nums {
-    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; font-weight: 300 !important;
-    font-size: clamp(100px, 12vw, 180px) !important; color: #14202e !important; text-shadow: none !important;
-  }
-  :root[fm-theme="arctic"][fm-theme] .absolute.top-4.right-4 .flex-col.text-right > div { color: #5b6b80 !important; }
-  :root[fm-theme="arctic"][fm-theme] .group.cursor-pointer:has(input[readonly]) {
-    background: rgb(255 255 255 / .72) !important; border: 1px solid rgb(0 0 0 / .1) !important;
-    backdrop-filter: blur(18px) !important; box-shadow: 0 16px 40px rgb(0 0 0 / .08) !important;
-  }
-  :root[fm-theme="arctic"][fm-theme] .group.cursor-pointer:has(input[readonly]) :is(input, svg) { color: #14202e !important; }
-  :root[fm-theme="arctic"][fm-theme] .inline-block.backdrop-blur-sm.p-3 { background: rgb(255 255 255 / .72) !important; border-color: rgb(0 0 0 / .1) !important; }
-  :root[fm-theme="arctic"][fm-theme] .inline-block.backdrop-blur-sm.p-3 * { color: #14202e !important; }
-
-}
 
 
 /* ---------------- Тема: Arctic ---------------- */

@@ -44,42 +44,6 @@
 }
 :root[fm-theme="macos"][fm-theme] moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
 :root[fm-theme="macos"][fm-theme] .fm-nowbar, :root[fm-theme="macos"][fm-theme] .fm-toast { border-radius: 12px !important; }
-:root[fm-theme="macos"][fm-theme] #appMenu-mainView { --fm-tile-color: #8E8E93; }
-:root[fm-theme="macos"][fm-theme] #appMenu-new-tab-button2 { --fm-tile-color: #0A84FF; }
-:root[fm-theme="macos"][fm-theme] #appMenu-history-button { --fm-tile-color: #FF9F0A; }
-:root[fm-theme="macos"][fm-theme] #appMenu-bookmarks-button { --fm-tile-color: #FFD60A; }
-:root[fm-theme="macos"][fm-theme] #appMenu-downloads-button { --fm-tile-color: #30D158; }
-:root[fm-theme="macos"][fm-theme] #appMenu-passwords-button { --fm-tile-color: #8E8E93; }
-:root[fm-theme="macos"][fm-theme] #appMenu-extensions-themes-button, :root[fm-theme="macos"][fm-theme] #appMenu-unified-extensions-button { --fm-tile-color: #BF5AF2; }
-:root[fm-theme="macos"][fm-theme] #appMenu-settings-button { --fm-tile-color: #8E8E93; }
-:root[fm-theme="macos"][fm-theme] #appMenu-quit-button2 { --fm-tile-color: #FF453A; }
-:root[fm-theme="macos"][fm-theme] #appMenu-new-private-window-button2 { --fm-tile-color: #5E5CE6; }
-:root[fm-theme="macos"][fm-theme] #appMenu-translate-button { --fm-tile-color: #64D2FF; }
-:root[fm-theme="macos"][fm-theme] .titlebar-buttonbox .titlebar-button {
-  list-style-image: none !important; padding: 0 7px !important; background: transparent !important;
-}
-:root[fm-theme="macos"][fm-theme] .titlebar-buttonbox .titlebar-button > .toolbarbutton-icon {
-  width: 13px !important; height: 13px !important; border-radius: 50% !important;
-  box-shadow: inset 0 0 0 .5px rgb(0 0 0 / .25) !important;
-}
-:root[fm-theme="macos"][fm-theme] .titlebar-close > .toolbarbutton-icon { background: #ff5f57 !important; }
-:root[fm-theme="macos"][fm-theme] .titlebar-min > .toolbarbutton-icon { background: #febc2e !important; }
-:root[fm-theme="macos"][fm-theme] :is(.titlebar-max, .titlebar-restore) > .toolbarbutton-icon { background: #28c840 !important; }
-:root[fm-theme="macos"][fm-theme]:not([tabsintitlebar]) .titlebar-buttonbox .titlebar-button:not(:hover) > .toolbarbutton-icon { filter: saturate(.9); }
-:root[fm-theme="macos"][fm-theme] .titlebar-buttonbox .titlebar-button:hover > .toolbarbutton-icon { filter: brightness(.9); }
-:root[fm-theme="macos"][fm-theme] menupopup > :is(menuitem, menu):is([_moz-menuactive], :hover):not([disabled]) {
-  background-color: var(--fm-accent) !important; color: #fff !important;
-}
-:root[fm-theme="macos"][fm-theme] menupopup > :is(menuitem, menu) { min-height: 26px !important; padding-block: 3px !important; }
-:root[fm-theme="macos"][fm-theme] .tabbrowser-tab[selected] > .tab-stack > .tab-background {
-  background: var(--fm-field) !important;
-  box-shadow: 0 1px 2px light-dark(rgb(0 0 0 / .12), rgb(0 0 0 / .5)), 0 0 0 .5px var(--fm-line) !important;
-}
-:root[fm-theme="macos"][fm-theme] .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; }
-:root[fm-theme="macos"][fm-theme] #urlbar-background, :root[fm-theme="macos"][fm-theme] .urlbar-background { background-color: var(--fm-field) !important; }
-:root[fm-theme="macos"][fm-theme] #urlbar:not([focused], [open]) #urlbar-input { text-align: center !important; }
-:root[fm-theme="macos"][fm-theme] #PlacesToolbarItems > .bookmark-item { background: transparent !important; box-shadow: none !important; }
-:root[fm-theme="macos"][fm-theme] #PlacesToolbarItems > .bookmark-item:hover { background: var(--fm-hover) !important; }
 }
 
 
@@ -147,33 +111,6 @@
   }
 }
 
-@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
-
-  html[fm-theme="macos"][fm-theme] { background: #1a1030 !important; }
-  /* обои в духе macOS: тёплые и холодные волны */
-  :root[fm-theme="macos"][fm-theme] #root::before {
-    animation: none !important;
-    background:
-      radial-gradient(70% 50% at 20% 85%, rgb(255 140 60 / .85), transparent 65%),
-      radial-gradient(60% 55% at 85% 20%, rgb(90 120 255 / .85), transparent 65%),
-      radial-gradient(55% 50% at 60% 60%, rgb(200 70 160 / .7), transparent 70%),
-      linear-gradient(170deg, #1d1440, #3a1d5c 50%, #20123a) !important;
-  }
-  :root[fm-theme="macos"][fm-theme] .absolute.top-4.right-4 > div > .flex { flex-direction: column-reverse !important; gap: 0 !important; }
-  :root[fm-theme="macos"][fm-theme] .absolute.top-4.right-4 .flex-col.text-right > div { font-size: 20px !important; font-weight: 600 !important; color: rgb(255 255 255 / .9) !important; }
-  :root[fm-theme="macos"][fm-theme] .absolute.top-4.right-4 .tabular-nums {
-    font-weight: 600 !important; font-size: clamp(100px, 12vw, 180px) !important;
-    letter-spacing: -0.02em !important; color: rgb(255 255 255 / .92) !important;
-    text-shadow: 0 2px 30px rgb(0 0 0 / .25) !important;
-  }
-  :root[fm-theme="macos"][fm-theme] .absolute.top-4.right-4 .tabular-nums > .animate-pulse { animation: none !important; opacity: 1 !important; }
-  :root[fm-theme="macos"][fm-theme] .group.cursor-pointer:has(input[readonly]) {
-    border-radius: 14px !important; border: 0 !important;
-    background: rgb(255 255 255 / .16) !important; backdrop-filter: blur(24px) saturate(180%) !important;
-    box-shadow: inset 0 0 0 .5px rgb(255 255 255 / .3), 0 16px 40px rgb(0 0 0 / .3) !important;
-  }
-
-}
 
 
 /* ---------------- Тема: macOS ---------------- */

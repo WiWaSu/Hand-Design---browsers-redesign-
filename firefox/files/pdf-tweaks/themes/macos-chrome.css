@@ -44,44 +44,4 @@
 }
 :root:not([fm-theme]:not([fm-theme="macos"])) moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
 :root:not([fm-theme]:not([fm-theme="macos"])) .fm-nowbar, :root:not([fm-theme]:not([fm-theme="macos"])) .fm-toast { border-radius: 12px !important; }
-:root:not([fm-theme]:not([fm-theme="macos"])) #appMenu-mainView { --fm-tile-color: #8E8E93; }
-:root:not([fm-theme]:not([fm-theme="macos"])) #appMenu-new-tab-button2 { --fm-tile-color: #0A84FF; }
-:root:not([fm-theme]:not([fm-theme="macos"])) #appMenu-history-button { --fm-tile-color: #FF9F0A; }
-:root:not([fm-theme]:not([fm-theme="macos"])) #appMenu-bookmarks-button { --fm-tile-color: #FFD60A; }
-:root:not([fm-theme]:not([fm-theme="macos"])) #appMenu-downloads-button { --fm-tile-color: #30D158; }
-:root:not([fm-theme]:not([fm-theme="macos"])) #appMenu-passwords-button { --fm-tile-color: #8E8E93; }
-:root:not([fm-theme]:not([fm-theme="macos"])) #appMenu-extensions-themes-button, :root:not([fm-theme]:not([fm-theme="macos"])) #appMenu-unified-extensions-button { --fm-tile-color: #BF5AF2; }
-:root:not([fm-theme]:not([fm-theme="macos"])) #appMenu-settings-button { --fm-tile-color: #8E8E93; }
-:root:not([fm-theme]:not([fm-theme="macos"])) #appMenu-quit-button2 { --fm-tile-color: #FF453A; }
-:root:not([fm-theme]:not([fm-theme="macos"])) #appMenu-new-private-window-button2 { --fm-tile-color: #5E5CE6; }
-:root:not([fm-theme]:not([fm-theme="macos"])) #appMenu-translate-button { --fm-tile-color: #64D2FF; }
-
-
-/* кнопки окна — «светофор» macOS */
-:root:not([fm-theme]:not([fm-theme="macos"])) .titlebar-buttonbox .titlebar-button {
-  list-style-image: none !important; padding: 0 7px !important; background: transparent !important;
-}
-:root:not([fm-theme]:not([fm-theme="macos"])) .titlebar-buttonbox .titlebar-button > .toolbarbutton-icon {
-  width: 13px !important; height: 13px !important; border-radius: 50% !important;
-  box-shadow: inset 0 0 0 .5px rgb(0 0 0 / .25) !important;
-}
-:root:not([fm-theme]:not([fm-theme="macos"])) .titlebar-close > .toolbarbutton-icon { background: #ff5f57 !important; }
-:root:not([fm-theme]:not([fm-theme="macos"])) .titlebar-min > .toolbarbutton-icon { background: #febc2e !important; }
-:root:not([fm-theme]:not([fm-theme="macos"])) :is(.titlebar-max, .titlebar-restore) > .toolbarbutton-icon { background: #28c840 !important; }
-:root:not([fm-theme]:not([fm-theme="macos"])):not([tabsintitlebar]) .titlebar-buttonbox .titlebar-button:not(:hover) > .toolbarbutton-icon { filter: saturate(.9); }
-:root:not([fm-theme]:not([fm-theme="macos"])) .titlebar-buttonbox .titlebar-button:hover > .toolbarbutton-icon { filter: brightness(.9); }
-/* меню как в macOS: выделение — сплошной синий, белый текст */
-:root:not([fm-theme]:not([fm-theme="macos"])) menupopup > :is(menuitem, menu):is([_moz-menuactive], :hover):not([disabled]) {
-  background-color: var(--fm-accent) !important; color: #fff !important;
-}
-:root:not([fm-theme]:not([fm-theme="macos"])) menupopup > :is(menuitem, menu) { min-height: 26px !important; padding-block: 3px !important; }
-:root:not([fm-theme]:not([fm-theme="macos"])) .tabbrowser-tab[selected] > .tab-stack > .tab-background {
-  background: var(--fm-field) !important;
-  box-shadow: 0 1px 2px light-dark(rgb(0 0 0 / .12), rgb(0 0 0 / .5)), 0 0 0 .5px var(--fm-line) !important;
-}
-:root:not([fm-theme]:not([fm-theme="macos"])) .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; }
-:root:not([fm-theme]:not([fm-theme="macos"])) #urlbar-background, :root:not([fm-theme]:not([fm-theme="macos"])) .urlbar-background { background-color: var(--fm-field) !important; }
-:root:not([fm-theme]:not([fm-theme="macos"])) #urlbar:not([focused], [open]) #urlbar-input { text-align: center !important; }
-:root:not([fm-theme]:not([fm-theme="macos"])) #PlacesToolbarItems > .bookmark-item { background: transparent !important; box-shadow: none !important; }
-:root:not([fm-theme]:not([fm-theme="macos"])) #PlacesToolbarItems > .bookmark-item:hover { background: var(--fm-hover) !important; }
 /* FM-THEME END chrome */

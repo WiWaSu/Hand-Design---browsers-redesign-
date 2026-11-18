@@ -44,17 +44,4 @@
 }
 :root:not([fm-theme]:not([fm-theme="contrast"])) moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
 :root:not([fm-theme]:not([fm-theme="contrast"])) .fm-nowbar, :root:not([fm-theme]:not([fm-theme="contrast"])) .fm-toast { border-radius: 6px !important; }
-
-
-
-:root:not([fm-theme]:not([fm-theme="contrast"])) { color-scheme: dark !important; }
-:root:not([fm-theme]:not([fm-theme="contrast"])) #navigator-toolbox, :root:not([fm-theme]:not([fm-theme="contrast"])) #nav-bar, :root:not([fm-theme]:not([fm-theme="contrast"])) #TabsToolbar, :root:not([fm-theme]:not([fm-theme="contrast"])) #sidebar-main { color: var(--fm-ink) !important; }
-:root:not([fm-theme]:not([fm-theme="contrast"])) .tabbrowser-tab[selected] > .tab-stack > .tab-background {
-  background: var(--fm-soft) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fm-accent) 30%, transparent) !important;
-}
-:root:not([fm-theme]:not([fm-theme="contrast"])) .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; }
-
-:root:not([fm-theme]:not([fm-theme="contrast"])) .tabbrowser-tab[selected] > .tab-stack > .tab-background { outline: 2px solid var(--fm-accent) !important; outline-offset: -2px !important; }
-:root:not([fm-theme]:not([fm-theme="contrast"])) :focus-visible { outline: 3px solid var(--fm-accent) !important; }
-:root:not([fm-theme]:not([fm-theme="contrast"])) menupopup::part(content), :root:not([fm-theme]:not([fm-theme="contrast"])) panel::part(content) { border: 2px solid #ffffff !important; }
 /* FM-THEME END chrome */

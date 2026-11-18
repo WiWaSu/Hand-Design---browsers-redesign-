@@ -44,21 +44,6 @@
 }
 :root[fm-theme="terminal"][fm-theme] moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
 :root[fm-theme="terminal"][fm-theme] .fm-nowbar, :root[fm-theme="terminal"][fm-theme] .fm-toast { border-radius: 2px !important; }
-:root[fm-theme="terminal"][fm-theme] #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon { box-shadow: none !important; }
-@media (prefers-color-scheme: light) {
-  :root[fm-theme="terminal"][fm-theme] #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon { filter: invert(1) !important; }
-}
-:root[fm-theme="terminal"][fm-theme] { color-scheme: dark !important; }
-:root[fm-theme="terminal"][fm-theme] #navigator-toolbox, :root[fm-theme="terminal"][fm-theme] menupopup, :root[fm-theme="terminal"][fm-theme] panel { text-shadow: 0 0 6px rgb(51 255 102 / .45); }
-:root[fm-theme="terminal"][fm-theme] toolbar .toolbarbutton-1 > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack) { fill: var(--fm-ink) !important; }
-:root[fm-theme="terminal"][fm-theme] .tabbrowser-tab[selected] > .tab-stack > .tab-background {
-  background: transparent !important; box-shadow: inset 0 0 0 1px var(--fm-accent), 0 0 12px rgb(51 255 102 / .25) !important;
-}
-:root[fm-theme="terminal"][fm-theme] .tabbrowser-tab[selected] .tab-label { color: var(--fm-accent) !important; }
-:root[fm-theme="terminal"][fm-theme] #urlbar-background, :root[fm-theme="terminal"][fm-theme] .urlbar-background { background: #000 !important; box-shadow: inset 0 0 0 1px var(--fm-line) !important; }
-:root[fm-theme="terminal"][fm-theme] #urlbar:is([focused], [open]) > :is(#urlbar-background, .urlbar-background) { box-shadow: inset 0 0 0 1px var(--fm-accent), 0 0 14px rgb(51 255 102 / .3) !important; }
-:root[fm-theme="terminal"][fm-theme] menupopup::part(content), :root[fm-theme="terminal"][fm-theme] panel::part(content) { border: 1px solid var(--fm-line) !important; }
-:root[fm-theme="terminal"][fm-theme] menupopup > :is(menuitem, menu):is([_moz-menuactive]):not([disabled]) { background: var(--fm-accent) !important; color: #000 !important; text-shadow: none; }
 }
 
 
@@ -126,39 +111,6 @@
   }
 }
 
-@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
-
-  html[fm-theme="terminal"][fm-theme] { background: #010301 !important; }
-  /* экран старого монитора: строки развёртки и свечение */
-  :root[fm-theme="terminal"][fm-theme] #root::before {
-    animation: none !important; inset: 0 !important;
-    background:
-      repeating-linear-gradient(180deg, rgb(0 0 0 / .35) 0 1px, transparent 1px 3px),
-      radial-gradient(80% 70% at 50% 45%, rgb(20 80 35 / .55), transparent 75%),
-      #010301 !important;
-  }
-  :root[fm-theme="terminal"][fm-theme] #root::after { content: "" !important; position: fixed !important; inset: 0 !important; z-index: -1 !important; pointer-events: none !important;
-    background: radial-gradient(120% 100% at 50% 50%, transparent 60%, rgb(0 0 0 / .8)) !important; }
-  :root[fm-theme="terminal"][fm-theme] .absolute.top-4.right-4 .tabular-nums {
-    font-family: "Cascadia Mono", Consolas, monospace !important; font-weight: 400 !important;
-    font-size: clamp(90px, 11vw, 160px) !important; color: #5CFF85 !important;
-    text-shadow: 0 0 10px rgb(51 255 102 / .8), 0 0 40px rgb(51 255 102 / .35) !important;
-  }
-  :root[fm-theme="terminal"][fm-theme] .absolute.top-4.right-4 .tabular-nums::after { content: "_"; animation: fm-blink 1.1s steps(1) infinite; }
-  :root[fm-theme="terminal"][fm-theme] .absolute.top-4.right-4 .tabular-nums > .animate-pulse { animation: none !important; opacity: 1 !important; }
-  :root[fm-theme="terminal"][fm-theme] .absolute.top-4.right-4 .flex-col.text-right > div { font-family: "Cascadia Mono", Consolas, monospace !important; color: #2BA84C !important; text-transform: uppercase; letter-spacing: .15em; }
-  :root[fm-theme="terminal"][fm-theme] .absolute.top-4.right-4 .flex-col.text-right > div:first-child::before { content: "> "; }
-  :root[fm-theme="terminal"][fm-theme] .group.cursor-pointer:has(input[readonly]) {
-    border-radius: 0 !important; background: #000 !important; border: 1px solid rgb(51 255 102 / .5) !important;
-    box-shadow: 0 0 18px rgb(51 255 102 / .2) !important;
-  }
-  :root[fm-theme="terminal"][fm-theme] .group.cursor-pointer:has(input[readonly]) input { font-family: "Cascadia Mono", Consolas, monospace !important; color: #5CFF85 !important; }
-  :root[fm-theme="terminal"][fm-theme] .group.cursor-pointer:has(input[readonly]) input::placeholder { color: #2BA84C !important; }
-  :root[fm-theme="terminal"][fm-theme] .group.cursor-pointer:has(input[readonly]) svg { color: #5CFF85 !important; }
-  :root[fm-theme="terminal"][fm-theme] .inline-block.backdrop-blur-sm.p-3 { border-radius: 0 !important; background: #000 !important; border: 1px solid rgb(51 255 102 / .35) !important; }
-  :root[fm-theme="terminal"][fm-theme] .inline-block.backdrop-blur-sm.p-3 * { color: #5CFF85 !important; font-family: "Cascadia Mono", Consolas, monospace !important; }
-
-}
 
 
 /* ---------------- Тема: Terminal ---------------- */

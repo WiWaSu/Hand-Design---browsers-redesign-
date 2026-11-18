@@ -44,26 +44,4 @@
 }
 :root:not([fm-theme]:not([fm-theme="nightdrive"])) moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
 :root:not([fm-theme]:not([fm-theme="nightdrive"])) .fm-nowbar, :root:not([fm-theme]:not([fm-theme="nightdrive"])) .fm-toast { border-radius: 999px !important; }
-
-
-:root:not([fm-theme]:not([fm-theme="nightdrive"])) #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon { box-shadow: none !important; }
-@media (prefers-color-scheme: light) {
-  :root:not([fm-theme]:not([fm-theme="nightdrive"])) #appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon { filter: invert(1) !important; }
-}
-
-/* Night Drive: тёмное стекло, тёплый свет фар */
-:root:not([fm-theme]:not([fm-theme="nightdrive"])) #urlbar-background, :root:not([fm-theme]:not([fm-theme="nightdrive"])) .urlbar-background {
-  background-color: rgb(255 255 255 / .06) !important;
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / .08), 0 0 0 1px rgb(255 255 255 / .06) !important;
-}
-:root:not([fm-theme]:not([fm-theme="nightdrive"])) .tabbrowser-tab[selected] > .tab-stack > .tab-background {
-  background: rgb(255 255 255 / .09) !important;
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / .12), 0 6px 18px rgb(0 0 0 / .35) !important;
-}
-:root:not([fm-theme]:not([fm-theme="nightdrive"])) .tabbrowser-tab[selected] .tab-label { color: #fff !important; }
-:root:not([fm-theme]:not([fm-theme="nightdrive"])) menupopup::part(content), :root:not([fm-theme]:not([fm-theme="nightdrive"])) panel::part(content) {
-  backdrop-filter: blur(24px) saturate(1.4) !important;
-  border: 1px solid rgb(255 255 255 / .1) !important;
-}
-:root:not([fm-theme]:not([fm-theme="nightdrive"])) #tabbrowser-tabpanels .browserContainer { box-shadow: 0 0 0 1px rgb(255 255 255 / .05), 0 18px 50px rgb(0 0 0 / .6) !important; }
 /* FM-THEME END chrome */

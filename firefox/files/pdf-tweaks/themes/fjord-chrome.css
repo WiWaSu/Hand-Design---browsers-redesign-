@@ -44,13 +44,4 @@
 }
 :root:not([fm-theme]:not([fm-theme="fjord"])) moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
 :root:not([fm-theme]:not([fm-theme="fjord"])) .fm-nowbar, :root:not([fm-theme]:not([fm-theme="fjord"])) .fm-toast { border-radius: 12px !important; }
-
-
-
-:root:not([fm-theme]:not([fm-theme="fjord"])) { color-scheme: dark !important; }
-:root:not([fm-theme]:not([fm-theme="fjord"])) #navigator-toolbox, :root:not([fm-theme]:not([fm-theme="fjord"])) #nav-bar, :root:not([fm-theme]:not([fm-theme="fjord"])) #TabsToolbar, :root:not([fm-theme]:not([fm-theme="fjord"])) #sidebar-main { color: var(--fm-ink) !important; }
-:root:not([fm-theme]:not([fm-theme="fjord"])) .tabbrowser-tab[selected] > .tab-stack > .tab-background {
-  background: var(--fm-soft) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fm-accent) 30%, transparent) !important;
-}
-:root:not([fm-theme]:not([fm-theme="fjord"])) .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; }
 /* FM-THEME END chrome */

@@ -44,37 +44,4 @@
 }
 :root:not([fm-theme]:not([fm-theme="retro"])) moz-toggle { --toggle-background-color-pressed: #000080 !important; }
 :root:not([fm-theme]:not([fm-theme="retro"])) .fm-nowbar, :root:not([fm-theme]:not([fm-theme="retro"])) .fm-toast { border-radius: 0px !important; }
-
-
-
-/* Retro 98: серые «выпуклые» кнопки, синие заголовки, никаких скруглений */
-:root:not([fm-theme]:not([fm-theme="retro"])) { color-scheme: light !important; }
-:root:not([fm-theme]:not([fm-theme="retro"])) #navigator-toolbox, :root:not([fm-theme]:not([fm-theme="retro"])) #nav-bar, :root:not([fm-theme]:not([fm-theme="retro"])) #TabsToolbar, :root:not([fm-theme]:not([fm-theme="retro"])) #PersonalToolbar { color: #000 !important; }
-:root:not([fm-theme]:not([fm-theme="retro"])) toolbar .toolbarbutton-1 > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack) {
-  background: #c0c0c0 !important;
-  box-shadow: inset -1px -1px #404040, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf !important;
-  fill: #000 !important;
-}
-:root:not([fm-theme]:not([fm-theme="retro"])) toolbar .toolbarbutton-1:not([disabled]):active > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack) {
-  box-shadow: inset 1px 1px #404040, inset -1px -1px #ffffff, inset 2px 2px #808080 !important;
-}
-:root:not([fm-theme]:not([fm-theme="retro"])) .tabbrowser-tab > .tab-stack > .tab-background {
-  background: #c0c0c0 !important;
-  box-shadow: inset -1px 0 #404040, inset 1px 1px #ffffff, inset -2px 0 #808080 !important;
-}
-:root:not([fm-theme]:not([fm-theme="retro"])) .tabbrowser-tab[selected] > .tab-stack > .tab-background { background: #d4d0c8 !important; }
-:root:not([fm-theme]:not([fm-theme="retro"])) .tabbrowser-tab[selected] .tab-label { color: #000 !important; font-weight: 700 !important; }
-:root:not([fm-theme]:not([fm-theme="retro"])) #urlbar-background, :root:not([fm-theme]:not([fm-theme="retro"])) .urlbar-background {
-  background: #fff !important;
-  box-shadow: inset 1px 1px #808080, inset -1px -1px #ffffff, inset 2px 2px #404040 !important; outline: none !important;
-}
-:root:not([fm-theme]:not([fm-theme="retro"])) #urlbar-input, :root:not([fm-theme]:not([fm-theme="retro"])) .urlbar-input { color: #000 !important; }
-:root:not([fm-theme]:not([fm-theme="retro"])) menupopup::part(content), :root:not([fm-theme]:not([fm-theme="retro"])) panel::part(content) {
-  border: 0 !important; box-shadow: inset -1px -1px #404040, inset 1px 1px #ffffff, 2px 2px 0 rgb(0 0 0 / .35) !important;
-}
-:root:not([fm-theme]:not([fm-theme="retro"])) menupopup > :is(menuitem, menu) { color: #000 !important; }
-:root:not([fm-theme]:not([fm-theme="retro"])) menupopup > :is(menuitem, menu):is([_moz-menuactive]):not([disabled]), :root:not([fm-theme]:not([fm-theme="retro"])) .subviewbutton:not([disabled]):hover { background: #000080 !important; color: #fff !important; }
-:root:not([fm-theme]:not([fm-theme="retro"])) #tabbrowser-tabpanels .browserContainer { box-shadow: inset 0 0 0 2px #808080 !important; }
-:root:not([fm-theme]:not([fm-theme="retro"])) .fm-toast, :root:not([fm-theme]:not([fm-theme="retro"])) .fm-nowbar { border-radius: 0 !important; background: #c0c0c0 !important; color: #000 !important;
-  box-shadow: inset -1px -1px #404040, inset 1px 1px #fff, 3px 3px 0 rgb(0 0 0 / .3) !important; }
 /* FM-THEME END chrome */

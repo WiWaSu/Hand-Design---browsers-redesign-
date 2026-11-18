@@ -44,15 +44,4 @@
 }
 :root:not([fm-theme]:not([fm-theme="ocean"])) moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
 :root:not([fm-theme]:not([fm-theme="ocean"])) .fm-nowbar, :root:not([fm-theme]:not([fm-theme="ocean"])) .fm-toast { border-radius: 999px !important; }
-
-
-
-:root:not([fm-theme]:not([fm-theme="ocean"])) { color-scheme: dark !important; }
-:root:not([fm-theme]:not([fm-theme="ocean"])) #navigator-toolbox, :root:not([fm-theme]:not([fm-theme="ocean"])) #nav-bar, :root:not([fm-theme]:not([fm-theme="ocean"])) #TabsToolbar, :root:not([fm-theme]:not([fm-theme="ocean"])) #sidebar-main { color: var(--fm-ink) !important; }
-:root:not([fm-theme]:not([fm-theme="ocean"])) .tabbrowser-tab[selected] > .tab-stack > .tab-background {
-  background: var(--fm-soft) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fm-accent) 30%, transparent) !important;
-}
-:root:not([fm-theme]:not([fm-theme="ocean"])) .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; }
-:root:not([fm-theme]:not([fm-theme="ocean"])) menupopup::part(content), :root:not([fm-theme]:not([fm-theme="ocean"])) panel::part(content) { backdrop-filter: blur(26px) saturate(1.6) !important; }
-:root:not([fm-theme]:not([fm-theme="ocean"])) #urlbar-background, :root:not([fm-theme]:not([fm-theme="ocean"])) .urlbar-background { backdrop-filter: blur(18px) !important; }
 /* FM-THEME END chrome */

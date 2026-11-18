@@ -44,17 +44,4 @@
 }
 :root:not([fm-theme]:not([fm-theme="material"])) moz-toggle { --toggle-background-color-pressed: var(--fm-accent) !important; }
 :root:not([fm-theme]:not([fm-theme="material"])) .fm-nowbar, :root:not([fm-theme]:not([fm-theme="material"])) .fm-toast { border-radius: 999px !important; }
-
-
-
-/* вкладки и закладки — тональные «таблетки», как в Android 16 */
-:root:not([fm-theme]:not([fm-theme="material"])) .tabbrowser-tab[selected] > .tab-stack > .tab-background {
-  background: var(--fm-soft) !important; box-shadow: none !important;
-}
-:root:not([fm-theme]:not([fm-theme="material"])) .tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; font-weight: 600 !important; }
-:root:not([fm-theme]:not([fm-theme="material"])) #urlbar-background, :root:not([fm-theme]:not([fm-theme="material"])) .urlbar-background { background-color: var(--fm-field) !important; box-shadow: none !important; }
-:root:not([fm-theme]:not([fm-theme="material"])) #urlbar { --urlbar-min-height: 42px !important; }
-:root:not([fm-theme]:not([fm-theme="material"])) #nav-bar { padding-block: 6px !important; }
-:root:not([fm-theme]:not([fm-theme="material"])) menupopup > :is(menuitem, menu):is([_moz-menuactive], :hover):not([disabled]) { background-color: var(--fm-soft) !important; }
-:root:not([fm-theme]:not([fm-theme="material"])) #appMenu-mainView .subviewbutton:not([disabled]):hover { background: var(--fm-soft) !important; }
 /* FM-THEME END chrome */

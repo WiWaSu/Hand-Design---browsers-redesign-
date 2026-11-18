@@ -62,32 +62,4 @@
     --chakra-colors-purple-subtle: var(--fm-soft) !important;
   }
 }
-
-@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
-
-  html:not([fm-theme]:not([fm-theme="macos"])) { background: #1a1030 !important; }
-  /* обои в духе macOS: тёплые и холодные волны */
-  :root:not([fm-theme]:not([fm-theme="macos"])) #root::before {
-    animation: none !important;
-    background:
-      radial-gradient(70% 50% at 20% 85%, rgb(255 140 60 / .85), transparent 65%),
-      radial-gradient(60% 55% at 85% 20%, rgb(90 120 255 / .85), transparent 65%),
-      radial-gradient(55% 50% at 60% 60%, rgb(200 70 160 / .7), transparent 70%),
-      linear-gradient(170deg, #1d1440, #3a1d5c 50%, #20123a) !important;
-  }
-  :root:not([fm-theme]:not([fm-theme="macos"])) .absolute.top-4.right-4 > div > .flex { flex-direction: column-reverse !important; gap: 0 !important; }
-  :root:not([fm-theme]:not([fm-theme="macos"])) .absolute.top-4.right-4 .flex-col.text-right > div { font-size: 20px !important; font-weight: 600 !important; color: rgb(255 255 255 / .9) !important; }
-  :root:not([fm-theme]:not([fm-theme="macos"])) .absolute.top-4.right-4 .tabular-nums {
-    font-weight: 600 !important; font-size: clamp(100px, 12vw, 180px) !important;
-    letter-spacing: -0.02em !important; color: rgb(255 255 255 / .92) !important;
-    text-shadow: 0 2px 30px rgb(0 0 0 / .25) !important;
-  }
-  :root:not([fm-theme]:not([fm-theme="macos"])) .absolute.top-4.right-4 .tabular-nums > .animate-pulse { animation: none !important; opacity: 1 !important; }
-  :root:not([fm-theme]:not([fm-theme="macos"])) .group.cursor-pointer:has(input[readonly]) {
-    border-radius: 14px !important; border: 0 !important;
-    background: rgb(255 255 255 / .16) !important; backdrop-filter: blur(24px) saturate(180%) !important;
-    box-shadow: inset 0 0 0 .5px rgb(255 255 255 / .3), 0 16px 40px rgb(0 0 0 / .3) !important;
-  }
-
-}
 /* FM-THEME END content */

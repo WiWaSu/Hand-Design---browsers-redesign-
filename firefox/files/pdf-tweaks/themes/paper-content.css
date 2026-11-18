@@ -62,34 +62,4 @@
     --chakra-colors-purple-subtle: var(--fm-soft) !important;
   }
 }
-
-@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
-
-  html:not([fm-theme]:not([fm-theme="paper"])) { background: #f1ebdf !important; }
-  /* бумага: тёплый тон, лёгкие волокна и линейка */
-  :root:not([fm-theme]:not([fm-theme="paper"])) #root::before {
-    animation: none !important; inset: 0 !important;
-    background:
-      repeating-linear-gradient(180deg, transparent 0 35px, rgb(120 90 60 / .06) 35px 36px),
-      radial-gradient(90% 70% at 50% 40%, #fbf7ef, #ece4d5) !important;
-  }
-  :root:not([fm-theme]:not([fm-theme="paper"])) #root::after { display: none !important; }
-  :root:not([fm-theme]:not([fm-theme="paper"])) .absolute.top-4.right-4 .tabular-nums {
-    font-family: Georgia, "Times New Roman", serif !important; font-weight: 400 !important;
-    font-size: clamp(100px, 12vw, 170px) !important; color: #2b2622 !important; text-shadow: none !important;
-  }
-  :root:not([fm-theme]:not([fm-theme="paper"])) .absolute.top-4.right-4 .tabular-nums > .animate-pulse { animation: none !important; opacity: 1 !important; }
-  :root:not([fm-theme]:not([fm-theme="paper"])) .absolute.top-4.right-4 .flex-col.text-right > div { font-family: Georgia, serif !important; font-style: italic; color: #7a7066 !important; }
-  :root:not([fm-theme]:not([fm-theme="paper"])) .group.cursor-pointer:has(input[readonly]) {
-    border-radius: 0 !important; background: transparent !important; border: 0 !important;
-    box-shadow: inset 0 -2px 0 #2b2622 !important; backdrop-filter: none !important;
-  }
-  :root:not([fm-theme]:not([fm-theme="paper"])) .group.cursor-pointer:has(input[readonly]) input { font-family: Georgia, serif !important; color: #2b2622 !important; }
-  :root:not([fm-theme]:not([fm-theme="paper"])) .group.cursor-pointer:has(input[readonly]) input::placeholder { color: #8a7f74 !important; font-style: italic; }
-  :root:not([fm-theme]:not([fm-theme="paper"])) .group.cursor-pointer:has(input[readonly]) svg { color: #2b2622 !important; }
-  :root:not([fm-theme]:not([fm-theme="paper"])) .inline-block.backdrop-blur-sm.p-3 { border-radius: 4px !important; background: #faf6ee !important; border: 1px solid rgb(43 38 34 / .15) !important; box-shadow: none !important; }
-  :root:not([fm-theme]:not([fm-theme="paper"])) .inline-block.backdrop-blur-sm.p-3 * { color: #2b2622 !important; }
-  :root:not([fm-theme]:not([fm-theme="paper"])) button.fixed.bottom-4.right-4 { background: #faf6ee !important; color: #2b2622 !important; border-color: rgb(43 38 34 / .2) !important; }
-
-}
 /* FM-THEME END content */

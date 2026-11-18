@@ -62,24 +62,4 @@
     --chakra-colors-purple-subtle: var(--fm-soft) !important;
   }
 }
-
-@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
-
-  html:not([fm-theme]:not([fm-theme="latte"])) { background: #f2ebe3 !important; }
-  :root:not([fm-theme]:not([fm-theme="latte"])) #root::before { animation: none !important; inset: 0 !important; background: radial-gradient(80% 70% at 50% 0%, #f0e2d2, transparent 70%), #f6efe7 !important; }
-  :root:not([fm-theme]:not([fm-theme="latte"])) #root::after { display: none !important; }
-  :root:not([fm-theme]:not([fm-theme="latte"])) .absolute.top-4.right-4 .tabular-nums {
-    font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif !important; font-weight: 500 !important;
-    font-size: clamp(100px, 12vw, 180px) !important; color: #5a3e28 !important; text-shadow: none !important;
-  }
-  :root:not([fm-theme]:not([fm-theme="latte"])) .absolute.top-4.right-4 .flex-col.text-right > div { color: #7d6a5a !important; }
-  :root:not([fm-theme]:not([fm-theme="latte"])) .group.cursor-pointer:has(input[readonly]) {
-    background: rgb(255 255 255 / .72) !important; border: 1px solid rgb(0 0 0 / .1) !important;
-    backdrop-filter: blur(18px) !important; box-shadow: 0 16px 40px rgb(0 0 0 / .08) !important;
-  }
-  :root:not([fm-theme]:not([fm-theme="latte"])) .group.cursor-pointer:has(input[readonly]) :is(input, svg) { color: #33261c !important; }
-  :root:not([fm-theme]:not([fm-theme="latte"])) .inline-block.backdrop-blur-sm.p-3 { background: rgb(255 255 255 / .72) !important; border-color: rgb(0 0 0 / .1) !important; }
-  :root:not([fm-theme]:not([fm-theme="latte"])) .inline-block.backdrop-blur-sm.p-3 * { color: #33261c !important; }
-
-}
 /* FM-THEME END content */
