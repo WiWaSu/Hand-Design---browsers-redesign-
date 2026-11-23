@@ -1,11 +1,13 @@
 <div align="center">
 
+<img src="docs/hero.jpg" alt="Hand Design" width="100%">
+
 # Hand Design
 
-**A redesign for Floorp, Firefox and Firefox forks on Windows.**<br>
-24 themes, a Studio for every detail, notes like in Obsidian, PDF and Markdown editors right in the browser.
+**A Firefox mod for Windows that redesigns the whole browser.**<br>
+24 themes, a Studio for every detail, notes like in Obsidian, PDF, Markdown, CSV and image editors right in the browser.
 
-[![Version](https://img.shields.io/badge/version-2.1.0-8e6bff?style=for-the-badge)](firefox/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.2.0-8e6bff?style=for-the-badge)](firefox/CHANGELOG.md)
 [![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-2b7cd3?style=for-the-badge)](#install)
 [![Firefox](https://img.shields.io/badge/Firefox-156%2B-ff7139?style=for-the-badge)](#install)
 [![License](https://img.shields.io/badge/license-MIT-2ea44f?style=for-the-badge)](LICENSE)
@@ -16,7 +18,7 @@
 
 ---
 
-Works with **Floorp, Firefox** (including Developer Edition and Nightly), **LibreWolf, Waterfox, Zen and Mercury**. Needs Windows 10 or 11 and Firefox 156 or newer (Floorp 12). Earlier names of the project: Redesigned Fox, Floorp Modern.
+Works with **Firefox** (including Developer Edition and Nightly) and its forks: **LibreWolf, Waterfox, Zen, Floorp 12 and Mercury**. Needs Windows 10 or 11 and Firefox 156 or newer. Earlier names of the project: Redesigned Fox, Floorp Modern.
 
 <table>
 <tr>
@@ -43,7 +45,7 @@ Colors, corners, tabs, address bar, menus, fonts, animations. Everything a theme
 <td valign="top">
 
 **Notes**<br>
-Live Preview, `[[links]]`, tags, a graph, daily notes. Plain `.md` files that Obsidian opens too.
+Formatted text without markup, `[[links]]`, tags, a graph, daily notes. Plain `.md` files that Obsidian opens too.
 
 </td>
 </tr>
@@ -124,7 +126,7 @@ There are 6 presets, and settings can be saved to a file and loaded back.
 
 ![Notes](docs/feature-notes.jpg)
 
-- **Live Preview** like in Obsidian: Markdown marks show only on the line with the cursor
+- only formatted text on screen: `#`, `**` and ` ``` ` stay hidden even under the cursor (Studio can show them on the cursor line, like in Obsidian)
 - folder tree, search, pinned notes, drag and drop, right-click menu
 - `[[links]]` with suggestions, a Mentions list under each note, links follow renamed notes
 - `#tags`, `> [!note]` callouts, properties, footnotes, `%%comments%%`
@@ -149,6 +151,18 @@ There are 6 presets, and settings can be saved to a file and loaded back.
 - drag a `.md` file into the window: table of contents, read / side by side / text modes, a formatting toolbar, `Ctrl+S` saves
 - tables are edited right in the document: click a cell, `Tab` and `Enter` move between cells
 - the Documents page creates and opens `.md` files and keeps a list of recent ones
+
+**CSV tables**
+
+- `.csv` files open as a table instead of downloading: edit cells, sort by a column, search, add and delete rows and columns, paste a block from Excel, `Ctrl+S` saves in the same encoding and delimiter
+
+**Image editor** (off by default, turn it on in Studio → Documents)
+
+- crop, rotate, flip, arrows, boxes, brush, text, blur for emails, faces and card numbers
+- opens a picture from disk, from "Edit image" in the right-click menu, or a screenshot pasted with `Ctrl+V`
+- "Save as…" writes PNG, JPEG or WebP and shows the file size before saving
+
+![CSV and images](docs/feature-files.jpg)
 
 ## Calls, music and the new tab
 
@@ -237,7 +251,7 @@ The internal names still say "floorp-modern", so that existing settings keep wor
 
 | Folder or file | What is inside |
 |---|---|
-| `firefox/` | The edition for Firefox, Floorp and forks: installer, styles, scripts, `CHANGELOG.md`. This folder goes into the release zip. |
+| `firefox/` | The edition for Firefox and its forks: installer, styles, scripts, `CHANGELOG.md`. This folder goes into the release zip. |
 | `chrome/` | The edition for Chromium browsers: extension, installer, `CHANGELOG.md`. |
 | `docs/` | Pictures for this README and for release pages. |
 | `release-notes/` | Text for each GitHub release, one file per version. |
@@ -284,14 +298,14 @@ This is an unofficial mod, not connected with Mozilla or Ablaze (Floorp). It onl
 
 ## По-русски
 
-**Редизайн Floorp, Firefox и форков Firefox для Windows.**<br>
-24 темы, Studio для любой мелочи, заметки как в Obsidian, редакторы PDF и Markdown прямо в браузере.
+**Мод для Firefox на Windows, который меняет оформление всего браузера.**<br>
+24 темы, Studio для любой мелочи, заметки как в Obsidian, редакторы PDF, Markdown, CSV и картинок прямо в браузере.
 
 ### [Скачать](https://github.com/WiWaSu/Hand-Design---browsers-redesign-/releases/latest) · [Что нового](firefox/CHANGELOG.md) · [Версия для Chromium](chrome/README.md)
 
 </div>
 
-Работает с Floorp, Firefox (и Developer Edition, и Nightly), LibreWolf, Waterfox, Zen и Mercury. Нужны Windows 10 или 11 и Firefox 156 или новее (Floorp 12). Раньше проект назывался Redesigned Fox, а ещё раньше Floorp Modern.
+Работает с Firefox (и Developer Edition, и Nightly) и его форками: LibreWolf, Waterfox, Zen, Floorp 12 и Mercury. Нужны Windows 10 или 11 и Firefox 156 или новее. Раньше проект назывался Redesigned Fox, а ещё раньше Floorp Modern.
 
 ### Темы
 
@@ -317,7 +331,7 @@ Studio открывается из быстрой панели, через ☰ �
 
 ![Заметки](docs/feature-notes.jpg)
 
-- Live Preview как в Obsidian: значки разметки видны только в строке с курсором
+- на экране только оформленный текст: `#`, `**` и ` ``` ` не видны даже под курсором (в Studio можно показывать их в строке с курсором, как в Obsidian)
 - дерево папок, поиск, закреплённые заметки, перетаскивание, своё меню правой кнопки
 - `[[ссылки]]` с подсказками, блок «Упоминания», ссылки обновляются при переименовании
 - `#теги`, блоки `> [!note]`, свойства, сноски, `%%комментарии%%`
@@ -332,6 +346,10 @@ Studio открывается из быстрой панели, через ☰ �
 - PDF: панель помещается в половину экрана, рисование как в Edge, ровные линии с Shift, текст, выделение, закладки страниц (`Ctrl+B`), быстрый текст по «……», PDF открывается там, где вы остановились
 - Markdown: перетащите файл `.md` в окно, и он откроется оформленным; три режима, панель кнопок, `Ctrl+S` сохраняет, таблицы правятся прямо в документе
 - страница «Документы» создаёт и открывает `.md` и помнит недавние
+- таблицы `.csv` открываются в браузере вместо скачивания: правка ячеек, сортировка, поиск, строки и столбцы, вставка из Excel, `Ctrl+S` сохраняет в той же кодировке
+- редактор картинок (по умолчанию выключен, включается в Studio → «Документы»): обрезка, поворот, стрелки, рамки, кисть, текст, размытие почты, лиц и номеров карт; сохраняет в PNG, JPEG или WebP и заранее показывает размер файла
+
+![CSV и картинки](docs/feature-files.jpg)
 
 ### Ещё
 
