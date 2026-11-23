@@ -6,7 +6,7 @@
   --fm-frame: light-dark(#e7e5ea, #1f1e23) !important;
   --fm-bar: light-dark(#f6f5f8, #2a292f) !important;
   --fm-field: light-dark(#ffffff, #38373d) !important;
-  --fm-menu: light-dark(rgb(246 245 248 / .97), rgb(40 39 44 / .97)) !important;
+  --fm-menu: light-dark(rgb(246 245 248), rgb(40 39 44)) !important;
   --fm-ink: light-dark(#1d1d1f, #f5f5f7) !important;
   --fm-muted: light-dark(#6e6e73, #98989d) !important;
   --fm-line: light-dark(rgb(0 0 0 / .1), rgb(255 255 255 / .1)) !important;

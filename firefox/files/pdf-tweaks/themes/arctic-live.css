@@ -6,7 +6,7 @@
   --fm-frame: #eef3f9 !important;
   --fm-bar: #ffffff !important;
   --fm-field: #ffffff !important;
-  --fm-menu: rgb(255 255 255 / .96) !important;
+  --fm-menu: rgb(255 255 255) !important;
   --fm-ink: #14202e !important;
   --fm-muted: #5b6b80 !important;
   --fm-line: rgb(0 0 0 / .1) !important;
@@ -55,7 +55,7 @@
     --fm-frame: #eef3f9 !important;
     --fm-bar: #ffffff !important;
     --fm-field: #ffffff !important;
-    --fm-menu: rgb(255 255 255 / .96) !important;
+    --fm-menu: rgb(255 255 255) !important;
     --fm-ink: #14202e !important;
     --fm-muted: #5b6b80 !important;
     --fm-line: rgb(0 0 0 / .1) !important;
@@ -91,7 +91,7 @@
     --fm-frame: #eef3f9 !important;
     --fm-bar: #ffffff !important;
     --fm-field: #ffffff !important;
-    --fm-menu: rgb(255 255 255 / .96) !important;
+    --fm-menu: rgb(255 255 255) !important;
     --fm-ink: #14202e !important;
     --fm-muted: #5b6b80 !important;
     --fm-line: rgb(0 0 0 / .1) !important;
