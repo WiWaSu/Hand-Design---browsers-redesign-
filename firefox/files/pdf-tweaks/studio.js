@@ -13,7 +13,7 @@ const mk = (tag, cls, text) => {
   return e;
 };
 // значения по умолчанию для переключателей (null = как в теме)
-const BOOL_DEFAULT = { ctrlTabPreview: false, square: false, pdfAutoParams: false, pdfInkSelect: false, notesSpell: false, notesToolbar: false, notesCompact: false };
+const BOOL_DEFAULT = { ctrlTabPreview: false, square: false, pdfAutoParams: false, pdfInkSelect: false, notesSpell: false, notesToolbar: false, notesCompact: false, imgEditor: false, notesMarks: false };
 
 let cfg = {};
 let connected = false;
@@ -430,6 +430,28 @@ function buildControl(it) {
     r.append(seg);
     update = v => {
       for (const b of seg.children) b.toggleAttribute("on", b.dataset.v === v);
+    };
+  } else if (it.type === "details") {
+    const grid = mk("div", "details");
+    for (const [val, name] of it.options) {
+      const c = mk("button", `dcard dcard-${it.part}`);
+      c.dataset.v = val;
+      if (val === "none") {
+        c.append(mk("span", "dnone", tr(name)));
+      } else {
+        const img = mk("img");
+        img.src = `details/${it.part}-${val}.webp`;
+        img.alt = "";
+        img.loading = "lazy";
+        c.append(img, mk("span", "", name));
+      }
+      c.title = tr(name);
+      c.addEventListener("click", () => set(it.key, cfg[it.key] === val ? null : val));
+      grid.append(c);
+    }
+    r.append(grid);
+    update = v => {
+      for (const b of grid.children) b.toggleAttribute("on", b.dataset.v === v);
     };
   } else if (it.type === "cards") {
     const grid = mk("div", "cards");

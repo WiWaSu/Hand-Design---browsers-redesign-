@@ -273,6 +273,11 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
     if (!doc || event.target !== doc) {
       return;
     }
+    // старый адрес страниц (вкладки, восстановленные после обновления)
+    if (/^resource:\/\/pdftweaks\/(notes|docs|csv|image|studio)\.html/.test(doc.documentURI)) {
+      this.contentWindow.location.replace(doc.documentURI.replace("resource://pdftweaks/", "resource://handdesign/"));
+      return;
+    }
     // сайты, где звук играет из плееров вне разметки — запоминаем их, чтобы Now Bar мог поставить паузу
     try {
       this.#trackMedia();
@@ -287,7 +292,7 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
     }
     // страница Floorp Modern Studio: отдаём ей настройки и принимаем изменения
     try {
-      if (/^(resource:\/\/pdftweaks\/|chrome:\/\/fmstudio\/content\/)studio\.html/.test(String(this.contentWindow?.location?.href || ""))) {
+      if (/^(resource:\/\/handdesign\/|chrome:\/\/fmstudio\/content\/)studio\.html/.test(String(this.contentWindow?.location?.href || ""))) {
         this.#setupStudio();
         return;
       }
@@ -295,11 +300,19 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       console.error("[pdf-tweaks] studio:", e);
     }
     try {
-      if (doc.documentURI === "resource://pdftweaks/docs.html") {
+      if (doc.documentURI === "resource://handdesign/docs.html") {
         this.#setupDocs();
         return;
       }
-      if (doc.documentURI === "resource://pdftweaks/notes.html" && Services.prefs.getBoolPref("floorp.modern.notes", true)) {
+      if (doc.documentURI.startsWith("resource://handdesign/csv.html#")) {
+        this.#setupCsv();
+        return;
+      }
+      if (doc.documentURI.startsWith("resource://handdesign/image.html")) {
+        this.#setupImage();
+        return;
+      }
+      if (doc.documentURI === "resource://handdesign/notes.html" && Services.prefs.getBoolPref("floorp.modern.notes", true)) {
         this.#setupNotes();
         return;
       }
@@ -366,6 +379,11 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       this.#setupShiftLine();
     } catch (e) {
       console.error("[pdf-tweaks] shift line:", e);
+    }
+    try {
+      this.#setupPasteImage();
+    } catch (e) {
+      console.error("[pdf-tweaks] paste image:", e);
     }
     try {
       this.#setupPdfFlags();
@@ -520,10 +538,49 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       t,
       list: () => this.sendQuery("HDDocs:list"),
       create: () => this.sendQuery("HDDocs:new"),
+      createCsv: () => this.sendQuery("HDDocs:newCsv"),
+      createImage: () => this.sendQuery("HDDocs:image"),
+      options: () => this.sendQuery("HDDocs:options"),
       open: () => this.sendQuery("HDDocs:open"),
       openRecent: path => this.sendQuery("HDDocs:recent", { path }),
       forget: path => this.sendQuery("HDDocs:forget", { path }),
     });
+  }
+
+  #setupCsv() {
+    const win = this.contentWindow;
+    win.windowUtils.loadSheetUsingURIString("resource://pdftweaks/markdown.css", win.windowUtils.AUTHOR_SHEET);
+    const api = Cu.createObjectIn(win, { defineAs: "hdCsv" });
+    Cu.exportFunction((op, json, done) => {
+      let data = null;
+      try {
+        data = JSON.parse(String(json));
+      } catch {}
+      const name = String(op) === "home" ? "HDDocs:home" : "HDCsv:" + String(op);
+      this.sendQuery(name, data)
+        .catch(e => ({ ok: false, error: String(e) }))
+        .then(r => done(JSON.stringify(r ?? null)));
+    }, api, { defineAs: "call" });
+    Cu.exportFunction((s, ...a) => t(String(s), ...a.map(String)), api, { defineAs: "t" });
+    win.dispatchEvent(new win.CustomEvent("hd-csv-ready"));
+  }
+
+  #setupImage() {
+    const win = this.contentWindow;
+    win.windowUtils.loadSheetUsingURIString("resource://pdftweaks/markdown.css", win.windowUtils.AUTHOR_SHEET);
+    const api = Cu.createObjectIn(win, { defineAs: "hdImg" });
+    Cu.exportFunction((op, json, done) => {
+      let data = null;
+      try {
+        data = JSON.parse(String(json));
+      } catch {}
+      const name = String(op) === "home" ? "HDDocs:home" : "HDImg:" + String(op);
+      this.sendQuery(name, data)
+        .catch(e => ({ ok: false, error: String(e) }))
+        .then(r => done(JSON.stringify(r ?? null)));
+    }, api, { defineAs: "call" });
+    Cu.exportFunction((s, ...a) => t(String(s), ...a.map(String)), api, { defineAs: "t" });
+    win.dispatchEvent(new win.CustomEvent("hd-img-ready"));
   }
 
   #setupNotes() {
@@ -551,6 +608,9 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
     let mtime = 0;
     try {
       const r = await this.sendQuery("HDMd:read");
+      if (r?.off) {
+        return;
+      }
       if (r?.ok && typeof r.text === "string") {
         text = r.text;
         mtime = r.mtime;
@@ -588,7 +648,7 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
     const doc = this.document;
     const win = this.contentWindow;
     // страница рисуется React-ом уже после загрузки — ждём, пока станет ясно,
-    // что это новая вкладка Firefox (.outer-wrapper), а не Floorp (у него свои часы)
+    // что это новая вкладка Firefox (.outer-wrapper, .nova-outer-wrapper), а не Floorp (у него свои часы)
     // Важно: Firefox заранее грузит новую вкладку в скрытом виде, и React
     // рисует её только когда вкладку откроют (может пройти сколько угодно времени).
     // Поэтому не ограничиваемся таймером, а следим за изменениями страницы.
@@ -598,7 +658,7 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
         mo?.disconnect();
         return true;
       }
-      if (!doc.querySelector(".outer-wrapper")) {
+      if (!doc.querySelector(".outer-wrapper, .nova-outer-wrapper")) {
         return false;
       }
       mo?.disconnect();
@@ -943,15 +1003,15 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
 
     const fmt = opts => {
       try {
-        return new win.Intl.DateTimeFormat(win.navigator.language || undefined, opts);
+        return new Intl.DateTimeFormat(win.navigator.language || undefined, opts);
       } catch {
-        return new win.Intl.DateTimeFormat(undefined, opts);
+        return new Intl.DateTimeFormat(undefined, opts);
       }
     };
     const fmtDay = fmt({ weekday: "short" });
     const fmtDate = fmt({ day: "2-digit", month: "2-digit" });
     const tick = () => {
-      const d = new win.Date();
+      const d = new Date();
       hh.data = String(d.getHours()).padStart(2, "0");
       mm.data = String(d.getMinutes()).padStart(2, "0");
       const wd = fmtDay.format(d);
@@ -1788,47 +1848,102 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       layer.append(svg);
       return { svg, line };
     };
+    let firing = false;
+    const fire = (type, target, x, y, s) => {
+      const ev = new win.PointerEvent(type, {
+        bubbles: true, cancelable: true, composed: true, clientX: x, clientY: y,
+        button: 0, buttons: type === "pointerup" ? 0 : 1, pointerId: s.pid, pointerType: s.ptype || "mouse", isPrimary: true,
+      });
+      Cu.exportFunction(() => new win.Array(), ev.wrappedJSObject, { defineAs: "getCoalescedEvents" });
+      firing = true;
+      try {
+        target.dispatchEvent(ev);
+      } finally {
+        firing = false;
+      }
+    };
+    const clamp = (layer, x, y) => {
+      const r = layer.getBoundingClientRect();
+      return [Math.min(Math.max(x, r.left + 1), r.right - 1), Math.min(Math.max(y, r.top + 1), r.bottom - 1)];
+    };
     win.addEventListener("pointerdown", e => {
+      if (firing || !e.isTrusted) return;
       st = null;
-      if (!e.isTrusted || e.button !== 0) return;
+      if (e.button !== 0) return;
       const layer = e.target?.closest?.(".annotationEditorLayer");
-      if (!layer || !layer.classList.contains("inkEditing") || !pdfCfg().pdfShiftLine) return;
-      st = { layer, x0: e.clientX, y0: e.clientY, end: null, used: false, view: null, pid: e.pointerId, ptype: e.pointerType, target: e.target };
+      if (!layer || e.target !== layer || !layer.classList.contains("inkEditing")) return;
+      st = { layer, x0: e.clientX, y0: e.clientY, end: null, used: false, view: null, pid: e.pointerId, ptype: e.pointerType };
     }, { capture: true, signal });
     win.addEventListener("pointermove", e => {
-      if (!st || !e.isTrusted || !(e.buttons & 1)) return;
-      if (!e.shiftKey) {
-        if (st.view) { st.view.svg.remove(); st.view = null; }
+      if (firing || !st || !e.isTrusted || !(e.buttons & 1)) return;
+      if (e.shiftKey && pdfCfg().pdfShiftLine) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        st.used = true;
+        const [x, y] = clamp(st.layer, ...snap(st.x0, st.y0, e.clientX, e.clientY));
+        st.end = [x, y];
+        if (!st.view) st.view = preview(st.layer);
+        const r = st.layer.getBoundingClientRect();
+        const l = st.view.line;
+        l.setAttribute("x1", st.x0 - r.left); l.setAttribute("y1", st.y0 - r.top);
+        l.setAttribute("x2", x - r.left); l.setAttribute("y2", y - r.top);
         return;
       }
-      // Shift: просмотрщику ничего не отдаём, только рисуем подсказку
-      e.stopImmediatePropagation();
-      e.preventDefault();
-      st.used = true;
-      const [x, y] = snap(st.x0, st.y0, e.clientX, e.clientY);
-      st.end = [x, y];
-      if (!st.view) st.view = preview(st.layer);
-      const r = st.layer.getBoundingClientRect();
-      const l = st.view.line;
-      l.setAttribute("x1", st.x0 - r.left); l.setAttribute("y1", st.y0 - r.top);
-      l.setAttribute("x2", x - r.left); l.setAttribute("y2", y - r.top);
+      if (st.view) {
+        st.view.svg.remove();
+        st.view = null;
+      }
+      if (st.used && st.end) {
+        for (const k of [0.5, 1]) fire("pointermove", st.layer, st.x0 + (st.end[0] - st.x0) * k, st.y0 + (st.end[1] - st.y0) * k, st);
+        [st.x0, st.y0] = st.end;
+        st.used = false;
+      }
+      const layer = e.target?.closest?.(".annotationEditorLayer");
+      if (!layer || layer === st.layer || !layer.classList.contains("inkEditing") || e.target !== layer) return;
+      fire("pointerup", st.layer, ...clamp(st.layer, e.clientX, e.clientY), st);
+      st.layer = layer;
+      st.x0 = e.clientX;
+      st.y0 = e.clientY;
+      fire("pointerdown", layer, e.clientX, e.clientY, st);
     }, { capture: true, signal });
     const finish = e => {
-      if (!st) return;
+      if (firing || !st || !e.isTrusted) return;
       const s = st;
       st = null;
       s.view?.svg.remove();
-      if (!e.isTrusted || !s.used || !s.end) return;
-      // одна точка — конец линии; дальше браузер сам передаст отпускание кнопки
-      const ev = new win.PointerEvent("pointermove", {
-        bubbles: true, cancelable: true, composed: true,
-        clientX: s.end[0], clientY: s.end[1], screenX: e.screenX + (s.end[0] - e.clientX), screenY: e.screenY + (s.end[1] - e.clientY),
-        buttons: 1, pointerId: s.pid, pointerType: s.ptype || "mouse", isPrimary: true, shiftKey: false,
-      });
-      (s.target?.isConnected ? s.target : s.layer).dispatchEvent(ev);
+      if (!s.used || !s.end) return;
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      for (const k of [0.5, 1]) fire("pointermove", s.layer, s.x0 + (s.end[0] - s.x0) * k, s.y0 + (s.end[1] - s.y0) * k, s);
+      fire("pointerup", s.layer, ...s.end, s);
     };
     win.addEventListener("pointerup", finish, { capture: true, signal });
-    win.addEventListener("pointercancel", () => { st?.view?.svg.remove(); st = null; }, { capture: true, signal });
+    win.addEventListener("pointercancel", () => {
+      if (firing) return;
+      st?.view?.svg.remove();
+      st = null;
+    }, { capture: true, signal });
+  }
+
+  /* Ctrl+V с картинкой в буфере вставляет её на текущую страницу без выбора инструмента */
+  #setupPasteImage() {
+    const win = this.contentWindow;
+    this.document.addEventListener("paste", e => {
+      if (e.target?.closest?.("input, textarea, [contenteditable]")) return;
+      const file = [...(e.clipboardData?.files || [])].find(f => f.type.startsWith("image/"));
+      if (!file) return;
+      let ui = null;
+      try {
+        ui = win.wrappedJSObject.PDFViewerApplication.pdfViewer._layerProperties.annotationEditorUIManager;
+      } catch {}
+      const layer = ui?.currentLayer;
+      if (!layer || ui.getMode() !== 0) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const params = new win.Object();
+      params.wrappedJSObject.bitmapFile = file;
+      layer.pasteEditor(Cu.cloneInto({ mode: 13 }, win), params);
+    }, { capture: true, signal: this.#ac.signal });
   }
 
   /* Включить / выключить части просмотрщика по настройкам Studio — сразу, без перезагрузки. */

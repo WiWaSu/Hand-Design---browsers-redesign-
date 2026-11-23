@@ -139,10 +139,10 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    &:not([data-x-page]) { --x-page-filter: invert(.88) hue-rotate(180deg) contrast(.9); --x-page-bg: #25262a; }
+    &:not([data-x-page]) { --x-page-filter: invert(.88) hue-rotate(180deg) contrast(.9); --x-page-bg: #25262a; --x-mark-blend: screen; }
   }
   &[data-x-page="sepia"] { --x-page-filter: sepia(.45) brightness(.96) contrast(.95); --x-page-bg: #f4eddc; }
-  &[data-x-page="night"] { --x-page-filter: invert(.88) hue-rotate(180deg) contrast(.9); --x-page-bg: #25262a; }
+  &[data-x-page="night"] { --x-page-filter: invert(.88) hue-rotate(180deg) contrast(.9); --x-page-bg: #25262a; --x-mark-blend: screen; }
 
   &, & body, & button, & input, & select, & menu {
     font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
@@ -415,15 +415,83 @@
   }
 
   & #viewsManager {
+    --status-actions-bg: transparent;
+    --status-border-color: transparent;
+    --indicator-color: var(--x-accent);
     background: var(--x-rail) !important;
     border-inline-end: 1px solid var(--x-line) !important;
     box-shadow: none !important;
   }
-  & .thumbnailImageContainer {
-    border-radius: 4px !important;
-    overflow: hidden !important;
+  & #viewsManagerHeader { background: transparent !important; border: 0 !important; }
+  & #viewsManagerTitle {
+    min-height: 48px !important;
+    padding-inline: 8px !important;
+    background: transparent !important;
+    border-bottom: 1px solid var(--x-line) !important;
   }
+  & #viewsManagerHeaderLabel {
+    justify-content: flex-start !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: var(--x-ink) !important;
+  }
+  & #viewsManager .newBadge { display: none !important; }
+  & #viewsManagerStatus { border: 0 !important; border-bottom: 1px solid var(--x-line) !important; }
+  & #viewsManagerStatus > div { min-height: 44px !important; padding-inline: 14px 8px !important; }
+  & #viewsManagerStatus .viewsManagerStatusLabel { font-size: 12px !important; color: var(--x-muted) !important; }
+  & #viewsManagerStatusActionButton {
+    width: auto !important;
+    height: 28px !important;
+    padding-inline: 12px 8px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background-color: var(--x-well) !important;
+    color: var(--x-ink) !important;
+    font-size: 12px !important;
+  }
+  & #viewsManagerStatusActionButton:hover { background-color: var(--x-hover) !important; }
+  & #thumbnailsView { gap: 18px 12px !important; padding: 16px 12px 28px !important; }
+  & #thumbnailsView > .thumbnail { width: var(--thumbnail-width) !important; gap: 0 !important; padding-bottom: 20px; }
+  & #thumbnailsView > .thumbnail > input {
+    appearance: none;
+    position: absolute;
+    top: 8px;
+    inset-inline-start: 8px;
+    z-index: 2;
+    width: 18px !important;
+    height: 18px !important;
+    border: 1.5px solid #fff;
+    border-radius: 50%;
+    background: rgb(0 0 0 / .35);
+    opacity: 0;
+    cursor: pointer;
+  }
+  & #thumbnailsView > .thumbnail > input:checked {
+    border-color: var(--x-accent);
+    background: var(--x-accent) center / 12px no-repeat url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12.5l4.5 4.5L19 7.5'/></svg>");
+  }
+  & #thumbnailsView > .thumbnail:is(:hover, :focus-within) > input,
+  & #thumbnailsView:has(input:checked) > .thumbnail > input { opacity: 1; }
+  & .thumbnailImageContainer, & .thumbnailImageContainer img { border-radius: 6px !important; }
+  & .thumbnailImageContainer { box-shadow: 0 0 0 1px var(--x-line) !important; }
   & .thumbnailImageContainer img { filter: var(--x-page-filter) !important; }
+  & #thumbnailsView > .thumbnail:hover > .thumbnailImageContainer { box-shadow: 0 0 0 1px var(--x-muted) !important; }
+  & #thumbnailsView > .thumbnail:has(input:checked) > .thumbnailImageContainer { box-shadow: 0 0 0 2px var(--x-accent) !important; }
+  & #thumbnailsView > .thumbnail:not(.isDragging) > .thumbnailImageContainer::after {
+    bottom: -20px !important;
+    min-width: 0 !important;
+    height: auto !important;
+    padding: 0 !important;
+    border: 0 !important;
+    outline: 0 !important;
+    background: none !important;
+    color: var(--x-muted) !important;
+    font-size: 11px !important;
+  }
+  & #thumbnailsView > .thumbnail:has([aria-current="page"]):not(.isDragging) > .thumbnailImageContainer::after {
+    color: var(--x-accent) !important;
+    font-weight: 600 !important;
+  }
   & .thumbnail:has([aria-current="page"]) > .thumbnailImageContainer {
     outline: 2px solid var(--x-accent) !important;
     outline-offset: 3px !important;
@@ -441,7 +509,16 @@
     /* цвет страницы после фильтра: без белых вспышек при отрисовке */
     background-color: var(--x-page-bg, #ffffff) !important;
   }
-  & .pdfViewer .page .canvasWrapper { filter: var(--x-page-filter) !important; }
+  & .pdfViewer .page .canvasWrapper > :is(canvas, svg) { filter: var(--x-page-filter) !important; }
+  & .pdfViewer .page .canvasWrapper > svg.highlight { mix-blend-mode: var(--x-mark-blend, var(--blend-mode, multiply)) !important; }
+  & .pdfViewer .page .canvasWrapper > svg.draw { z-index: 99999 !important; pointer-events: none !important; }
+  & .annotationEditorLayer.inkEditing :is(.stampEditor, .signatureEditor, .freeTextEditor) { pointer-events: none !important; }
+  & .annotationEditorLayer .noAltTextBadge { display: none !important; }
+  & .pdfPresentationMode :is(.editToolbar, .resizers, .x-shiftline, .commentPopup, .annotationCommentButton) { display: none !important; }
+  & .pdfPresentationMode .annotationEditorLayer, & .pdfPresentationMode .annotationEditorLayer * { pointer-events: none !important; cursor: default !important; }
+  & .pdfPresentationMode .annotationEditorLayer :is(.freeTextEditor, .inkEditor, .stampEditor, .signatureEditor) { border-color: transparent !important; outline: none !important; }
+  & .pdfPresentationMode .canvasWrapper svg.draw > * { filter: none !important; }
+  &:has(#viewerContainer.pdfPresentationMode) :is(#toolbarContainer, #sidebarContainer, #secondaryToolbar, .editorParamsToolbar, .doorHanger, .doorHangerRight) { display: none !important; }
   & .pdfViewer:is(.scrollHorizontal, .scrollWrapped) .page,
   & .pdfViewer .spread .page { margin: 0 calc(var(--x-gap) / 2) var(--x-gap) !important; }
 
@@ -463,10 +540,10 @@
     cursor: move !important;
   }
   & .annotationEditorLayer .inkEditor.x-hot:not(.selectedEditor) { cursor: pointer !important; }
-  & .canvasWrapper svg.draw.x-hover {
+  & .canvasWrapper svg.draw.x-hover > * {
     filter: drop-shadow(0 0 1.5px var(--x-accent)) drop-shadow(0 0 1.5px var(--x-accent));
   }
-  & .canvasWrapper svg.draw.x-sel {
+  & .canvasWrapper svg.draw.x-sel > * {
     filter: drop-shadow(0 0 1px var(--x-accent)) drop-shadow(0 0 3px var(--x-accent));
   }
 
@@ -693,6 +770,19 @@
     background: var(--x-accent) !important; color: var(--x-on-accent) !important;
     font: 600 13px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
   }
+  & moz-message-bar {
+    --x-mb: var(--x-accent);
+    --message-bar-background-color: color-mix(in srgb, var(--x-mb) 12%, var(--x-bar)) !important;
+    --message-bar-text-color: var(--x-ink) !important;
+    --message-bar-icon-color: var(--x-mb) !important;
+    --message-bar-border-color: color-mix(in srgb, var(--x-mb) 22%, var(--x-line)) !important;
+    --link-color: var(--x-accent) !important;
+    --link-color-hover: var(--x-accent) !important;
+  }
+  & moz-message-bar[type="warning"] { --x-mb: #f5a623; }
+  & moz-message-bar:is([type="error"], [type="critical"]) { --x-mb: #e5484d; }
+  & moz-message-bar[type="success"] { --x-mb: #30a46c; }
+  & moz-message-bar a { color: var(--x-accent) !important; }
   & #editorUndoBar {
     --message-bar-bg-color: var(--x-bar) !important;
     --message-bar-fg-color: var(--x-ink) !important;

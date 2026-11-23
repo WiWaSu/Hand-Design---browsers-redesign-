@@ -12,7 +12,7 @@ Night Drive, Aero, Retro 98, Terminal, Paper, Cyberpunk и палитры 1.20
 Цвет акцента везде берётся как var(--fm-user-accent, ...), чтобы установщик
 мог заменить его выбранным пользователем."""
 
-import json, sys, pathlib
+import re, json, sys, pathlib
 
 UA = "var(--fm-user-accent, AccentColor)"   # акцент Windows (или выбранный в установщике)
 
@@ -796,11 +796,20 @@ menupopup::part(content), panel::part(content) { border: 2px solid #ffffff !impo
 """
 
 
+GLASS = {"ios", "nightdrive", "aero", "midnight", "ocean"}
+
+
+def menu_bg(t):
+    if t["name"].lower().replace(" ", "") in GLASS or t.get("id") in GLASS:
+        return re.sub(r"/\s*\.\d+\)", "/ .96)", t["menu"])
+    return re.sub(r"\s*/\s*\.\d+\)", ")", t["menu"])
+
+
 def tok(t):
     keys = [("accent", "accent"), ("on-accent", "on_accent"), ("frame", "frame"), ("bar", "bar"), ("field", "field"),
             ("menu", "menu"), ("ink", "ink"), ("muted", "muted"), ("line", "line"), ("hover", "hover"),
             ("press", "press"), ("soft", "soft"), ("radius", "radius"), ("font", "font")]
-    return "\n".join(f"  --fm-{css}: {t[py]} !important;" for css, py in keys)
+    return "\n".join(f"  --fm-{css}: {menu_bg(t) if py == 'menu' else t[py]} !important;" for css, py in keys)
 
 
 def chrome(tid, t):

@@ -1,6 +1,6 @@
 /* Hand Design — страница «Документы»: новый файл, открыть, недавние. Файлы открываются в редакторе Markdown. */
 
-export function mountDocs(win, doc, { t, list, create, open, openRecent, forget }) {
+export function mountDocs(win, doc, { t, list, create, createCsv, createImage, options, open, openRecent, forget }) {
   doc.documentElement.setAttribute("data-hd-md", "");
   doc.title = t("Документы");
   doc.body.innerHTML = `
@@ -14,6 +14,8 @@ export function mountDocs(win, doc, { t, list, create, open, openRecent, forget 
       </header>
       <div class="hd-docs-actions">
         <button type="button" class="hd-docs-card" data-act="new"><span class="hd-docs-glyph" data-glyph="new"></span><b></b><small></small></button>
+        <button type="button" class="hd-docs-card" data-act="csv"><span class="hd-docs-glyph" data-glyph="table"></span><b></b><small></small></button>
+        <button type="button" class="hd-docs-card" data-act="image" hidden><span class="hd-docs-glyph" data-glyph="image"></span><b></b><small></small></button>
         <button type="button" class="hd-docs-card" data-act="open"><span class="hd-docs-glyph" data-glyph="open"></span><b></b><small></small></button>
       </div>
       <section class="hd-docs-recent">
@@ -24,15 +26,22 @@ export function mountDocs(win, doc, { t, list, create, open, openRecent, forget 
     </main>`;
   const $ = sel => doc.querySelector(sel);
   $("h1").textContent = t("Документы");
-  $(".hd-docs-sub").textContent = t("Можно просто перетащить файл .md в окно браузера.");
-  const [cNew, cOpen] = doc.querySelectorAll(".hd-docs-card");
+  $(".hd-docs-sub").textContent = t("Можно просто перетащить файл .md или .csv в окно браузера.");
+  const [cNew, cCsv, cImg, cOpen] = doc.querySelectorAll(".hd-docs-card");
   cNew.querySelector("b").textContent = t("Новый документ");
   cNew.querySelector("small").textContent = t("Выберите, где сохранить, и начинайте писать");
+  cCsv.querySelector("b").textContent = t("Новая таблица");
+  cCsv.querySelector("small").textContent = t("Файл .csv: открывается в Excel и Google Таблицах");
+  cImg.querySelector("b").textContent = t("Картинка");
+  cImg.querySelector("small").textContent = t("Обрезать, подписать, размыть, сжать");
+  options().then(o => (cImg.hidden = !o?.image));
   cOpen.querySelector("b").textContent = t("Открыть файл");
-  cOpen.querySelector("small").textContent = t("Файл .md с компьютера");
+  cOpen.querySelector("small").textContent = t("Файл .md или .csv с компьютера");
   $(".hd-docs-recent h2").textContent = t("Недавние");
   $(".hd-docs-empty").textContent = t("Здесь появятся файлы, которые вы открывали.");
   cNew.addEventListener("click", () => create());
+  cCsv.addEventListener("click", () => createCsv());
+  cImg.addEventListener("click", () => createImage());
   cOpen.addEventListener("click", () => open());
 
   const ol = $(".hd-docs-recent ol");
@@ -53,6 +62,7 @@ export function mountDocs(win, doc, { t, list, create, open, openRecent, forget 
       li.toggleAttribute("data-missing", !it.exists);
       li.innerHTML = `<button type="button" class="hd-docs-open"><span class="hd-docs-file"></span><span class="hd-docs-names"><b></b><small></small></span><time></time></button><button type="button" class="hd-docs-forget">✕</button>`;
       li.querySelector("b").textContent = name;
+      li.querySelector(".hd-docs-file").dataset.kind = /\.(csv|tsv)$/i.test(name) ? "CSV" : "MD";
       li.querySelector("small").textContent = folder;
       li.querySelector("small").title = it.path;
       li.querySelector("time").textContent = !it.exists ? t("Файл не найден") : it.time ? fmt.format(new Date(it.time)) : "";

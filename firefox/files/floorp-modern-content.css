@@ -132,6 +132,16 @@
   input[type="radio"] { accent-color: var(--fm-accent) !important; }
   richlistbox, .list, tree { border-radius: 18px !important; border-color: var(--fm-line) !important; }
   dialog, .dialogBox { border-radius: 26px !important; }
+  :is(moz-message-bar, notification-message) {
+    --fm-mb: var(--fm-accent);
+    --message-bar-background-color: color-mix(in srgb, var(--fm-mb) 12%, var(--fm-bar)) !important;
+    --message-bar-text-color: var(--fm-ink) !important;
+    --message-bar-icon-color: var(--fm-mb) !important;
+    --message-bar-border-color: color-mix(in srgb, var(--fm-mb) 22%, var(--fm-line)) !important;
+  }
+  :is(moz-message-bar, notification-message)[type="warning"] { --fm-mb: #f5a623; }
+  :is(moz-message-bar, notification-message):is([type="error"], [type="critical"]) { --fm-mb: #e5484d; }
+  :is(moz-message-bar, notification-message)[type="success"] { --fm-mb: #30a46c; }
 }
 @-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
   :root {
@@ -178,7 +188,7 @@
   #fm-clock .flex-col { display: flex !important; }
   #fm-clock { font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; color: #fff !important; pointer-events: none !important; }
   :root:has(#fm-clock) :is(.logo-and-wordmark-wrapper, .logo-and-wordmark) { display: none !important; }
-  :root:has(#fm-clock) .outer-wrapper { padding-top: 36vh !important; }
+  :root:has(#fm-clock) :is(.outer-wrapper, .nova-outer-wrapper) { padding-top: 36vh !important; }
   .bg-cover[style*="noraneko-newtab"] { display: none !important; }
 
   .flex.justify-center.items-center.mb-8:has(> img[alt="Logo"]) { display: none !important; }
@@ -457,6 +467,21 @@
 #screenshots-component #screenshots-cancel-button:hover { background: #fff !important; color: #000 !important; }
 #screenshots-component .preview-instructions { font: 600 22px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; }
 
+@-moz-document url-prefix("chrome://noraneko-modal-child/") {
+  [class*="bg-[#0061E0]"] {
+    background-color: var(--fm-user-accent, AccentColor) !important;
+    color: var(--fm-user-on-accent, AccentColorText) !important;
+    border-radius: 999px !important;
+    box-shadow: none !important;
+  }
+  [class*="bg-[#0061E0]"]:hover { background-color: color-mix(in srgb, var(--fm-user-accent, AccentColor) 85%, black) !important; }
+  :is(input, select, textarea, button):focus-visible {
+    outline: 2px solid var(--fm-user-accent, AccentColor) !important;
+    outline-offset: 1px !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+}
 @-moz-document url-prefix("chrome://noraneko-settings/") {
   :root, :root[data-theme], .floorp-standard-ui {
     --floorp-brand: var(--fm-user-accent, AccentColor) !important;
@@ -525,7 +550,7 @@
     padding: 10px 12px 8px !important;
     background: transparent !important;
   }
-  :is(search-textbox, moz-input-search, input[type="search"], #search-box) {
+  :is(search-textbox, input[type="search"], #search-box):not(moz-input-search) {
     border-radius: 999px !important;
     border: 0 !important;
     background-color: color-mix(in srgb, currentColor 9%, transparent) !important;
@@ -533,9 +558,16 @@
     padding-inline: 12px !important;
     outline: none !important;
   }
-  :is(search-textbox, moz-input-search, input[type="search"], #search-box):focus-within {
+  :is(search-textbox, input[type="search"], #search-box):not(moz-input-search):focus-within {
     outline: 2px solid var(--fm-accent, var(--fm-user-accent, AccentColor)) !important;
     outline-offset: -2px !important;
+  }
+  moz-input-search {
+    --input-text-border-radius: 999px !important;
+    --input-text-border-color: transparent !important;
+    --input-text-background-color: color-mix(in srgb, currentColor 9%, transparent) !important;
+    --input-text-min-height: 36px !important;
+    outline: none !important;
   }
   tree, #bookmarks-view, #historyTree {
     background-color: transparent !important;

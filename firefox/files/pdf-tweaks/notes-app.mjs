@@ -115,7 +115,7 @@ let cfg = {};
 const WIDTH = { narrow: "640px", normal: "780px", wide: "1000px", full: "none" };
 const FONT = { ui: "var(--md-ui)", serif: "Georgia, \"Times New Roman\", serif", mono: "var(--md-mono)" };
 const num = (v, min, max, def) => (typeof v === "number" && v >= min && v <= max ? v : def);
-const editorSettings = () => ({ live: cfg.notesLive, spell: cfg.notesSpell, selBar: cfg.notesSelBar, slash: cfg.notesSlash, menu: cfg.notesMenu });
+const editorSettings = () => ({ live: cfg.notesLive, marks: cfg.notesMarks === true, spell: cfg.notesSpell, selBar: cfg.notesSelBar, slash: cfg.notesSlash, menu: cfg.notesMenu });
 async function applySettings() {
   cfg = (await api("settings")) || {};
   const s = app.style;

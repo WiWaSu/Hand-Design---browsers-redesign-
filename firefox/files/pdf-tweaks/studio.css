@@ -165,6 +165,17 @@ h2 { font: 700 18px "Segoe UI Variable Display", "Segoe UI", sans-serif; margin:
 .card small { color: var(--muted); font-size: 12px; }
 .card b { margin-top: 6px; }
 
+.details { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 8px; margin-top: 12px; }
+.dcard { display: flex; flex-direction: column; gap: 5px; padding: 5px; border-radius: 10px; background: var(--card2); border: 2px solid transparent; font-size: 12px; text-align: start; }
+.dcard:hover { border-color: var(--line); }
+.dcard[on] { border-color: var(--acc); }
+.dcard img { display: block; width: 100%; border-radius: 6px; }
+.dcard-clock img { aspect-ratio: 256 / 96; }
+.dcard-wall img { aspect-ratio: 256 / 150; }
+.dcard-search img { aspect-ratio: 256 / 115; }
+.dcard-window img { aspect-ratio: 320 / 56; }
+.dnone { display: grid; place-items: center; flex: 1; min-height: 44px; color: var(--muted); }
+
 /* мини-превью меню */
 .pv { height: 78px; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 8px; box-sizing: border-box; background: light-dark(#e4e6ec, #0e0f13); }
 .pv i { display: block; height: 14px; border-radius: 7px; background: light-dark(#fff, #26282f); }
@@ -184,6 +195,13 @@ h2 { font: 700 18px "Segoe UI Variable Display", "Segoe UI", sans-serif; margin:
 .pv-menuStyle.pv-neon i { background: #11141c; }
 .pv-menuStyle.pv-neon i.sel { background: color-mix(in srgb, var(--acc) 25%, #11141c); box-shadow: 0 0 10px var(--acc); }
 /* мини-превью Ctrl+Tab: три окошка в ряд */
+.pv-tabPreview { align-items: center; }
+.pv-tabPreview i { width: 62%; }
+.pv-tabPreview i:not(.sel) { height: 6px; border-radius: 3px; }
+.pv-tabPreview i.sel { order: -1; height: 30px; border-radius: 6px; }
+.pv-tabPreview.pv-compact i.sel { display: none; }
+.pv-tabPreview.pv-wide i { width: 86%; }
+.pv-tabPreview.pv-wide i.sel { height: 40px; }
 .pv-ctrlTabStyle { flex-direction: row; align-items: center; }
 .pv-ctrlTabStyle i { flex: 1; height: 40px; border-radius: 6px; }
 .pv-ctrlTabStyle.pv-ios { background: linear-gradient(135deg, #2b2f3a, #14161c); }

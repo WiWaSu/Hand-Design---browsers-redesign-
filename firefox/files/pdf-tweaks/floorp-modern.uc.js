@@ -21,6 +21,15 @@
     return;
   }
   win.__floorpModern = true;
+  try {
+    const res = Services.io.getProtocolHandler("resource").QueryInterface(Ci.nsIResProtocolHandler);
+    if (!res.hasSubstitution("handdesign")) {
+      res.setSubstitution("handdesign", res.getSubstitution("pdftweaks"));
+    }
+  } catch (e) {}
+  try {
+    Services.prefs.getDefaultBranch("").setBoolPref("pdfjs.enableNewAltTextWhenAddingImage", false);
+  } catch (e) {}
 
   const HTML = "http://www.w3.org/1999/xhtml";
   const el = (tag, cls) => {
@@ -99,6 +108,7 @@
     }, 2400);
   }
   win.FloorpModernToast = toast;
+  doc.documentElement.style.setProperty("--fm-group-noname", JSON.stringify(T("Без названия")));
 
   safe("progress bar", () => {
     /* ----------------------- полоска загрузки ------------------------- */
@@ -248,7 +258,7 @@
             for (const p of THEME_PREFS) {
               Services.prefs.setIntPref(p, next);
             }
-            const w = event.target.ownerGlobal;
+            const w = event.target.ownerDocument.defaultView;
             w.FloorpModernToast?.(T("Тема: ") + NAMES[next], "info");
           },
         });
@@ -345,7 +355,7 @@
       } catch (e) {
         log("studio open: ОШИБКА", e);
         try {
-          const t = w.gBrowser.addTrustedTab("resource://pdftweaks/studio.html", {
+          const t = w.gBrowser.addTrustedTab("resource://handdesign/studio.html", {
             triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(),
           });
           w.gBrowser.selectedTab = t;
@@ -794,12 +804,12 @@
         if (e.button === 0) {
           e.stopPropagation();
           e.preventDefault();
-          node.ownerGlobal.FloorpModernQuickPanel?.(node);
+          node.ownerDocument.defaultView.FloorpModernQuickPanel?.(node);
         }
       });
       node.addEventListener("command", e => {
         e.stopPropagation();
-        node.ownerGlobal.FloorpModernQuickPanel?.(node);
+        node.ownerDocument.defaultView.FloorpModernQuickPanel?.(node);
       });
     };
     win.FloorpModernQuickPanel = togglePanel;
@@ -844,6 +854,83 @@
       }
     }, true);
   });
+  safe("csv", () => {
+    // .csv и .tsv Firefox скачивает — открываем их редактором таблиц
+    const W = Ci.nsIWebProgressListener;
+    win.gBrowser.addTabsProgressListener({
+      onStateChange(browser, webProgress, request, flags) {
+        if (!webProgress?.isTopLevel || !(flags & W.STATE_START) || !(flags & W.STATE_IS_DOCUMENT)) {
+          return;
+        }
+        let uri = null;
+        try {
+          uri = request.QueryInterface(Ci.nsIChannel).URI;
+        } catch (e) {
+          return;
+        }
+        if (!uri?.schemeIs("file") || !/\.(csv|tsv)$/i.test(uri.filePath)) {
+          return;
+        }
+        try {
+          if (JSON.parse(Services.prefs.getStringPref("floorp.modern.studio", "{}")).csvEditor === false) {
+            return;
+          }
+          const path = uri.QueryInterface(Ci.nsIFileURL).file.path;
+          ChromeUtils.importESModule("resource://pdftweaks/FloorpPdfTweaksParent.sys.mjs").openCsv(browser, path);
+        } catch (e) {
+          log("csv", e);
+        }
+      },
+    });
+  });
+  safe("image editor", () => {
+    const parent = () => ChromeUtils.importESModule("resource://pdftweaks/FloorpPdfTweaksParent.sys.mjs");
+    const W = Ci.nsIWebProgressListener;
+    win.gBrowser.addTabsProgressListener({
+      onStateChange(browser, webProgress, request, flags) {
+        if (!webProgress?.isTopLevel || !(flags & W.STATE_START) || !(flags & W.STATE_IS_DOCUMENT)) {
+          return;
+        }
+        let uri = null;
+        try {
+          uri = request.QueryInterface(Ci.nsIChannel).URI;
+        } catch (e) {
+          return;
+        }
+        if (!uri?.schemeIs("file") || !/\.(png|jpe?g|gif|webp|avif|bmp)$/i.test(uri.filePath)) {
+          return;
+        }
+        try {
+          if (parent().imageEditorEnabled()) {
+            parent().openImage(browser, uri.QueryInterface(Ci.nsIFileURL).file.path);
+          }
+        } catch (e) {
+          log("image editor", e);
+        }
+      },
+    });
+    const menu = doc.getElementById("contentAreaContextMenu");
+    if (!menu) {
+      return;
+    }
+    const item = doc.createXULElement("menuitem");
+    item.id = "fm-context-editimage";
+    item.setAttribute("label", T("Редактировать картинку"));
+    item.hidden = true;
+    item.addEventListener("command", () => {
+      const url = win.gContextMenu?.mediaURL;
+      if (url) {
+        parent().openImageUrl(win, url);
+      }
+    });
+    (doc.getElementById("context-copyimage-contents") || doc.getElementById("context-saveimage"))?.after(item);
+    menu.addEventListener("popupshowing", e => {
+      if (e.target === menu) {
+        const cm = win.gContextMenu;
+        item.hidden = !(cm?.onImage && !cm.onCanvas && parent().imageEditorEnabled());
+      }
+    });
+  });
   safe("notes", () => {
     const parent = () => ChromeUtils.importESModule("resource://pdftweaks/FloorpPdfTweaksParent.sys.mjs");
     if (!parent().notesEnabled()) {
@@ -859,7 +946,7 @@
           type: "button",
           label: T("Заметки"),
           tooltiptext: T("Заметки") + " (Alt+Shift+N)",
-          onCommand: e => parent().openNotes(e.target.ownerGlobal),
+          onCommand: e => parent().openNotes(e.target.ownerDocument.defaultView),
         });
       } catch (e) {}
     }
@@ -1376,9 +1463,10 @@
         width: max-content; max-width: min(520px, calc(100vw - 40px)); padding: 5px 6px 5px 6px; border-radius: 999px;
         background: var(--fm-bar, #1c1d21); color: var(--fm-ink, #f2f3f5); border: 1px solid var(--fm-line, rgb(255 255 255 / .1));
         box-shadow: 0 10px 30px rgb(0 0 0 / .35); font: 500 13px var(--fm-font, system-ui);
-        opacity: 0; translate: -50% -14px; scale: .94; pointer-events: none;
-        transition: opacity .25s ease, translate calc(.45s * var(--fm-k, 1)) var(--fm-spring, ease), scale calc(.45s * var(--fm-k, 1)) var(--fm-spring, ease), padding .3s; }
-      .fm-callbar.fm-in { opacity: 1; translate: -50% 0; scale: 1; pointer-events: auto; }
+        opacity: 0; translate: -50% -10px; pointer-events: none;
+        transition: opacity .25s ease, translate calc(.4s * var(--fm-k, 1)) var(--fm-spring, ease); }
+      .fm-callbar[hidden] { display: none; }
+      .fm-callbar.fm-in { opacity: 1; translate: -50% 0; pointer-events: auto; }
       .fm-callbar-dot { flex: none; width: 30px; height: 30px; border-radius: 50%; position: relative; background: #2fbf71 center / 16px no-repeat;
         -moz-context-properties: fill; fill: #fff;
         background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='context-fill'><path d='M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z'/></svg>"); }
@@ -1408,9 +1496,8 @@
       .fm-callbar.fm-mini .fm-callbar-dot { width: 24px; height: 24px; background-size: 13px; }
       .fm-callbar.fm-mini .fm-callbar-time { font-size: 12.5px; opacity: 1; font-weight: 600; }
       /* перетаскивание: за кружок или текст; позиция запоминается */
-      .fm-callbar[data-moved] { translate: 0 0; transition: opacity .25s ease, scale calc(.45s * var(--fm-k, 1)) var(--fm-spring, ease), padding .3s; }
-      .fm-callbar[data-moved]:not(.fm-in) { translate: 0 -8px; }
-      .fm-callbar.fm-drag { transition: none !important; cursor: grabbing; scale: 1.03; box-shadow: 0 18px 40px rgb(0 0 0 / .45); }
+      .fm-callbar[data-moved] { translate: 0 0; transition: opacity .25s ease; }
+      .fm-callbar.fm-drag { transition: none !important; cursor: grabbing; box-shadow: 0 18px 40px rgb(0 0 0 / .45); }
       .fm-callbar-dot { cursor: grab; }
       .fm-callbar-btn.fm-callbar-mic:not([data-off]), .fm-callbar-btn.fm-callbar-cam:not([data-off]) { background-color: rgb(128 128 128 / .14); }
     `;
@@ -1434,7 +1521,21 @@
     go.title = T("Перейти к звонку");
     hide.title = T("Скрыть до конца звонка (насовсем — Studio → Показать / скрыть → Плашка звонка)");
     bar.append(dot, text, mic, cam, go, hide);
+    bar.hidden = true;
     host.after(bar);
+    let hideTimer = 0;
+    const setShown = show => {
+      win.clearTimeout(hideTimer);
+      if (show && !bar.classList.contains("fm-in")) {
+        bar.hidden = false;
+        place();
+        bar.getBoundingClientRect();
+        win.requestAnimationFrame(() => bar.classList.add("fm-in"));
+      } else if (!show && !bar.hidden) {
+        bar.classList.remove("fm-in");
+        hideTimer = win.setTimeout(() => (bar.hidden = true), 300);
+      }
+    };
 
     const started = new WeakMap();   // вкладка → когда начался звонок
     const lastSeen = new WeakMap();  // вкладка → когда последний раз видели звонок
@@ -1542,10 +1643,7 @@
       });
       current = calls.find(t => t === current) || calls[calls.length - 1] || null;
       const show = !!current && current !== gB.selectedTab && !dismissed.has(current);
-      if (show && !bar.classList.contains("fm-in")) {
-        win.requestAnimationFrame(() => place());
-      }
-      bar.classList.toggle("fm-in", show);
+      setShown(show);
       doc.documentElement.toggleAttribute("fm-callbar", show);
       win.clearInterval(timer);
       if (!current) {
@@ -1666,7 +1764,7 @@
     /* ---- перетаскивание плашки (за кружок или надпись), позиция запоминается.
        Двойной щелчок по кружку — вернуть наверх по центру. */
     const POS = "floorp.modern.callbar.pos";
-    const area = () => (doc.getElementById("browser") || doc.documentElement).getBoundingClientRect();
+    const area = () => (doc.getElementById("tabbrowser-tabbox") || doc.getElementById("browser") || doc.documentElement).getBoundingClientRect();
     const place = () => {
       let p = null;
       try {
@@ -1675,7 +1773,7 @@
       const a = area();
       if (!p) {
         bar.removeAttribute("data-moved");
-        bar.style.left = "";
+        bar.style.left = Math.round(a.left + a.width / 2) + "px";
         bar.style.top = Math.round(a.top + 10) + "px";
         return;
       }

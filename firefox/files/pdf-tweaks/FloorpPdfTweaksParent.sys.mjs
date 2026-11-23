@@ -67,7 +67,7 @@ export function boot() {
 }
 
 export const STUDIO_URL = "chrome://fmstudio/content/studio.html";
-const STUDIO_FALLBACK = "resource://pdftweaks/studio.html";
+const STUDIO_FALLBACK = "resource://handdesign/studio.html";
 function studioRegistered() {
   try {
     Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIChromeRegistry)
@@ -106,9 +106,12 @@ export function openStudio(win) {
   return "opened";
 }
 
-export const DOCS_URL = "resource://pdftweaks/docs.html";
+export const DOCS_URL = "resource://handdesign/docs.html";
 const RECENT_PREF = "floorp.modern.md.recent";
 const MD_RE = /\.(md|markdown|mdown|mkd|mkdn)$/i;
+const CSV_RE = /\.(csv|tsv)$/i;
+export const CSV_URL = "resource://handdesign/csv.html";
+const DOC_RE = /\.(md|markdown|mdown|mkd|mkdn|csv|tsv)$/i;
 
 export function openDocs(win) {
   if (!win || !win.gBrowser) {
@@ -128,7 +131,7 @@ export function openDocs(win) {
 function readRecent() {
   try {
     const list = JSON.parse(Services.prefs.getStringPref(RECENT_PREF, "[]"));
-    return Array.isArray(list) ? list.filter(x => typeof x?.path === "string" && MD_RE.test(x.path)) : [];
+    return Array.isArray(list) ? list.filter(x => typeof x?.path === "string" && DOC_RE.test(x.path)) : [];
   } catch (e) {
     return [];
   }
@@ -140,20 +143,131 @@ function remember(path) {
   Services.prefs.setStringPref(RECENT_PREF, JSON.stringify(list.slice(0, 12)));
 }
 
+/* .csv из адресной строки, проводника или перетаскивания — открывается редактором таблиц */
+export function openCsv(browser, path) {
+  remember(path);
+  browser.loadURI(Services.io.newURI(CSV_URL + "#" + encodeURIComponent(path)), {
+    triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(),
+  });
+}
+
+let cp1251 = null;
+function encode1251(text) {
+  if (!cp1251) {
+    cp1251 = new Map();
+    const dec = new TextDecoder("windows-1251");
+    for (let b = 0x80; b <= 0xff; b++) {
+      cp1251.set(dec.decode(new Uint8Array([b])), b);
+    }
+  }
+  const out = new Uint8Array(text.length);
+  for (let i = 0; i < text.length; i++) {
+    const c = text.charCodeAt(i);
+    out[i] = c < 0x80 ? c : cp1251.get(text[i]) ?? 0x3f;
+  }
+  return out;
+}
+
 function forget(path) {
   Services.prefs.setStringPref(RECENT_PREF, JSON.stringify(readRecent().filter(x => x.path !== path)));
 }
 
-function pickFile(bc, mode, title, name) {
+function pickFile(bc, mode, title, name, csv = false) {
   return new Promise(resolve => {
     const fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
     fp.init(bc, title, mode);
-    fp.appendFilter("Markdown", "*.md; *.markdown");
+    if (mode === Ci.nsIFilePicker.modeOpen) {
+      fp.appendFilter("Markdown, CSV", "*.md; *.markdown; *.csv; *.tsv");
+    }
+    if (csv) {
+      fp.appendFilter("CSV", "*.csv; *.tsv");
+    } else {
+      fp.appendFilter("Markdown", "*.md; *.markdown");
+    }
     fp.appendFilters(Ci.nsIFilePicker.filterAll);
     if (name) {
       fp.defaultString = name;
-      fp.defaultExtension = "md";
+      fp.defaultExtension = csv ? "csv" : "md";
     }
+    fp.open(r => resolve(r === Ci.nsIFilePicker.returnCancel ? null : fp.file));
+  });
+}
+
+export const IMAGE_URL = "resource://handdesign/image.html";
+export const EDIT_IMG_RE = /\.(png|jpe?g|gif|webp|avif|bmp)$/i;
+const IMG_RECENT_PREF = "floorp.modern.img.recent";
+const webImages = new Map();
+
+export function imageEditorEnabled() {
+  try {
+    return JSON.parse(Services.prefs.getStringPref("floorp.modern.studio", "{}"))?.imgEditor === true;
+  } catch (e) {
+    return false;
+  }
+}
+
+const imgRecent = () => {
+  try {
+    const list = JSON.parse(Services.prefs.getStringPref(IMG_RECENT_PREF, "[]"));
+    return Array.isArray(list) ? list.filter(x => typeof x === "string") : [];
+  } catch (e) {
+    return [];
+  }
+};
+function rememberImage(path) {
+  const list = imgRecent().filter(x => x.toLowerCase() !== path.toLowerCase());
+  list.unshift(path);
+  Services.prefs.setStringPref(IMG_RECENT_PREF, JSON.stringify(list.slice(0, 40)));
+}
+
+export function openImage(browser, path) {
+  rememberImage(path);
+  browser.loadURI(Services.io.newURI(IMAGE_URL + "#" + encodeURIComponent(path)), {
+    triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(),
+  });
+}
+
+/* картинка со страницы: из меню правой кнопки, открывается в новой вкладке рядом */
+export function openImageUrl(win, url) {
+  const gB = win?.gBrowser;
+  if (!gB || !url) {
+    return;
+  }
+  let target = IMAGE_URL;
+  try {
+    const uri = Services.io.newURI(url);
+    if (uri.schemeIs("file")) {
+      const path = uri.QueryInterface(Ci.nsIFileURL).file.path;
+      rememberImage(path);
+      target += "#" + encodeURIComponent(path);
+    } else {
+      const id = Services.uuid.generateUUID().toString().slice(1, 9);
+      const { PrivateBrowsingUtils } = ChromeUtils.importESModule("resource://gre/modules/PrivateBrowsingUtils.sys.mjs");
+      webImages.set(id, { url, private: PrivateBrowsingUtils.isWindowPrivate(win) });
+      target += "#u:" + id;
+    }
+  } catch (e) {
+    return;
+  }
+  gB.selectedTab = gB.addTrustedTab(target, {
+    triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(),
+    relatedToCurrent: true,
+    inBackground: false,
+  });
+}
+
+function pickImage(bc, mode, title, name, ext) {
+  return new Promise(resolve => {
+    const fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
+    fp.init(bc, title, mode);
+    if (mode === Ci.nsIFilePicker.modeOpen) {
+      fp.appendFilters(Ci.nsIFilePicker.filterImages);
+    } else {
+      fp.appendFilter(ext.toUpperCase(), ext === "jpg" ? "*.jpg; *.jpeg" : "*." + ext);
+      fp.defaultString = name + "." + ext;
+      fp.defaultExtension = ext;
+    }
+    fp.appendFilters(Ci.nsIFilePicker.filterAll);
     fp.open(r => resolve(r === Ci.nsIFilePicker.returnCancel ? null : fp.file));
   });
 }
@@ -174,7 +288,7 @@ async function writeMd(path, text, mtime) {
   return { ok: true, mtime: await stamp() };
 }
 
-export const NOTES_URL = "resource://pdftweaks/notes.html";
+export const NOTES_URL = "resource://handdesign/notes.html";
 const NOTES_DIR_PREF = "floorp.modern.notes.dir";
 const NOTES_PIN_PREF = "floorp.modern.notes.pinned";
 
@@ -353,6 +467,7 @@ const WALL_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image
 
 export class FloorpPdfTweaksParent extends JSWindowActorParent {
   #notesObs = null;
+  #imgPath = "";
 
   didDestroy() {
     if (this.#notesObs) {
@@ -418,6 +533,13 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
     } catch {}
     if (!/\.(md|markdown|mdown|mkd|mkdn)$/i.test(path)) {
       return { ok: false, error: "not a markdown file" };
+    }
+    if (op === "read") {
+      try {
+        if (JSON.parse(Services.prefs.getStringPref("floorp.modern.studio", "{}"))?.mdEditor === false) {
+          return { ok: false, off: true };
+        }
+      } catch (e) {}
     }
     const mtime = async () => (await IOUtils.stat(path)).lastModified;
     try {
@@ -705,9 +827,166 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
     return null;
   }
 
+  /* редактор таблиц: файл — из адреса страницы, и только из списка недавних */
+  async #csv(op, data) {
+    const uri = this.manager.documentURI;
+    if (!uri?.spec.startsWith(CSV_URL + "#")) {
+      return null;
+    }
+    const path = decodeURIComponent(uri.ref || "");
+    if (!CSV_RE.test(path) || !readRecent().some(x => x.path.toLowerCase() === path.toLowerCase())) {
+      return { ok: false, error: "not allowed" };
+    }
+    const stamp = async () => (await IOUtils.stat(path)).lastModified;
+    try {
+      if (op === "stat") {
+        return { ok: true, mtime: await stamp() };
+      }
+      if (op === "read") {
+        const bytes = await IOUtils.read(path);
+        const bom = bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf;
+        let text;
+        let encoding = "utf-8";
+        try {
+          text = new TextDecoder("utf-8", { fatal: true }).decode(bom ? bytes.subarray(3) : bytes);
+        } catch {
+          encoding = "windows-1251";
+          text = new TextDecoder("windows-1251").decode(bytes);
+        }
+        return { ok: true, text, encoding, bom, mtime: await stamp(), name: PathUtils.filename(path), folder: PathUtils.parent(path) };
+      }
+      if (op === "save") {
+        if (data?.mtime && (await stamp()) !== data.mtime) {
+          return { ok: false, conflict: true };
+        }
+        const text = String(data?.text ?? "");
+        let bytes;
+        if (data?.encoding === "windows-1251") {
+          bytes = encode1251(text);
+        } else {
+          const body = new TextEncoder().encode(text);
+          bytes = data?.bom ? new Uint8Array([0xef, 0xbb, 0xbf, ...body]) : body;
+        }
+        await IOUtils.write(path, bytes, { tmpPath: path + ".hd-tmp" });
+        return { ok: true, mtime: await stamp() };
+      }
+    } catch (e) {
+      return { ok: false, error: e?.message || String(e) };
+    }
+    return null;
+  }
+
+  /* редактор картинок: файл — из адреса страницы (только из списка открытых) или из «Сохранить как» */
+  async #image(op, data) {
+    const uri = this.manager.documentURI;
+    if (!uri?.spec.startsWith(IMAGE_URL)) {
+      return null;
+    }
+    const t = ChromeUtils.importESModule("resource://pdftweaks/FloorpModernL10n.sys.mjs").t;
+    const ref = decodeURIComponent(uri.ref || "");
+    const web = ref.startsWith("u:") ? webImages.get(ref.slice(2)) : null;
+    let path = this.#imgPath;
+    if (!path && ref && !web && EDIT_IMG_RE.test(ref) && imgRecent().some(x => x.toLowerCase() === ref.toLowerCase())) {
+      path = ref;
+    }
+    const stamp = async () => (await IOUtils.stat(path)).lastModified;
+    const write = async (target, b64) => {
+      const bytes = Uint8Array.fromBase64(String(b64 || ""));
+      await IOUtils.write(target, bytes, { tmpPath: target + ".hd-tmp" });
+    };
+    try {
+      if (op === "read") {
+        if (path) {
+          if ((await IOUtils.stat(path)).size > 80 * 1024 * 1024) {
+            return { ok: false, error: t("Файл слишком большой") };
+          }
+          const ext = path.match(EDIT_IMG_RE)[1].toLowerCase();
+          return {
+            ok: true,
+            data: (await IOUtils.read(path)).toBase64(),
+            mime: IMG_MIME[ext],
+            name: PathUtils.filename(path),
+            folder: PathUtils.parent(path),
+            path,
+            mtime: await stamp(),
+          };
+        }
+        if (web) {
+          const r = await fetch(web.url, { credentials: web.private ? "omit" : "include" });
+          if (!r.ok) {
+            return { ok: false, error: "HTTP " + r.status };
+          }
+          const mime = (r.headers.get("content-type") || "").split(";")[0].trim();
+          const src = new URL(web.url);
+          const http = /^https?:$/.test(src.protocol);
+          let name = "";
+          try {
+            name = http ? decodeURIComponent(src.pathname.split("/").pop() || "") : "";
+          } catch (e) {}
+          name = cleanName(name) || t("Картинка");
+          if (!/\.[a-z0-9]{2,5}$/i.test(name)) {
+            name += "." + ((mime.split("/")[1] || "png").replace("jpeg", "jpg").replace(/\+.*/, ""));
+          }
+          return { ok: true, data: new Uint8Array(await r.arrayBuffer()).toBase64(), mime, name, folder: http ? src.host : "", path: "", mtime: 0 };
+        }
+        return ref ? { ok: false, error: t("Картинка больше недоступна, откройте её заново") } : { ok: false, empty: true };
+      }
+      if (op === "save") {
+        if (!path) {
+          return { ok: false, error: "no file" };
+        }
+        if (data?.mtime && (await stamp()) !== data.mtime) {
+          return { ok: false, conflict: true };
+        }
+        await write(path, data?.data);
+        return { ok: true, mtime: await stamp() };
+      }
+      if (op === "saveAs") {
+        const ext = ["png", "jpg", "webp"].includes(data?.ext) ? data.ext : "png";
+        const file = await pickImage(this.browsingContext, Ci.nsIFilePicker.modeSave, t("Сохранить как…"), cleanName(data?.name || "") || t("Картинка"), ext);
+        if (!file) {
+          return { ok: false, cancel: true };
+        }
+        let target = file.path;
+        if (!EDIT_IMG_RE.test(target)) {
+          target += "." + ext;
+        }
+        await write(target, data?.data);
+        rememberImage(target);
+        this.#imgPath = path = target;
+        return { ok: true, path, name: PathUtils.filename(path), folder: PathUtils.parent(path), mtime: await stamp() };
+      }
+      if (op === "copy") {
+        const bytes = Uint8Array.fromBase64(String(data?.data || ""));
+        const imgTools = Cc["@mozilla.org/image/tools;1"].getService(Ci.imgITools);
+        const img = imgTools.decodeImageFromArrayBuffer(bytes.buffer, "image/png");
+        const trans = Cc["@mozilla.org/widget/transferable;1"].createInstance(Ci.nsITransferable);
+        trans.init(null);
+        trans.addDataFlavor("image/png");
+        trans.setTransferData("image/png", img);
+        Services.clipboard.setData(trans, null, Ci.nsIClipboard.kGlobalClipboard);
+        return { ok: true };
+      }
+      if (op === "open") {
+        const file = await pickImage(this.browsingContext, Ci.nsIFilePicker.modeOpen, t("Открыть картинку"));
+        if (file && EDIT_IMG_RE.test(file.path)) {
+          rememberImage(file.path);
+          this.browsingContext.top.loadURI(Services.io.newURI(IMAGE_URL + "#" + encodeURIComponent(file.path)), {
+            triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(),
+          });
+        }
+        return null;
+      }
+    } catch (e) {
+      return { ok: false, error: e?.message || String(e) };
+    }
+    return null;
+  }
+
   #openFile(path) {
     remember(path);
-    this.browsingContext.top.loadURI(Services.io.newURI(PathUtils.toFileURI(path)), {
+    const url = CSV_RE.test(path) ? CSV_URL + "#" + encodeURIComponent(path) : PathUtils.toFileURI(path);
+    this.browsingContext.top.loadURI(Services.io.newURI(url), {
       triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(),
     });
   }
@@ -716,7 +995,7 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
   async #docs(op, data) {
     const spec = this.manager.documentURI?.spec || "";
     const fromDocs = spec === DOCS_URL;
-    const fromEditor = this.manager.documentURI?.schemeIs("file") && MD_RE.test(spec);
+    const fromEditor = (this.manager.documentURI?.schemeIs("file") && MD_RE.test(spec)) || spec.startsWith(CSV_URL + "#") || spec.startsWith(IMAGE_URL);
     if (!fromDocs && !(fromEditor && op === "home")) {
       return null;
     }
@@ -724,6 +1003,15 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
     try {
       if (op === "home") {
         this.browsingContext.top.loadURI(Services.io.newURI(DOCS_URL), {
+          triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(),
+        });
+        return null;
+      }
+      if (op === "options") {
+        return { image: imageEditorEnabled() };
+      }
+      if (op === "image") {
+        this.browsingContext.top.loadURI(Services.io.newURI(IMAGE_URL), {
           triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(),
         });
         return null;
@@ -736,7 +1024,7 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
         return out;
       }
       if (op === "open") {
-        const file = await pickFile(this.browsingContext, Ci.nsIFilePicker.modeOpen, t("Открыть документ Markdown"));
+        const file = await pickFile(this.browsingContext, Ci.nsIFilePicker.modeOpen, t("Открыть документ"));
         if (file) {
           this.#openFile(file.path);
         }
@@ -754,6 +1042,22 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
         if (!(await IOUtils.exists(path))) {
           const title = PathUtils.filename(path).replace(MD_RE, "");
           await IOUtils.writeUTF8(path, `# ${title}\n\n`);
+        }
+        this.#openFile(path);
+        return null;
+      }
+      if (op === "newCsv") {
+        const file = await pickFile(this.browsingContext, Ci.nsIFilePicker.modeSave, t("Новая таблица"), t("Таблица") + ".csv", true);
+        if (!file) {
+          return null;
+        }
+        let path = file.path;
+        if (!CSV_RE.test(path)) {
+          path += ".csv";
+        }
+        if (!(await IOUtils.exists(path))) {
+          const c = t("Столбец");
+          await IOUtils.writeUTF8(path, `\uFEFF${c} 1;${c} 2;${c} 3\r\n;;\r\n`);
         }
         this.#openFile(path);
         return null;
@@ -790,13 +1094,19 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
     if (msg.name.startsWith("HDDocs:")) {
       return this.#docs(msg.name.slice(7), msg.data);
     }
+    if (msg.name.startsWith("HDCsv:")) {
+      return this.#csv(msg.name.slice(6), msg.data);
+    }
+    if (msg.name.startsWith("HDImg:")) {
+      return this.#image(msg.name.slice(6), msg.data);
+    }
     if (msg.name.startsWith("HDNotes:")) {
       return this.#notes(msg.name.slice(8), msg.data);
     }
     if (msg.name === "PdfTweaks:studio-save") {
       // принимаем только со страницы Studio
       const spec = this.manager.documentURI?.spec || "";
-      if (!/^(resource:\/\/pdftweaks\/|chrome:\/\/fmstudio\/content\/)studio\.html/.test(spec)) {
+      if (!/^(resource:\/\/handdesign\/|chrome:\/\/fmstudio\/content\/)studio\.html/.test(spec)) {
         return null;
       }
       try {
@@ -810,7 +1120,7 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
     }
     if (msg.name === "PdfTweaks:studio-lang") {
       const spec = this.manager.documentURI?.spec || "";
-      if (!/^(resource:\/\/pdftweaks\/|chrome:\/\/fmstudio\/content\/)studio\.html/.test(spec)) {
+      if (!/^(resource:\/\/handdesign\/|chrome:\/\/fmstudio\/content\/)studio\.html/.test(spec)) {
         return null;
       }
       try {
@@ -823,7 +1133,7 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
     }
     if (msg.name === "PdfTweaks:theme-set") {
       const spec = this.manager.documentURI?.spec || "";
-      if (!/^(resource:\/\/pdftweaks\/|chrome:\/\/fmstudio\/content\/)studio\.html/.test(spec)) {
+      if (!/^(resource:\/\/handdesign\/|chrome:\/\/fmstudio\/content\/)studio\.html/.test(spec)) {
         return null;
       }
       try {

@@ -4,7 +4,7 @@
  * CSS и подключается как пользовательская таблица стилей ко всему браузеру
  * (окна, меню, новая вкладка) — изменения видны сразу, без перезапуска.
  *
- * Страница настроек: resource://pdftweaks/studio.html (импортирует SCHEMA
+ * Страница настроек: resource://handdesign/studio.html (импортирует SCHEMA
  * отсюда же, поэтому на верхнем уровне модуля нет обращений к Services).
  */
 
@@ -12,7 +12,7 @@ import { PARTS } from "resource://pdftweaks/themes/parts.sys.mjs";
 
 export const PREF = "floorp.modern.studio";
 // версия Hand Design — меняется вместе с VERSION (tools/build.sh проверяет)
-export const APP_VERSION = "2.0.0";
+export const APP_VERSION = "2.2.0";
 
 /* Описание всех настроек: из него рисуется страница, проверяются значения
    и собирается CSS. null = «как в теме». */
@@ -23,10 +23,10 @@ const DETAIL_THEMES = [["none", "Без особенностей"], ["ios", "iOS
 
 export const SCHEMA = [
   { group: "details", title: "Детали тем", items: [
-    { key: "dWindow", type: "select", label: "Окно и меню", hint: "Выделенная вкладка, пункты меню, плитки главного меню, стекло, кнопки окна — как в выбранной теме. Не выбрано — как в текущей теме", options: DETAIL_THEMES },
-    { key: "dClock", type: "select", label: "Часы на новой вкладке", hint: "Шрифт, размер, точки Nothing, окно Retro 98, фосфор Terminal, неон и т. д.", options: DETAIL_THEMES },
-    { key: "dWall", type: "select", label: "Фон новой вкладки", hint: "Огни Night Drive, точечная сетка Nothing, строки развёртки, бумага, неоновая сетка и т. д. Обои из Studio остаются поверх", options: DETAIL_THEMES },
-    { key: "dSearch", type: "select", label: "Поиск и ярлыки на новой вкладке", options: DETAIL_THEMES },
+    { key: "dWindow", type: "details", part: "window", label: "Окно и меню", hint: "Выделенная вкладка, пункты меню, плитки главного меню, стекло, кнопки окна — как в выбранной теме. Не выбрано — как в текущей теме", options: DETAIL_THEMES },
+    { key: "dClock", type: "details", part: "clock", label: "Часы на новой вкладке", hint: "Шрифт, размер, точки Nothing, окно Retro 98, фосфор Terminal, неон и т. д.", options: DETAIL_THEMES },
+    { key: "dWall", type: "details", part: "wall", label: "Фон новой вкладки", hint: "Огни Night Drive, точечная сетка Nothing, строки развёртки, бумага, неоновая сетка и т. д. Обои из Studio остаются поверх", options: DETAIL_THEMES },
+    { key: "dSearch", type: "details", part: "search", label: "Поиск и ярлыки на новой вкладке", options: DETAIL_THEMES },
   ] },
   { group: "colors", title: "Цвета", items: [
     { key: "accent", type: "color", label: "Акцент", hint: "Кнопки, выделение, ползунки" },
@@ -63,6 +63,11 @@ export const SCHEMA = [
     { key: "tabClose", type: "select", label: "Крестик на вкладке", options: [["always", "Всегда"], ["hover", "При наведении"], ["never", "Скрыть"]] },
     { key: "tabWeight", type: "range", label: "Жирность названия", min: 300, max: 800, step: 100 },
     { key: "tabsHide", type: "select", label: "Скрыть вкладки", hint: "«У края» — вкладки спрятаны и выезжают, когда подводите мышь к краю окна. «Полностью» — их не видно совсем (Alt+Shift+T — показать / спрятать). Не компактный вид, а скрытие целиком", options: [["edge", "У края"], ["always", "Полностью"]] },
+    { key: "tabPreview", type: "cards", label: "Превью при наведении", options: [
+      ["card", "Карточка", "Миниатюра, под ней название и адрес"],
+      ["compact", "Компактное", "Только название и адрес"],
+      ["wide", "Крупное", "Большая миниатюра"],
+    ] },
   ] },
   { group: "urlbar", title: "Адресная строка", items: [
     { key: "urlHeight", type: "range", label: "Высота", min: 28, max: 52, step: 1, unit: "px" },
@@ -146,9 +151,12 @@ export const SCHEMA = [
   ] },
   { group: "docs", title: "Документы", items: [
     { key: "mdEditor", type: "bool", label: "Редактор Markdown", hint: "Файлы .md открываются оформленными: просмотр, правка рядом, сохранение по Ctrl+S" },
+    { key: "csvEditor", type: "bool", label: "Редактор таблиц CSV", hint: "Файлы .csv и .tsv открываются таблицей вместо скачивания: правка ячеек, сортировка, поиск, сохранение по Ctrl+S" },
+    { key: "imgEditor", type: "bool", label: "Редактор картинок", hint: "Обрезка, поворот, стрелки, рамки, текст, размытие, сжатие и смена формата. Картинки с компьютера открываются в редакторе, в меню правой кнопки по картинке появляется «Редактировать картинку»" },
   ] },
   { group: "notes", title: "Заметки", items: [
-    { key: "notesLive", type: "bool", label: "Live Preview", hint: "Разметка (#, **, [ ]) видна только в строке с курсором. Выкл.: видна всегда" },
+    { key: "notesLive", type: "bool", label: "Live Preview", hint: "Вместо знаков разметки (#, **, [ ]) виден оформленный текст. Выкл.: виден исходный Markdown" },
+    { key: "notesMarks", type: "bool", label: "Показывать разметку под курсором", hint: "Как в Obsidian: знаки #, **, ``` видны в строке с курсором. Выкл.: всегда виден только оформленный текст" },
     { key: "notesSpell", type: "bool", label: "Проверка орфографии" },
     { key: "notesTitle", type: "bool", label: "Название над заметкой", hint: "Это имя файла: поменяли — файл переименовался" },
     { key: "notesWords", type: "bool", label: "Счётчик слов" },
@@ -234,7 +242,7 @@ export function sanitize(raw) {
         out[it.key] = v.toUpperCase();
       } else if (it.type === "range" && typeof v === "number" && isFinite(v)) {
         out[it.key] = Math.min(it.max, Math.max(it.min, v));
-      } else if ((it.type === "select" || it.type === "cards") && it.options.some(o => o[0] === v)) {
+      } else if ((it.type === "select" || it.type === "cards" || it.type === "details") && it.options.some(o => o[0] === v)) {
         out[it.key] = v;
       } else if (it.type === "bool" && typeof v === "boolean") {
         out[it.key] = v;
@@ -683,7 +691,13 @@ export function buildCss(cfgRaw) {
     chrome.push(`menupopup :is(menuitem, menu) { font-size: ${px(c.menuFont)} !important; }`);
   }
   if (c.menuIcons === false) {
-    chrome.push(`menupopup :is(menuitem, menu) > .menu-icon { display: none !important; }`);
+    chrome.push(`menupopup :is(menuitem, menu) > .menu-icon, menupopup :is(menuitem, menu):not([type])::before { display: none !important; }`);
+  }
+
+  if (c.tabPreview === "compact") {
+    chrome.push(`#tab-preview-panel { --panel-width: 260px !important; } #tab-preview-panel .tab-preview-thumbnail-container { display: none !important; } #tab-preview-panel .tab-preview-text-container { margin: 4px 8px !important; }`);
+  } else if (c.tabPreview === "wide") {
+    chrome.push(`#tab-preview-panel { --panel-width: 420px !important; } #tab-preview-panel .tab-preview-title { font-size: 14px !important; }`);
   }
 
   // Ctrl+Tab
@@ -814,10 +828,10 @@ export function buildCss(cfgRaw) {
   }
   if (has("clockPos")) {
     if (c.clockPos === "hidden") {
-      newtab.push(`${CLOCK} { display: none !important; } :root:has(#fm-clock) .outer-wrapper { padding-top: revert !important; }`);
+      newtab.push(`${CLOCK} { display: none !important; } :root:has(#fm-clock) :is(.outer-wrapper, .nova-outer-wrapper) { padding-top: revert !important; }`);
     } else if (c.clockPos === "center") {
       newtab.push(`${CLOCK} { top: 26vh !important; }`);
-      newtab.push(`.w-full.min-h-screen.flex.flex-col.justify-center.items-center { padding-top: 40vh !important; } :root:has(#fm-clock) .outer-wrapper { padding-top: 50vh !important; }`);
+      newtab.push(`.w-full.min-h-screen.flex.flex-col.justify-center.items-center { padding-top: 40vh !important; } :root:has(#fm-clock) :is(.outer-wrapper, .nova-outer-wrapper) { padding-top: 50vh !important; }`);
     } else {
       newtab.push(`${CLOCK} { top: 8vh !important; }`);
     }
@@ -843,7 +857,7 @@ export function buildCss(cfgRaw) {
   out.push(`@-moz-document url("about:newtab"), url("about:home"), url-prefix("chrome://noraneko-newtab/") {\n${boost(R + "\n" + newtab.join("\n"))}\n}`);
   if (R) {
     // PDF и встроенные страницы тоже берут акцент и скорость анимаций
-    out.push(`@-moz-document url-prefix("resource://pdf.js/"), url-prefix("about:"), url-prefix("resource://pdftweaks/"), url-prefix("chrome://fmstudio/") {\n${boost(R)}\n}`);
+    out.push(`@-moz-document url-prefix("resource://pdf.js/"), url-prefix("about:"), url-prefix("resource://handdesign/"), url-prefix("chrome://fmstudio/") {\n${boost(R)}\n}`);
   }
   const pdfVars = [];
   for (const [key, prop] of [["pdfBar", "--x-bar"], ["pdfWell", "--x-well"]]) {

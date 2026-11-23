@@ -8,9 +8,9 @@ try {
   dir.append("pdf-tweaks");
   if (dir.exists()) {
     const io = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-    io.getProtocolHandler("resource")
-      .QueryInterface(Ci.nsIResProtocolHandler)
-      .setSubstitution("pdftweaks", io.newFileURI(dir));
+    const res = io.getProtocolHandler("resource").QueryInterface(Ci.nsIResProtocolHandler);
+    res.setSubstitution("pdftweaks", io.newFileURI(dir));
+    res.setSubstitution("handdesign", io.newFileURI(dir));
 
     // 1. просмотрщик PDF: тема и рисование
     ChromeUtils.registerWindowActor("FloorpPdfTweaks", {

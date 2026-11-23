@@ -32,7 +32,113 @@ ICONS = {
 }
 
 icon_rules = "\n".join(
-    f"{sel} {{ list-style-image: {url} !important; }}" for sel, url in ICONS.items()
+    f"{sel} {{ list-style-image: {url} !important; }}\n"
+    f":is({sel}) > .toolbarbutton-icon, :is({sel}) > .toolbarbutton-badge-stack > .toolbarbutton-icon "
+    f"{{ list-style-image: none !important; min-width: 16px; min-height: 16px; background-color: currentColor !important; "
+    f"mask: {url.replace('context-fill', 'black')} center / 16px no-repeat !important; }}"
+    for sel, url in ICONS.items()
+)
+
+MI = {
+    "tab": "<rect x='3.5' y='5' width='17' height='14' rx='3'/><path d='M12 9v6M9 12h6'/>",
+    "window": "<rect x='3.5' y='4.5' width='17' height='15' rx='3'/><path d='M3.5 9h17'/>",
+    "private": "<path d='M3 10c3-1 5-1 9 0s6 1 9 0'/><circle cx='8' cy='14' r='2.5'/><circle cx='16' cy='14' r='2.5'/>",
+    "container": "<rect x='3.5' y='7' width='17' height='12.5' rx='2.5'/><path d='M9 7V5h6v2'/>",
+    "grid": "<rect x='4' y='4' width='7' height='7' rx='2'/><rect x='13' y='4' width='7' height='7' rx='2'/><rect x='4' y='13' width='7' height='7' rx='2'/><rect x='13' y='13' width='7' height='7' rx='2'/>",
+    "external": "<path d='M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5'/>",
+    "link": "<path d='M10 14a4 4 0 0 0 5.6 0l3-3a4 4 0 0 0-5.6-5.6l-1 1'/><path d='M14 10a4 4 0 0 0-5.6 0l-3 3a4 4 0 0 0 5.6 5.6l1-1'/>",
+    "copy": "<rect x='8.5' y='8.5' width='11' height='11' rx='2.5'/><path d='M15.5 8.5V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7.5a2 2 0 0 0 2 2h2.5'/>",
+    "cut": "<circle cx='6.5' cy='17.5' r='2.5'/><circle cx='17.5' cy='17.5' r='2.5'/><path d='M8.5 16L18 4M15.5 16L6 4'/>",
+    "paste": "<rect x='5' y='5' width='14' height='16' rx='2.5'/><path d='M9 5V3.5h6V5'/>",
+    "delete": "<path d='M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13'/>",
+    "selectall": "<rect x='4' y='4' width='16' height='16' rx='3' stroke-dasharray='3 2.5'/>",
+    "undo": "<path d='M9 7L4.5 11.5 9 16'/><path d='M4.5 11.5H15a4.5 4.5 0 0 1 0 9h-2'/>",
+    "redo": "<path d='M15 7l4.5 4.5L15 16'/><path d='M19.5 11.5H9a4.5 4.5 0 0 0 0 9h2'/>",
+    "save": "<path d='M12 3.5v11M7 10l5 5 5-5M4.5 20h15'/>",
+    "bookmark": "<path d='M12 3.8l2.5 5.1 5.6.8-4 3.9.9 5.6-5-2.6-5 2.6.9-5.6-4-3.9 5.6-.8z'/>",
+    "image": "<rect x='3.5' y='4.5' width='17' height='15' rx='3'/><circle cx='9' cy='10' r='1.8'/><path d='M20.5 16l-5-5L6 19.5'/>",
+    "video": "<rect x='2.5' y='6' width='13' height='12' rx='3'/><path d='M15.5 10.5l5-3v9l-5-3'/>",
+    "sound": "<path d='M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z'/><path d='M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11'/>",
+    "mute": "<path d='M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z'/><path d='M16 9.5l5 5M21 9.5l-5 5'/>",
+    "play": "<path d='M8 5.5v13a1 1 0 0 0 1.5.9l10.2-6.5a1 1 0 0 0 0-1.7L9.5 4.6A1 1 0 0 0 8 5.5z'/>",
+    "pause": "<path d='M8 5v14M16 5v14'/>",
+    "reload": "<path d='M20 12a8 8 0 1 1-2.35-5.65'/><path d='M20 4v5h-5'/>",
+    "send": "<path d='M21 3L10 14'/><path d='M21 3l-7 18-4-7-7-4z'/>",
+    "screenshot": "<path d='M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2'/>",
+    "search": "<circle cx='11' cy='11' r='6.5'/><path d='M20 20l-4.2-4.2'/>",
+    "translate": "<path d='M4 6h9M8.5 4v2M6 6c.5 3 2.5 5.5 5 7M11 6c-.5 3-2.5 6-6 8'/><path d='M13 20l3.5-8 3.5 8M14.2 17.5h4.6'/>",
+    "code": "<path d='M9 8l-4 4 4 4M15 8l4 4-4 4'/>",
+    "inspect": "<rect x='3.5' y='4.5' width='17' height='15' rx='3'/><path d='M8 10l2.5 2-2.5 2M12.5 15H16'/>",
+    "a11y": "<circle cx='12' cy='5' r='1.8'/><path d='M5 8.5l7 1.5 7-1.5M12 10v4.5M9 21l3-6.5 3 6.5'/>",
+    "print": "<path d='M7 9V3.5h10V9'/><rect x='3.5' y='9' width='17' height='8' rx='2.5'/><path d='M7 14h10v6.5H7z'/>",
+    "pin": "<path d='M9 4h6l-1 6 3 3H7l3-3z'/><path d='M12 13v7'/>",
+    "close": "<path d='M7 7l10 10M17 7L7 17'/>",
+    "group": "<rect x='3.5' y='8' width='17' height='11.5' rx='3'/><path d='M7 4.5h10'/>",
+    "move": "<path d='M5 12h14M13 6l6 6-6 6'/>",
+    "sleep": "<path d='M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z'/>",
+    "info": "<circle cx='12' cy='12' r='8.5'/><path d='M12 11v5M12 8h.01'/>",
+    "folder": "<path d='M3.5 7.5a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z'/>",
+    "edit": "<path d='M4 20l1.2-4.4L15.8 5a2.2 2.2 0 0 1 3.2 3.2L8.4 18.8z'/>",
+    "settings": "<circle cx='12' cy='12' r='3'/><path d='M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1'/>",
+    "flag": "<path d='M5 21V4h12l-2 4 2 4H5'/>",
+    "ai": "<path d='M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z'/><path d='M19 16l.6 1.8 1.9.7-1.9.6-.6 1.9-.6-1.9-1.9-.6 1.9-.7z'/>",
+    "key": "<circle cx='8' cy='15' r='4'/><path d='M11 12l9-9M16 7l3 3'/>",
+    "email": "<rect x='3.5' y='5.5' width='17' height='13' rx='2.5'/><path d='M4 7l8 6 8-6'/>",
+    "phone": "<path d='M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z'/>",
+    "split": "<rect x='3.5' y='4.5' width='17' height='15' rx='3'/><path d='M12 4.5v15'/>",
+    "fullscreen": "<path d='M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5'/>",
+    "pip": "<rect x='3.5' y='4.5' width='17' height='15' rx='3'/><rect x='12' y='12' width='6' height='5' rx='1'/>",
+    "loop": "<path d='M17 4l3 3-3 3M4 12v-2a3 3 0 0 1 3-3h13M7 20l-3-3 3-3M20 12v2a3 3 0 0 1-3 3H4'/>",
+    "speed": "<path d='M4 16a8 8 0 1 1 16 0'/><path d='M12 16l4-5'/>",
+    "controls": "<path d='M4 7h10M18 7h2M4 17h4M12 17h8'/><circle cx='16' cy='7' r='2'/><circle cx='10' cy='17' r='2'/>",
+    "desktop": "<rect x='3.5' y='4.5' width='17' height='12' rx='2.5'/><path d='M9 20h6M12 16.5V20'/>",
+    "note": "<path d='M5 4.5h14v15H5z'/><path d='M8.5 9h7M8.5 12.5h7M8.5 16h4'/>",
+    "eye": "<path d='M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z'/><circle cx='12' cy='12' r='2.8'/>",
+    "marker": "<path d='M9.5 10.5l5-5.5 4.5 4.5-5.5 5z'/><path d='M9.5 10.5L6 14l4 4 3.5-3.5M6 14l-2 4h4M14 20.5h7'/>",
+    "sort": "<path d='M7 4v16M4 17l3 3 3-3M14 6h6M14 12h4M14 18h2'/>",
+    "line": "<path d='M4 12h16'/>",
+    "text": "<path d='M5 7V4.5h14V7M12 4.5v15M9 19.5h6'/>",
+    "history": "<circle cx='12' cy='12' r='8.5'/><path d='M12 7.5V12l3 2'/>",
+    "check": "<path d='M5 12.5l4.5 4.5L19 7.5'/>",
+    "puzzle": "<path d='M9.5 4.5a2 2 0 0 1 4 0V6H17a1 1 0 0 1 1 1v3.5h1.5a2 2 0 0 1 0 4H18V18a1 1 0 0 1-1 1h-3.5v-1.5a2 2 0 0 0-4 0V19H6a1 1 0 0 1-1-1v-3.5h1.5a2 2 0 0 0 0-4H5V7a1 1 0 0 1 1-1h3.5z'/>",
+}
+
+# порядок важен: правило ниже перекрывает правило выше
+MI_RULES = [
+    ("new", "tab"), ("open", "tab"), ("tab", "tab"), ("frame", "window"), ("window", "window"),
+    ("link", "link"), ("copy", "copy"), ("duplicate", "copy"), ("cut", "cut"), ("paste", "paste"), ("select", "selectall"),
+    ("save", "save"), ("bookmark", "bookmark"), ("reload", "reload"), ("refresh", "reload"),
+    ("image", "image"), ("imagetext", "text"), ("video", "video"), ("audio", "sound"),
+    ("play", "play"), ("pause", "pause"), ("mute", "mute"), ("unmute", "sound"), ("playbackrate", "speed"), ("loop", "loop"),
+    ("controls", "controls"), ("fullscreen", "fullscreen"), ("pictureinpicture", "pip"), ("mini", "pip"),
+    ("send", "send"), ("share", "send"), ("device", "send"), ("screenshot", "screenshot"),
+    ("search", "search"), ("engine", "search"), ("translate", "translate"), ("source", "code"), ("goToLine", "code"),
+    ("inspect", "inspect"), ("a11y", "a11y"), ("print", "print"), ("pin", "pin"), ("group", "group"),
+    ("move", "move"), ("position", "move"), ("unload", "sleep"), ("info", "info"), ("desc", "info"), ("learnmore", "info"),
+    ("folder", "folder"), ("edit", "edit"), ("manage", "settings"), ("customize", "settings"),
+    ("chat", "ai"), ("aitab", "ai"), ("genai", "ai"), ("smartwindow", "ai"), ("login", "key"), ("password", "key"), ("megalist", "key"),
+    ("relay", "email"), ("email", "email"), ("phone", "phone"), ("split", "split"), ("vertical-tabs", "split"),
+    ("background", "desktop"), ("note", "note"), ("comment", "note"), ("reveal", "eye"), ("preview", "eye"), ("highlight", "marker"),
+    ("sort", "sort"), ("separator", "line"), ("spell", "text"), ("dictionar", "text"), ("bidi", "text"),
+    ("history", "history"), ("allow", "check"), ("container", "container"), ("workspace", "grid"),
+    ("private", "private"), ("external", "external"), ("extension", "puzzle"), ("report", "flag"),
+    ("delete", "delete"), ("remove", "delete"), ("forget", "delete"), ("clear", "delete"), ("close", "close"), ("hide-sidebar", "close"),
+    ("undo", "undo"), ("reopen", "undo"), ("redo", "redo"),
+    ("saveimage", "save"), ("savevideo", "save"), ("saveaudio", "save"), ("reloadimage", "reload"), ("copyimage", "copy"),
+    ("videourl", "link"), ("audiourl", "link"), ("link-to-highlight", "link"), ("stripOnShare", "link"),
+    ("reopenInContainer", "container"), ("paste_group", "paste"), ("manage-extension", "settings"), ("ManageExtension", "settings"),
+    ("unpin-extension", "pin"), ("ToNewGroup", "group"), ("TabToGroup", "group"),
+]
+
+def _mi_url(body):
+    return ("url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' "
+            "stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'>" + body + "</svg>\")")
+
+MI_ITEM = ':is(menupopup:not(#ContentSelectDropdown *, menulist *), menupopup:not(#ContentSelectDropdown *, menulist *) > menugroup) > :is(menuitem, menu):not([type="checkbox"], [type="radio"], .menuitem-iconic, .menu-iconic, .bookmark-item)'
+menu_icon_rules = "\n".join(
+    [MI_ITEM + "::before { content: \"\"; flex: none; width: 16px; height: 16px; margin-inline-end: 10px; "
+     "background-color: currentColor; opacity: .75; mask: var(--fm-mi, linear-gradient(transparent, transparent)) center / 16px no-repeat; }"]
+    + [f'{MI_ITEM}[id*="{k}" i] {{ --fm-mi: {_mi_url(MI[v])}; }}' for k, v in MI_RULES]
 )
 
 TOKENS = r"""
@@ -199,6 +305,33 @@ toolbarbutton:is([open], [checked]) > :is(.toolbarbutton-icon, .toolbarbutton-ba
   background-image: none !important;
 }
 #panel-sidebar-splitter, #sidebar-splitter { border: 0 !important; }
+.sidebar-splitter:hover { background-color: color-mix(in srgb, var(--fm-accent) 45%, transparent) !important; }
+:root { --toolbarbutton-icon-fill-attention: var(--fm-accent) !important; }
+#downloads-button[progress] > .toolbarbutton-badge-stack > #downloads-indicator-anchor > #downloads-indicator-icon {
+  visibility: visible !important;
+  fill: var(--fm-accent) !important;
+  list-style-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3.5v11'/><path d='M7 10l5 5 5-5'/></svg>") !important;
+}
+#downloads-button > .toolbarbutton-badge-stack { position: relative; }
+#downloads-button > .toolbarbutton-badge-stack > #downloads-indicator-progress-outer {
+  position: absolute;
+  grid-area: auto !important;
+  inset-inline: calc(50% - 5.5px) auto !important;
+  inset-block: calc(50% + 4.5px) auto !important;
+  justify-content: flex-start !important;
+  width: 11px !important;
+  height: 2px !important;
+  margin: 0 !important;
+  border-radius: 999px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--fm-ink) 22%, transparent) !important;
+}
+#downloads-indicator-progress-inner {
+  width: var(--download-progress-pcent) !important;
+  height: 100% !important;
+  border-radius: inherit !important;
+  background: var(--fm-accent) !important;
+}
 
 menupopup, panel {
   --panel-background: var(--fm-menu) !important;
@@ -239,6 +372,18 @@ tooltip {
 findbar { border-top: 0 !important; background: var(--fm-frame) !important; }
 findbar .findbar-textbox { border-radius: 999px !important; }
 .notificationbox-stack notification-message, .infobar { border-radius: 18px !important; }
+:is(moz-message-bar, notification-message) {
+  --fm-mb: var(--fm-accent);
+  --message-bar-background-color: color-mix(in srgb, var(--fm-mb) 12%, var(--fm-bar)) !important;
+  --message-bar-text-color: var(--fm-ink) !important;
+  --message-bar-icon-color: var(--fm-mb) !important;
+  --message-bar-border-color: color-mix(in srgb, var(--fm-mb) 22%, var(--fm-line)) !important;
+  --link-color: var(--fm-accent) !important;
+  --link-color-hover: var(--fm-accent) !important;
+}
+:is(moz-message-bar, notification-message)[type="warning"] { --fm-mb: #f5a623; }
+:is(moz-message-bar, notification-message):is([type="error"], [type="critical"]) { --fm-mb: #e5484d; }
+:is(moz-message-bar, notification-message)[type="success"] { --fm-mb: #30a46c; }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
@@ -354,11 +499,11 @@ moz-urlbar:not([focused], [open]) .urlbar-input { text-align: center !important;
   font: 500 13.5px var(--fm-font);
   box-shadow: var(--fm-shine), var(--fm-pop);
   border: 1px solid var(--fm-line);
-  opacity: 0; transform: translateY(14px) scale(.96);
+  opacity: 0; transform: translateY(14px);
   transition: opacity .28s ease, transform .35s cubic-bezier(.2, .9, .25, 1.2);
 }
 .fm-toast.fm-in { opacity: 1; transform: none; }
-.fm-toast.fm-out { opacity: 0; transform: translateY(8px) scale(.98); }
+.fm-toast.fm-out { opacity: 0; transform: translateY(8px); }
 .fm-toast-dot {
   width: 9px; height: 9px; border-radius: 50%; background: var(--fm-accent);
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--fm-accent) 22%, transparent);
@@ -751,7 +896,7 @@ menupopup > :is(menuitem, menu)[_moz-menuactive]:not([disabled]) {
     padding: 10px 12px 8px !important;
     background: transparent !important;
   }
-  :is(search-textbox, moz-input-search, input[type="search"], #search-box) {
+  :is(search-textbox, input[type="search"], #search-box):not(moz-input-search) {
     border-radius: 999px !important;
     border: 0 !important;
     background-color: color-mix(in srgb, currentColor 9%, transparent) !important;
@@ -759,9 +904,16 @@ menupopup > :is(menuitem, menu)[_moz-menuactive]:not([disabled]) {
     padding-inline: 12px !important;
     outline: none !important;
   }
-  :is(search-textbox, moz-input-search, input[type="search"], #search-box):focus-within {
+  :is(search-textbox, input[type="search"], #search-box):not(moz-input-search):focus-within {
     outline: 2px solid var(--fm-accent, AccentColor) !important;
     outline-offset: -2px !important;
+  }
+  moz-input-search {
+    --input-text-border-radius: 999px !important;
+    --input-text-border-color: transparent !important;
+    --input-text-background-color: color-mix(in srgb, currentColor 9%, transparent) !important;
+    --input-text-min-height: 36px !important;
+    outline: none !important;
   }
   tree, #bookmarks-view, #historyTree {
     background-color: transparent !important;
@@ -855,6 +1007,81 @@ menupopup > :is(menuitem, menu)[_moz-menuactive]:not([disabled]) {
   #minimize:hover { background-color: var(--fm-press) !important; }
   .separator { border-inline-end-color: var(--fm-line) !important; }
 }
+
+tab-group {
+  --fm-group: color-mix(in oklab, var(--tab-group-color) 62%, var(--fm-muted));
+  --tab-group-line-color: color-mix(in oklab, var(--fm-group) 55%, transparent) !important;
+}
+#tabbrowser-tabs[orient="vertical"] tab-group .tab-group-label-hover-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-radius: var(--tab-border-radius) !important;
+}
+#tabbrowser-tabs[orient="vertical"] tab-group .tab-group-label {
+  position: relative !important;
+  background: color-mix(in oklab, var(--fm-group) 20%, transparent) !important;
+  color: var(--fm-group) !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: calc(var(--tab-border-radius) - 2px) !important;
+}
+#tabbrowser-tabs[orient="vertical"][expanded] tab-group .tab-group-label-hover-highlight {
+  width: auto !important;
+  background: right 10px center / 12px no-repeat url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>") !important;
+  -moz-context-properties: fill;
+  fill: var(--fm-muted);
+}
+#tabbrowser-tabs[orient="vertical"][expanded] tab-group[collapsed] .tab-group-label-hover-highlight {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M9 6l6 6-6 6'/></svg>") !important;
+  background-color: color-mix(in oklab, var(--fm-group) 10%, transparent) !important;
+}
+#tabbrowser-tabs[orient="vertical"][expanded] tab-group .tab-group-label-hover-highlight:hover { background-color: var(--fm-hover) !important; }
+#tabbrowser-tabs[orient="vertical"][expanded] tab-group .tab-group-label {
+  width: auto !important;
+  max-width: none !important;
+  height: var(--tab-min-height) !important;
+  padding: 0 32px 0 30px !important;
+  background: none !important;
+  color: var(--fm-ink) !important;
+  text-align: start !important;
+  font: 600 12.5px var(--fm-font) !important;
+  line-height: var(--tab-min-height) !important;
+}
+#tabbrowser-tabs[orient="vertical"][expanded] tab-group .tab-group-label::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 12px;
+  top: calc(50% - 4.5px);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--fm-group);
+}
+#tabbrowser-tabs[orient="vertical"][expanded] tab-group:is(:not([label]), [label=""], [label="\200B"]) .tab-group-label { font-size: 0 !important; }
+#tabbrowser-tabs[orient="vertical"][expanded] tab-group:is(:not([label]), [label=""], [label="\200B"]) .tab-group-label::after {
+  content: var(--fm-group-noname, "");
+  display: inline-block;
+  font: 500 12.5px var(--fm-font);
+  line-height: var(--tab-min-height);
+  color: var(--fm-muted);
+}
+#tabbrowser-tabs[orient="vertical"] .tab-group-overflow-count { color: var(--fm-muted) !important; background: none !important; }
+#tab-preview-panel {
+  --panel-background: var(--fm-bar) !important;
+  --panel-color: var(--fm-ink) !important;
+  --panel-border-color: var(--fm-line) !important;
+  --panel-border-radius: 18px !important;
+  --panel-padding: 6px !important;
+  --panel-width: 300px !important;
+}
+#tab-preview-panel .tab-preview-content-main { padding: 0 !important; gap: 8px !important; }
+#tab-preview-panel .tab-preview-thumbnail-container { order: 1 !important; width: 100% !important; border-radius: 12px; }
+#tab-preview-panel .tab-preview-thumbnail-container > canvas { border: 0 !important; border-radius: 12px !important; }
+#tab-preview-panel .tab-preview-text-container { order: 2 !important; display: grid; gap: 2px; margin: 0 8px 6px !important; }
+#tab-preview-panel .tab-preview-title { font: 600 13px/1.35 var(--fm-font) !important; color: var(--fm-ink) !important; }
+#tab-preview-panel .tab-preview-uri { font: 12px/1.3 var(--fm-font) !important; color: var(--fm-muted) !important; }
+#tab-preview-panel .tab-preview-pid-activeness { font: 11px var(--fm-font) !important; color: var(--fm-muted) !important; }
+@MENUICONS@
 /* ======================= FLOORP-MODERN END ======================= */
 """
 
@@ -972,6 +1199,16 @@ CONTENT = r"""
   input[type="radio"] { accent-color: var(--fm-accent) !important; }
   richlistbox, .list, tree { border-radius: 18px !important; border-color: var(--fm-line) !important; }
   dialog, .dialogBox { border-radius: 26px !important; }
+  :is(moz-message-bar, notification-message) {
+    --fm-mb: var(--fm-accent);
+    --message-bar-background-color: color-mix(in srgb, var(--fm-mb) 12%, var(--fm-bar)) !important;
+    --message-bar-text-color: var(--fm-ink) !important;
+    --message-bar-icon-color: var(--fm-mb) !important;
+    --message-bar-border-color: color-mix(in srgb, var(--fm-mb) 22%, var(--fm-line)) !important;
+  }
+  :is(moz-message-bar, notification-message)[type="warning"] { --fm-mb: #f5a623; }
+  :is(moz-message-bar, notification-message):is([type="error"], [type="critical"]) { --fm-mb: #e5484d; }
+  :is(moz-message-bar, notification-message)[type="success"] { --fm-mb: #30a46c; }
 }
 @-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
   :root {
@@ -1018,7 +1255,7 @@ CONTENT = r"""
   #fm-clock .flex-col { display: flex !important; }
   #fm-clock { font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; color: #fff !important; pointer-events: none !important; }
   :root:has(#fm-clock) :is(.logo-and-wordmark-wrapper, .logo-and-wordmark) { display: none !important; }
-  :root:has(#fm-clock) .outer-wrapper { padding-top: 36vh !important; }
+  :root:has(#fm-clock) :is(.outer-wrapper, .nova-outer-wrapper) { padding-top: 36vh !important; }
   .bg-cover[style*="noraneko-newtab"] { display: none !important; }
 
   .flex.justify-center.items-center.mb-8:has(> img[alt="Logo"]) { display: none !important; }
@@ -1297,6 +1534,21 @@ CONTENT = r"""
 #screenshots-component #screenshots-cancel-button:hover { background: #fff !important; color: #000 !important; }
 #screenshots-component .preview-instructions { font: 600 22px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; }
 
+@-moz-document url-prefix("chrome://noraneko-modal-child/") {
+  [class*="bg-[#0061E0]"] {
+    background-color: AccentColor !important;
+    color: AccentColorText !important;
+    border-radius: 999px !important;
+    box-shadow: none !important;
+  }
+  [class*="bg-[#0061E0]"]:hover { background-color: color-mix(in srgb, AccentColor 85%, black) !important; }
+  :is(input, select, textarea, button):focus-visible {
+    outline: 2px solid AccentColor !important;
+    outline-offset: 1px !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+}
 @-moz-document url-prefix("chrome://noraneko-settings/") {
   :root, :root[data-theme], .floorp-standard-ui {
     --floorp-brand: AccentColor !important;
@@ -1365,7 +1617,7 @@ CONTENT = r"""
     padding: 10px 12px 8px !important;
     background: transparent !important;
   }
-  :is(search-textbox, moz-input-search, input[type="search"], #search-box) {
+  :is(search-textbox, input[type="search"], #search-box):not(moz-input-search) {
     border-radius: 999px !important;
     border: 0 !important;
     background-color: color-mix(in srgb, currentColor 9%, transparent) !important;
@@ -1373,9 +1625,16 @@ CONTENT = r"""
     padding-inline: 12px !important;
     outline: none !important;
   }
-  :is(search-textbox, moz-input-search, input[type="search"], #search-box):focus-within {
+  :is(search-textbox, input[type="search"], #search-box):not(moz-input-search):focus-within {
     outline: 2px solid var(--fm-accent, AccentColor) !important;
     outline-offset: -2px !important;
+  }
+  moz-input-search {
+    --input-text-border-radius: 999px !important;
+    --input-text-border-color: transparent !important;
+    --input-text-background-color: color-mix(in srgb, currentColor 9%, transparent) !important;
+    --input-text-min-height: 36px !important;
+    outline: none !important;
   }
   tree, #bookmarks-view, #historyTree {
     background-color: transparent !important;
@@ -1419,7 +1678,7 @@ CONTENT = r"""
 /* ======================= FLOORP-MODERN END ======================= */
 """
 
-chrome_css = CHROME.replace("@TOKENS@", TOKENS).replace("@ICONS@", icon_rules)
+chrome_css = CHROME.replace("@TOKENS@", TOKENS).replace("@ICONS@", icon_rules).replace("@MENUICONS@", menu_icon_rules)
 content_css = CONTENT.replace("@TOKENS@", TOKENS.replace("\n  ", "\n    "))
 
 # Цвет акцента можно переопределить в установщике: везде, где стоит системный

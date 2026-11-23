@@ -36,9 +36,8 @@ text = f"""<div align="center">
 
 | | |
 |---|---|
-| ![One UI]({IMG}theme-oneui.jpg) | ![iOS]({IMG}theme-ios.jpg) |
-| ![Night Drive]({IMG}theme-nightdrive.jpg) | ![Cyberpunk]({IMG}theme-cyber.jpg) |
-| ![Wallpapers]({IMG}wallpaper-picker.jpg) | ![Studio]({IMG}studio-menus.jpg) |
+| ![Notes]({IMG}feature-notes.jpg) | ![Theme details]({IMG}feature-details.jpg) |
+| ![PDF and Markdown]({IMG}feature-docs.jpg) | ![24 themes]({IMG}themes.jpg) |
 
 ## Установка / Install
 

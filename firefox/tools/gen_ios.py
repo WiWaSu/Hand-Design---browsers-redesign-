@@ -49,7 +49,7 @@ GLASS_TOKENS = r"""
   --fm-frame: light-dark(#EEF1F8, #05060B) !important;
   --fm-bar: light-dark(#FFFFFF, #1C1C1E) !important;
   --fm-field: light-dark(rgb(255 255 255 / .7), rgb(255 255 255 / .1)) !important;
-  --fm-menu: light-dark(rgb(250 250 253 / .94), rgb(30 30 34 / .93)) !important;
+  --fm-menu: light-dark(rgb(250 250 253 / .96), rgb(30 30 34 / .96)) !important;
   --fm-ink: light-dark(#000000, #FFFFFF) !important;
   --fm-muted: light-dark(rgb(60 60 67 / .62), rgb(235 235 245 / .6)) !important;
   --fm-line: light-dark(rgb(60 60 67 / .14), rgb(255 255 255 / .1)) !important;

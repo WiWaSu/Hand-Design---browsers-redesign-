@@ -23,7 +23,7 @@
   # или путь к своей картинке (jpg, png, webp)
   [string]$Wall = "keep",
   # включённые функции через запятую
-  [string]$Features = "nowbar,progress,center,clock,wallpaper,notes",
+  [string]$Features = "nowbar,progress,center,clock,wallpaper,notes,files",
   # язык установщика и всего Hand Design в браузере: ask — как в Windows (в окне есть кнопка языка)
   [ValidateSet("ask", "ru", "en", "uk", "de", "fr", "es", "pt", "pl", "tr", "zh")]
   [string]$Lang = "ask",
@@ -33,6 +33,7 @@
   [string]$Dirs = "",
   [string]$FloorpDir = "",
   [string]$FirefoxDir = "",
+  [string]$RegRoot = "HKCU:\Software",
   [switch]$SkipAdmin
 )
 
@@ -40,7 +41,7 @@ $ErrorActionPreference = "Stop"
 try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch {}
 
 # версия установщика (меняется вместе с файлом VERSION и CHANGELOG.md)
-$Version = "2.0.0"
+$Version = "2.2.0"
 $Here = $PSScriptRoot
 $Utf8 = New-Object System.Text.UTF8Encoding($false)
 # ---------------------------------------------------------------- языки
@@ -296,7 +297,7 @@ function Set-PrefLine($text, $name, $literal) {
 function New-Options {
   return @{
     Theme = "oneui"; Pdf = $true; Accent = "windows"; Mode = "keep"; Corners = "theme"; Motion = "apple"; Wall = "keep"; WallFile = ""
-    NowBar = $true; Progress = $true; Center = $true; Clock = $true; Wallpaper = $true; Notes = $true
+    NowBar = $true; Progress = $true; Center = $true; Clock = $true; Wallpaper = $true; Notes = $true; Files = $true
   }
 }
 function Get-OnAccent($hex) {
@@ -499,6 +500,56 @@ function Close-Browser($key) {
 }
 
 # ================================================================ установка / удаление
+# ---------------------------------------------------------------- файлы .md, .csv, .pdf
+# Windows не даёт программе назначить себя «по умолчанию» — только добавить себя в «Открыть с помощью»
+# и в «Приложения по умолчанию». Сам выбор человек делает в Параметрах.
+$FileTypes = [ordered]@{
+  ".md" = "HandDesign.md"; ".markdown" = "HandDesign.md"
+  ".csv" = "HandDesign.csv"; ".tsv" = "HandDesign.csv"
+  ".pdf" = "HandDesign.pdf"
+}
+$FileTypeNames = @{ "HandDesign.md" = "Markdown"; "HandDesign.csv" = "CSV"; "HandDesign.pdf" = "PDF" }
+$script:FilesRegistered = $false
+
+function Set-FileTypes($exe, $browserName) {
+  $classes = Join-Path $RegRoot "Classes"
+  foreach ($id in $FileTypeNames.Keys) {
+    $key = Join-Path $classes $id
+    New-Item -Path (Join-Path $key "shell\open\command") -Force | Out-Null
+    New-Item -Path (Join-Path $key "DefaultIcon") -Force | Out-Null
+    Set-Item -Path $key -Value ("{0} ({1})" -f $FileTypeNames[$id], $browserName)
+    Set-Item -Path (Join-Path $key "DefaultIcon") -Value ('"{0}",0' -f $exe)
+    Set-Item -Path (Join-Path $key "shell\open\command") -Value ('"{0}" "%1"' -f $exe)
+  }
+  $caps = Join-Path $RegRoot "HandDesign\Capabilities"
+  New-Item -Path (Join-Path $caps "FileAssociations") -Force | Out-Null
+  New-ItemProperty -Path $caps -Name "ApplicationName" -Value ("Hand Design ({0})" -f $browserName) -PropertyType String -Force | Out-Null
+  New-ItemProperty -Path $caps -Name "ApplicationDescription" -Value (T "Markdown, таблицы CSV и PDF в браузере" "Markdown, CSV tables and PDF in the browser") -PropertyType String -Force | Out-Null
+  foreach ($ext in $FileTypes.Keys) {
+    $owp = Join-Path $classes "$ext\OpenWithProgids"
+    New-Item -Path $owp -Force | Out-Null
+    New-ItemProperty -Path $owp -Name $FileTypes[$ext] -Value "" -PropertyType String -Force | Out-Null
+    New-ItemProperty -Path (Join-Path $caps "FileAssociations") -Name $ext -Value $FileTypes[$ext] -PropertyType String -Force | Out-Null
+  }
+  $reg = Join-Path $RegRoot "RegisteredApplications"
+  New-Item -Path $reg -Force | Out-Null
+  New-ItemProperty -Path $reg -Name "Hand Design" -Value "Software\HandDesign\Capabilities" -PropertyType String -Force | Out-Null
+  $script:FilesRegistered = $true
+}
+
+function Remove-FileTypes {
+  $classes = Join-Path $RegRoot "Classes"
+  foreach ($id in $FileTypeNames.Keys) {
+    Remove-Item -Path (Join-Path $classes $id) -Recurse -Force -ErrorAction SilentlyContinue
+  }
+  foreach ($ext in $FileTypes.Keys) {
+    Remove-ItemProperty -Path (Join-Path $classes "$ext\OpenWithProgids") -Name $FileTypes[$ext] -Force -ErrorAction SilentlyContinue
+  }
+  Remove-Item -Path (Join-Path $RegRoot "HandDesign") -Recurse -Force -ErrorAction SilentlyContinue
+  Remove-ItemProperty -Path (Join-Path $RegRoot "RegisteredApplications") -Name "Hand Design" -Force -ErrorAction SilentlyContinue
+  $script:FilesRegistered = $false
+}
+
 function Invoke-Modern($action, $keys, $o) {
   $ok = $true
   $install = $action -ne "uninstall"
@@ -622,6 +673,19 @@ function Invoke-Modern($action, $keys, $o) {
       Say ((T "  ✗ ошибка: " "  ✗ error: ") + $_.Exception.Message) Red
       $ok = $false
     }
+  }
+  try {
+    $first = @($keys | Where-Object { $found[$_] }) | Select-Object -First 1
+    $files = $(if ($action -eq "update" -and $first) { $installed[$first].Options.Files } else { $o.Files })
+    if ($install -and $first -and $files -ne $false) {
+      Set-FileTypes (Join-Path $found[$first] $Browsers[$first].Exe) $Browsers[$first].Name
+      Say ""
+      Say ((T "Файлы .md, .csv и .pdf: {0} есть в «Открыть с помощью». Сделать его программой по умолчанию — Параметры → Приложения → Приложения по умолчанию → Hand Design." "Files .md, .csv and .pdf: {0} is in “Open with”. To make it the default, go to Settings → Apps → Default apps → Hand Design.") -f $Browsers[$first].Name) Green
+    } else {
+      Remove-FileTypes
+    }
+  } catch {
+    Say ((T "  ✗ типы файлов: " "  ✗ file types: ") + $_.Exception.Message) Yellow
   }
   return $ok
 }
@@ -1125,6 +1189,7 @@ function Show-Gui {
           <TextBlock x:Name="DoneTitle" Foreground="{StaticResource Ink}" FontSize="28" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,26,0,0"/>
           <TextBlock x:Name="DoneText" Foreground="{StaticResource Muted}" FontSize="14.5" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Margin="20,8,20,0"/>
           <Button x:Name="DoneBtn" Style="{StaticResource Primary}" Margin="0,30,0,0"/>
+          <Button x:Name="DoneFilesBtn" Style="{StaticResource Link}" Margin="0,14,0,0" HorizontalAlignment="Center" Visibility="Collapsed"/>
           <Button x:Name="DoneLogBtn" Style="{StaticResource Link}" Margin="0,8,0,0" HorizontalAlignment="Center"/>
         </StackPanel>
       </Grid>
@@ -1232,6 +1297,7 @@ public static extern int DwmSetWindowAttribute(System.IntPtr hwnd, int attr, ref
   (& $get "UninstallBtn").Content = T "Удалить оформление" "Remove theme"
   (& $get "DoneBtn").Content = T "Закрыть" "Close"
   (& $get "DoneLogBtn").Content = T "Показать подробности" "Show details"
+  (& $get "DoneFilesBtn").Content = T "Открывать .md, .csv и .pdf этим браузером…" "Open .md, .csv and .pdf with this browser…"
 
   # ---------- акцент ----------
   $currentAccent = {
@@ -1414,6 +1480,7 @@ public static extern int DwmSetWindowAttribute(System.IntPtr hwnd, int attr, ref
     @("Clock",     (T "Часы на новой вкладке" "New tab clock"),   (T "Большие часы и дата на стартовой странице" "Big clock and date on the start page")),
     @("Wallpaper", (T "Живые обои" "Animated wallpaper"),         (T "Медленное движение фона новой вкладки" "Slow motion of the new tab background")),
     @("Notes",     (T "Заметки" "Notes"),                       (T "Свой блокнот: Alt+Shift+N или меню ☰, заметки — файлы .md в выбранной папке" "Notebook: Alt+Shift+N or the ☰ menu, notes are .md files in a folder you pick")),
+    @("Files",     (T "Открывать файлы в браузере" "Open files in the browser"), (T "Браузер появится в «Открыть с помощью» для .md, .csv и .pdf" "The browser shows up in “Open with” for .md, .csv and .pdf")),
     @("Pdf",       (T "Новый просмотрщик PDF" "New PDF viewer"),  (T "Панель, темы страниц, рисование как в Edge, своя палитра" "Toolbar, page themes, Edge-style ink, own palette"))
   )
   $first = $true
@@ -1493,11 +1560,14 @@ public static extern int DwmSetWindowAttribute(System.IntPtr hwnd, int attr, ref
     $main = & $get "MainPanel"; $done = & $get "DonePanel"
     (& $get "DoneTitle").Text = $(if ($action -eq "install") { T "Готово!" "All set!" } elseif ($action -eq "update") { (T "Обновлено до v{0}" "Updated to v{0}") -f $Version } else { T "Оформление удалено" "Theme removed" })
     (& $get "DoneText").Text = $(if ($action -eq "update") { T "Перезапустите браузер. Тема и настройки остались прежними." "Restart the browser. Your theme and settings are unchanged." } elseif ($action -eq "install") { T "Откройте браузер — он уже в новом виде. Поменять тему или настройки можно, запустив установщик ещё раз." "Open the browser — it already has the new look. Run setup again to change the theme or settings." } else { T "После перезапуска браузер выглядит как раньше." "The browser looks as before after a restart." })
+    $filesBtn = & $get "DoneFilesBtn"
+    $filesBtn.Visibility = $(if ($action -ne "uninstall" -and $script:FilesRegistered) { "Visible" } else { "Collapsed" })
     $done.MinHeight = $main.ActualHeight
     $main.Visibility = "Collapsed"
     $done.Visibility = "Visible"
     $done.Opacity = 1
   }
+  (& $get "DoneFilesBtn").Add_Click({ Start-Process "ms-settings:defaultapps?registeredAppUser=Hand%20Design" })
   (& $get "DoneLogBtn").Add_Click({
     (& $get "DonePanel").Visibility = "Collapsed"
     (& $get "MainPanel").Visibility = "Visible"
@@ -1663,7 +1733,7 @@ if ($Action -eq "install") {
   if ($Wall -match '[\\/.]') { $o.WallFile = $Wall; $o.Wall = "custom" } else { $o.Wall = $Wall }
   $on = @($Features -split "," | ForEach-Object { $_.Trim().ToLower() })
   $o.NowBar = $on -contains "nowbar"; $o.Progress = $on -contains "progress"; $o.Center = $on -contains "center"
-  $o.Clock = $on -contains "clock"; $o.Wallpaper = $on -contains "wallpaper"; $o.Notes = $on -contains "notes"
+  $o.Clock = $on -contains "clock"; $o.Wallpaper = $on -contains "wallpaper"; $o.Notes = $on -contains "notes"; $o.Files = $on -contains "files"
 }
 $ok = Invoke-Modern $Action $keys $(if ($installed) { $installed } else { $o })
 Say ""
