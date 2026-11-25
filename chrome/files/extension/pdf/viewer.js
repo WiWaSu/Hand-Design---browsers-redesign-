@@ -21,7 +21,7 @@ const root = document.documentElement;
 const params = new URLSearchParams(location.search);
 const fileUrl = params.get("file") || "";
 let S = await load();
-setLang(S.lang || "");
+await setLang(S.lang || "");
 
 /* ---------- вид ---------- */
 function paint() {

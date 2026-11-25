@@ -57,6 +57,8 @@ body { width: 400px; padding: 10px; display: flex; flex-direction: column; gap: 
 .line { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 8px 7px 12px; font-weight: 500; font-size: 13px; border-radius: min(var(--hd-r-item), 14px); background: var(--hd-hover); }
 :root[hd-square] .line { border-radius: 0; }
 .bottom { display: flex; gap: 8px; }
+.bottom + .bottom { margin-top: 8px; }
+#notes-btn, #docs-btn { flex: 1; }
 .bottom .studio { flex: 1; }
 .pill {
   padding: 10px 16px; border-radius: 999px; font-weight: 600; font-size: 13px; background: var(--hd-soft); color: var(--hd-accent);

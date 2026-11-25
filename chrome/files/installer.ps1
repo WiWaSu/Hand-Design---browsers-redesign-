@@ -27,7 +27,7 @@ $ErrorActionPreference = "Stop"
 try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch {}
 
 # версия (меняется вместе с файлом VERSION, manifest.json и CHANGELOG.md)
-$Version = "0.1.2"
+$Version = "1.0.0"
 $Here = $PSScriptRoot
 # файл VERSION рядом с Setup.cmd главнее — номер не разойдётся с релизом
 try { $vf = Join-Path (Split-Path -Parent $Here) "VERSION"; if (Test-Path -LiteralPath $vf) { $v = ([IO.File]::ReadAllText($vf)).Trim(); if ($v -match '^\d+\.\d+\.\d+$') { $Version = $v } } } catch {}

@@ -30,6 +30,8 @@ function build() {
   $("#frame-btn").textContent = T("Покрасить рамку", "Paint the frame");
   $("#frame-btn").title = T("Вкладки и адресная строка браузера — в цвет темы", "Browser tabs and address bar in theme colors");
   $("#studio").textContent = T("Все настройки…", "All settings…");
+  $("#notes-btn").textContent = T("Заметки", "Notes");
+  $("#docs-btn").textContent = T("Документы", "Documents");
 
   const themes = $("#themes");
   for (const t of THEMES) {
@@ -97,11 +99,17 @@ function build() {
     window.close();
   });
   $("#frame-btn").addEventListener("click", paint);
+  for (const [id, page] of [["#notes-btn", "docs/notes.html"], ["#docs-btn", "docs/docs.html"]]) {
+    $(id).addEventListener("click", () => {
+      chrome.runtime.sendMessage({ type: "hd:open-page", page });
+      window.close();
+    });
+  }
 }
 
-function render(s) {
+async function render(s) {
   S = s;
-  setLang(s.lang || "");
+  if ((await setLang(s.lang || "")) && built) return location.reload();
   if (!built) build();
   const t = applyTheme(root, s);
   $("#theme-name").textContent = t.name;
@@ -124,7 +132,7 @@ async function update() {
     const a = $("#update");
     a.hidden = false;
     a.href = hdUpdate.url;
-    a.textContent = T(`Доступна версия ${hdUpdate.latest} — открыть`, `Version ${hdUpdate.latest} is available — open`);
+    a.textContent = T("Доступна версия {0} — открыть", "Version {0} is available — open", hdUpdate.latest);
   }
 }
 

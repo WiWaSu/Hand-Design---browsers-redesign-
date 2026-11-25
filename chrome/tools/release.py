@@ -10,7 +10,7 @@
   release-notes/chrome/vX.Y.Z.md                           — текст для страницы релиза
   latest.json                                              — поле "chrome"
 
-Тег в git: chrome-vX.Y.Z (не путается с тегами Firefox-версии v*).
+Тег в git: chromium-vX.Y.Z (не путается с тегами Firefox-версии v*).
 """
 import json
 import os
@@ -62,11 +62,12 @@ def notes(img_prefix, zip_link, back_link):
 
 {shots}## Установка / Install
 
-1. Скачайте {zip_link} и распакуйте. / Download {zip_link} and unzip.
-2. Запустите **Setup.cmd**, выберите тему и браузеры, нажмите «Установить». / Run **Setup.cmd**, pick a theme and browsers, press Install.
-3. В браузере один раз: страница расширений → «Режим разработчика» → «Загрузить распакованное» → Ctrl+V. Потом так же папку `frame` (рамка). / Once in the browser: extensions page → Developer mode → Load unpacked → Ctrl+V, then the `frame` folder.
+1. Скачайте **Hand-Design-Chromium-Setup-v{ver}.exe** ниже и запустите. Без .exe: распакуйте {zip_link} и запустите **Setup.cmd**. / Download **Hand-Design-Chromium-Setup-v{ver}.exe** below and run it. Without the .exe: unzip {zip_link} and run **Setup.cmd**.
+2. Выберите тему и браузеры, нажмите «Установить». / Pick a theme and browsers, press Install.
+3. В браузере один раз: страница расширений → «Режим разработчика» → «Загрузить распакованное» → Ctrl+V → «Выбрать папку». / Once in the browser: extensions page → Developer mode → Load unpacked → Ctrl+V → Select folder.
+4. Только для Edge, Opera, Яндекса или если хочется картинку темы под вкладками: так же загрузите папку `frame`. В Chrome, Brave и Chromium цвет верха ставится сам. / Edge, Opera, Yandex, or if you want the theme picture behind the tabs: load the `frame` folder the same way. Chrome, Brave and Chromium get the frame color automatically.
 
-Уже стоит — просто установите поверх и перезапустите браузер, настройки сохранятся. / Already installed — install over it and restart the browser, settings are kept.
+Уже стоит — запустите установщик новой версии и нажмите ⟳ на карточке Hand Design на странице расширений, настройки сохранятся. / Already installed — run the new installer and press ⟳ on the Hand Design card, settings are kept.
 
 {back_link}
 """
@@ -119,10 +120,10 @@ w(notes_path, notes(f"https://raw.githubusercontent.com/{REPO}/main/docs/", f"**
 root_lj = os.path.join(HD, "latest.json")
 if os.path.exists(root_lj):
     rj = json.load(open(root_lj, encoding="utf-8"))
-    rj["chrome"] = {"version": ver, "date": date, "url": f"https://github.com/{REPO}/releases/tag/chrome-v{ver}"}
+    rj["chrome"] = {"version": ver, "date": date, "url": f"https://github.com/{REPO}/releases/tag/chromium-v{ver}"}
     w(root_lj, json.dumps(rj, ensure_ascii=False, indent=2) + "\n")
 
 print(f"Hand Design for Chromium {ver} ({date}) разложен:")
 for p in [snap, os.path.join(arch, f"Hand-Design-Chromium-v{ver}.zip"), zip_path, notes_path, root_lj]:
     print("  ", os.path.relpath(p, HD))
-print(f"Тег: git tag chrome-v{ver}")
+print(f"Тег: git tag chromium-v{ver}")

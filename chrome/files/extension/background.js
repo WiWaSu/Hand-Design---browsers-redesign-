@@ -6,10 +6,12 @@
    5. Проверка обновлений раз в сутки (latest.json в репозитории релизов). */
 import { load, onChange, patch, sanitize, KEY, VERSION } from "./shared/settings.js";
 import { THEMES } from "./shared/themes.js";
+import { T } from "./shared/i18n.js";
 
 let S = null;
 const ready = load().then(s => (S = s));
 onChange(s => {
+  if (S && S.imgEditor !== s.imgEditor) chrome.contextMenus.update("hd-edit-image", { visible: s.imgEditor !== false }, () => chrome.runtime.lastError);
   S = s;
   paintTopSoon();
   if (!s.checkUpdates) chrome.action.setBadgeText({ text: "" });
@@ -29,12 +31,15 @@ chrome.runtime.onInstalled.addListener(async details => {
     await chrome.storage.local.set({ hdLangReset: true });
   }
   await injectIntoOpenTabs();
+  contextMenus();
   chrome.alarms.create("hd-update", { periodInMinutes: 24 * 60, delayInMinutes: 1 });
   if (details.reason === "install") {
     chrome.tabs.create({ url: chrome.runtime.getURL("studio/studio.html#welcome") });
   }
 });
 chrome.runtime.onStartup.addListener(async () => {
+  contextMenus();
+  checkUpdate();
   await importInstaller(false);
   await ready;
   if (S.startPage !== false) openStartPage();
@@ -186,7 +191,10 @@ chrome.tabs.onUpdated.addListener(async (id, info, tab) => {
     persist();
   }
   if (info.status === "complete" && tab.active) thumbSoon(tab.windowId);
-  if (info.status === "loading" && tab.url && /^file:/i.test(tab.url)) ready.then(() => S.pdf && maybeLocalPdf(tab));
+  if (info.status === "loading" && tab.url && /^file:/i.test(tab.url)) ready.then(() => {
+    if (S.pdf) maybeLocalPdf(tab);
+    maybeLocalDoc(tab);
+  });
 });
 
 function sendCmd(tabId, cmd) {
@@ -235,6 +243,9 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
     case "hd:open-studio":
       chrome.runtime.openOptionsPage();
       return;
+    case "hd:open-page":
+      if (["docs/notes.html", "docs/docs.html", "docs/image.html"].includes(msg.page)) openPage(msg.page);
+      return;
   }
 });
 
@@ -263,6 +274,7 @@ chrome.commands.onCommand.addListener(async cmd => {
   await ready;
   if (cmd === "switcher") return openSwitcher();
   if (cmd === "open-studio") return chrome.runtime.openOptionsPage();
+  if (cmd === "open-notes") return openPage("docs/notes.html");
   const { hdLive } = await chrome.storage.session.get("hdLive");
   if ((cmd === "toggle-mic" || cmd === "toggle-cam") && hdLive?.call) {
     const kind = cmd === "toggle-mic" ? "mic" : "cam";
@@ -407,6 +419,54 @@ async function maybeLocalPdf(tab) {
   if (!(await chrome.extension.isAllowedFileSchemeAccess())) return;
   chrome.tabs.update(tab.id, { url: `${VIEWER}?file=${encodeURIComponent(tab.url)}` }).catch(() => {});
 }
+
+/* ---------------------------------------------------------------- документы */
+const DOC_PAGE = [
+  [/\.(md|markdown|mdown|mkd|mkdn)$/i, "docs/md.html", "mdEditor"],
+  [/\.(csv|tsv)$/i, "docs/csv.html", "csvEditor"],
+  [/\.(png|jpe?g|gif|webp|avif|bmp)$/i, "docs/image.html", "imgEditor"],
+];
+async function maybeLocalDoc(tab) {
+  const path = tab.url.split(/[?#]/)[0];
+  const hit = DOC_PAGE.find(([re]) => re.test(path));
+  if (!hit || S[hit[2]] === false || !(await chrome.extension.isAllowedFileSchemeAccess())) return;
+  chrome.tabs.update(tab.id, { url: chrome.runtime.getURL(`${hit[1]}?file=${encodeURIComponent(tab.url)}`) }).catch(() => {});
+}
+/* .csv Chrome не показывает, а скачивает — открываем в редакторе таблиц */
+chrome.downloads.onCreated.addListener(async d => {
+  await ready;
+  const url = d.finalUrl || d.url || "";
+  const csv = /\.(csv|tsv)([?#]|$)/i.test(url.split(/[?#]/)[0]) || /^text\/(csv|tab-separated-values)/i.test(d.mime || "");
+  if (!csv || S.csvEditor === false || !/^(https?|file):/i.test(url)) return;
+  if (/^file:/i.test(url) && !(await chrome.extension.isAllowedFileSchemeAccess())) return;
+  await chrome.downloads.cancel(d.id).catch(() => {});
+  chrome.downloads.erase({ id: d.id }).catch(() => {});
+  chrome.tabs.create({ url: chrome.runtime.getURL("docs/csv.html?file=" + encodeURIComponent(url)) });
+});
+async function openPage(page) {
+  const url = chrome.runtime.getURL(page);
+  const [open] = await chrome.tabs.query({ url: url + "*" }).catch(() => []);
+  if (open) {
+    chrome.tabs.update(open.id, { active: true });
+    chrome.windows.update(open.windowId, { focused: true }).catch(() => {});
+  } else {
+    chrome.tabs.create({ url });
+  }
+}
+function contextMenus() {
+  chrome.contextMenus.removeAll(() => {
+    chrome.contextMenus.create({ id: "hd-edit-image", title: T("Редактировать картинку", "Edit image"), contexts: ["image"], visible: S?.imgEditor !== false });
+    chrome.contextMenus.create({ id: "hd-notes", title: T("Заметки Hand Design", "Hand Design notes"), contexts: ["action"] });
+    chrome.contextMenus.create({ id: "hd-docs", title: T("Документы Hand Design", "Hand Design documents"), contexts: ["action"] });
+  });
+}
+chrome.contextMenus.onClicked.addListener(info => {
+  if (info.menuItemId === "hd-edit-image" && /^(https?|file|data):/i.test(info.srcUrl || "")) {
+    chrome.tabs.create({ url: chrome.runtime.getURL("docs/image.html?u=" + encodeURIComponent(info.srcUrl)) });
+  }
+  if (info.menuItemId === "hd-notes") openPage("docs/notes.html");
+  if (info.menuItemId === "hd-docs") openPage("docs/docs.html");
+});
 
 /* ---------------------------------------------------------------- обновления */
 const RELEASES = "WiWaSu/Hand-Design---browsers-redesign-";

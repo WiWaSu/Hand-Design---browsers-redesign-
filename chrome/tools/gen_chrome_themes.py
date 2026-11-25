@@ -346,8 +346,12 @@ def main():
                 f.write(vivaldi_css(tid, t, dark))
             d = os.path.join(ROOT, "files", "themes", pid)
             os.makedirs(d, exist_ok=True)
+            pack = theme_pack(tid, t, dark, version)
+            # картинка полосы вкладок (tools/frames.mjs): фон новой вкладки темы
+            if os.path.exists(os.path.join(d, "images", "frame.png")):
+                pack["theme"]["images"] = {"theme_frame": "images/frame.png", "theme_frame_inactive": "images/frame.png"}
             with open(os.path.join(d, "manifest.json"), "w", encoding="utf-8", newline="\n") as f:
-                json.dump(theme_pack(tid, t, dark, version), f, ensure_ascii=False, indent=2)
+                json.dump(pack, f, ensure_ascii=False, indent=2)
 
     # список тем для установщика (PowerShell): плитки, вариант, группы
     with open(os.path.join(ROOT, "files", "themes", "themes.json"), "w", encoding="utf-8", newline="\n") as f:

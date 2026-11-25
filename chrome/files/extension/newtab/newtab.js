@@ -18,6 +18,7 @@ const CLOCK_FONTS = {
   rounded: '"Nunito", "Arial Rounded MT Bold", "Segoe UI Variable Display", sans-serif',
 };
 let S = null;
+const PLAIN_CLOCK = { weight: "300", size: "clamp(100px, 12vw, 180px)", color: "#ffffff", spacing: "0", shadow: "0 4px 40px rgb(0 0 0 / .3)" };
 
 /* яркость любого CSS-цвета (0…255) — чтобы понять, светлые ли обои */
 const probe = mk("i");
@@ -42,8 +43,9 @@ function setVar(k, v) {
 }
 
 async function render(s) {
+  const first = !S;
   S = s;
-  setLang(s.lang || "");
+  if ((await setLang(s.lang || "")) && !first) return location.reload();
   const t = applyTheme(root, s);
   // обои
   let wall = null;
@@ -55,28 +57,32 @@ async function render(s) {
     const w = WALLS.find(x => x[0] === s.wall);
     if (w) wall = w[3];
   }
+  const part = k => (s[k] === "none" ? null : themeById(s[k] || t.id));
+  const tw = part("dWall");
+  const tc = part("dClock");
+  const tsr = part("dSearch");
   if (!wall) {
-    wall = t.wall;
+    wall = tw ? tw.wall : t.vars.frame;
     themed = true;
   }
-  setVar("--nt-bg", themed ? t.newtabBg : "#05060c");
+  setVar("--nt-bg", themed ? (tw ? tw.newtabBg : t.vars.frame) : "#05060c");
   setVar("--nt-wall", wall);
   setVar("--nt-dim", String((s.wallDim ?? 15) / 100));
   setVar("--nt-shade", "#000");
   setVar("--nt-blur", (s.wallBlur || 0) + "px");
   setVar("--nt-blur-k", s.wallBlur ? String(Math.min(0.12, s.wallBlur / 300)) : "0");
   root.toggleAttribute("nt-blur", !!s.wallBlur);
-  const live = !!s.wallLive && ((themed && t.live) || s.wall === "aurora");
+  const live = !!s.wallLive && ((themed && !!tw?.live) || s.wall === "aurora");
   root.toggleAttribute("nt-live", live);
   liveMotion(live);
   root.toggleAttribute("nt-notoolbar", s.toolbar === false);
 
   // обои тёмные (почти у всех тем, даже в светлом режиме Windows) — значит и часы, дата, плитки
   // берутся из тёмного варианта темы, иначе получалась каша: тёмный фон и светлые подписи
-  const wallDark = !themed || lum(t.newtabBg) < 110;
+  const wallDark = !themed || lum(tw ? tw.newtabBg : t.vars.frame) < 110;
   if (wallDark && t.scheme === "both") setVar("color-scheme", "dark");
   // часы и поиск: для своих обоев — из темы, для остальных — «стекло»
-  const c = t.clock;
+  const c = tc ? tc.clock : PLAIN_CLOCK;
   const clockColor = themed ? c.color : LIGHT_WALLS.has(s.wall) ? "#1b1b22" : "#ffffff";
   // светлые ли обои — по цвету часов, как его реально посчитал браузер (light-dark() у тем с двумя вариантами)
   setVar("--nt-clock-color", clockColor);
@@ -96,12 +102,13 @@ async function render(s) {
   setVar("--nt-clock-fill", fill ? c.fill : null);
   root.toggleAttribute("nt-fill-clock", fill);
   if (!fill && clockColor === "transparent") setVar("--nt-clock-color", "#ffffff");
-  setVar("--nt-date", themed ? t.date.color : light ? "rgb(27 27 34 / .75)" : "rgb(255 255 255 / .85)");
-  setVar("--nt-date-size", t.date.size);
-  setVar("--nt-date-weight", t.date.weight);
-  root.toggleAttribute("nt-date-above", !!t.dateAbove);
-  const sr = t.search;
-  if (themed) {
+  const td = tc || t;
+  setVar("--nt-date", themed && tc ? td.date.color : light ? "rgb(27 27 34 / .75)" : "rgb(255 255 255 / .85)");
+  setVar("--nt-date-size", td.date.size);
+  setVar("--nt-date-weight", td.date.weight);
+  root.toggleAttribute("nt-date-above", !!tc?.dateAbove);
+  const sr = tsr?.search;
+  if (themed && sr) {
     setVar("--nt-s-radius", sr.radius);
     setVar("--nt-s-bg", sr.bg);
     setVar("--nt-s-border", sr.border);
