@@ -109,6 +109,10 @@ class Image extends WidgetType {
 
 /* таблица всегда показывается таблицей, ячейки правятся прямо в ней */
 let pendingCell = null;
+const IC = name => `<i class="hd-ic" style="--i: var(--fm-ic-${name})" aria-hidden="true"></i>`;
+const ICON_NAME = { bold: "bold", italic: "italic", strike: "strike", highlight: "marker", code: "code", link: "link", h1: "h1", h2: "h2", h3: "h3", bullet: "list", ordered: "ordered", task: "task", quote: "quoteMarks", table: "table", codeblock: "codeBlock", hr: "rule", template: "template" };
+const TABLE_ICON_NAME = { rowAdd: "rowAdd", colAdd: "colAdd", rowDel: "rowDel", colDel: "colDel", left: "alignLeft", center: "alignCenter", right: "alignRight", drop: "delete" };
+const CALLOUT_ICON_NAME = { note: "edit", info: "info", tip: "lightbulb", success: "checkCircle", question: "help", warning: "warning", danger: "closeCircle", example: "list", quote: "quoteMarks" };
 const TABLE_ICONS = {
   rowAdd: `<rect x="4" y="4.5" width="16" height="9" rx="2"/><path d="M12 16.5v5M9.5 19h5"/>`,
   colAdd: `<rect x="4.5" y="4" width="9" height="16" rx="2"/><path d="M16.5 12h5M19 9.5v5"/>`,
@@ -238,7 +242,7 @@ class Table extends WidgetType {
       b.type = "button";
       b.dataset.t = k;
       b.title = tr(TABLE_TITLES[k]);
-      b.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${TABLE_ICONS[k]}</svg>`;
+      b.innerHTML = IC(TABLE_ICON_NAME[k]);
       bar.append(b);
     }
     bar.addEventListener("mousedown", e => e.preventDefault());
@@ -344,7 +348,7 @@ class CalloutHead extends WidgetType {
   toDOM() {
     const s = document.createElement("span");
     s.className = "cm-lp-callout-icon";
-    s.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${CALLOUT_ICON[this.kind]}</svg>`;
+    s.innerHTML = IC(CALLOUT_ICON_NAME[this.kind] || "info");
     if (this.label) s.append(tr(this.label));
     return s;
   }
@@ -926,7 +930,7 @@ const button = (k, cls = "cm-lp-tool") => {
   b.dataset.cmd = k;
   b.title = label(k);
   b.setAttribute("aria-label", label(k));
-  b.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>`;
+  b.innerHTML = IC(ICON_NAME[k]);
   return b;
 };
 export const toolButton = button;
@@ -1034,7 +1038,7 @@ function openMenu(view, x, y) {
   const item = (text, run, icon) => {
     const b = document.createElement("button");
     b.type = "button";
-    b.innerHTML = icon ? `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[icon]}</svg>` : "<i></i>";
+    b.innerHTML = icon ? IC(ICON_NAME[icon]) : "<i></i>";
     b.append(text);
     b.addEventListener("click", () => {
       closeMenu();
@@ -1135,6 +1139,7 @@ export function createEditor(parent, { text = "", placeholderText = "", onChange
     parent,
     state: EditorState.create({
       doc: text,
+      selection: { anchor: (text.match(/^---\r?\n[\s\S]*?\r?\n---[ \t]*(?:\r?\n|$)/) || [""])[0].length },
       extensions: [
         history(),
         markdown({ base: markdownLanguage, extensions: [Highlight] }),

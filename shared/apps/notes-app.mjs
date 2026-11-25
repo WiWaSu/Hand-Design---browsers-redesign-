@@ -1,5 +1,8 @@
 /* Hand Design — страница «Заметки». Файлы читает и пишет браузер через window.hdNotes (FloorpPdfTweaksChild). */
 import { createEditor, toolButton } from "./hd-notes-editor.mjs";
+import { ensureIcons } from "./hd-icons.mjs";
+
+ensureIcons();
 
 await new Promise(resolve => {
   if (window.hdNotes) resolve();
@@ -7,33 +10,14 @@ await new Promise(resolve => {
 });
 
 const t = (s, ...a) => window.hdNotes.t(s, ...a);
+const caps = window.hdNotes.caps || {};
 const api = (op, data = null) => new Promise(resolve => {
   window.hdNotes.call(op, JSON.stringify(data), json => resolve(JSON.parse(json)));
 });
 
-const P = d => `<path d="${d}"/>`;
-const svg = body => `<svg viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
-const ICON = {
-  note: P("M7 3.5h7l4 4V20a.5.5 0 0 1-.5.5h-10A.5.5 0 0 1 7 20zM13.5 3.5V8H18"),
-  folderAdd: P("M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM12 11v5M9.5 13.5h5"),
-  collapse: P("M7 10l5-5 5 5M7 19l5-5 5 5"),
-  side: `<rect x="3.5" y="4.5" width="17" height="15" rx="2"/>` + P("M9.5 4.5v15"),
-  folder: P("M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"),
-  chev: P("M9 6l6 6-6 6"),
-  today: `<rect x="4" y="5" width="16" height="15" rx="2"/>` + P("M4 10h16M8 3v4M16 3v4M9 14.5h2"),
-  find: `<circle cx="11" cy="11" r="6.5"/>` + P("M16 16l4 4"),
-  graph: `<circle cx="6" cy="7" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/>` + P("M8.3 8.2l2.6 7.6M15.8 7.3l-2.6 8.5M8.5 7h7"),
-  close: P("M6 6l12 12M18 6L6 18"),
-};
-const MENU_ICON = {
-  open: ICON.note,
-  rename: P("M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17v3zM13.5 7.5l3 3"),
-  pin: P("M9 4h6l-1 6 4 3v2H6v-2l4-3zM12 15v5"),
-  reveal: ICON.folder,
-  newNote: ICON.note,
-  newFolder: ICON.folderAdd,
-  delete: P("M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"),
-};
+const svg = name => `<i class="hd-ic" style="--i: var(--fm-ic-${name})" aria-hidden="true"></i>`;
+const ICON = { note: "note", folderAdd: "folderAdd", collapse: "collapse", side: "sidebar", folder: "folder", chev: "chevronRight", today: "calendar", find: "search", graph: "graph", close: "close", import: "import" };
+const MENU_ICON = { open: "note", rename: "edit", pin: "pin", reveal: "folder", newNote: "note", newFolder: "folderAdd", delete: "delete" };
 
 document.documentElement.setAttribute("data-hd-md", "");
 document.title = t("Заметки");
@@ -54,6 +38,7 @@ document.body.innerHTML = `
       <div class="hd-notes-tree" tabindex="-1"></div>
       <footer class="hd-notes-foot">
         <button type="button" class="hd-notes-folder">${svg(ICON.folder)}<span></span></button>
+        <button type="button" class="hd-notes-import" hidden>${svg(ICON.import)}</button>
         <button type="button" class="hd-notes-change"></button>
       </footer>
     </aside>
@@ -86,6 +71,8 @@ for (const b of document.querySelectorAll(".hd-notes-head [data-act]")) {
 $(".hd-notes-show").title = t("Показать список");
 search.placeholder = t("Поиск по заметкам");
 $(".hd-notes-change").textContent = t("Сменить папку");
+$(".hd-notes-import").title = t("Импорт заметок");
+$(".hd-notes-import").hidden = caps.import !== true;
 $(".hd-notes-setup h1").textContent = t("Где хранить заметки?");
 $(".hd-notes-setup p").textContent = t("Каждая заметка — обычный файл .md в этой папке. Их можно открыть в Obsidian или любом другом редакторе.");
 $(".hd-notes-default b").textContent = t("Папка по умолчанию");
@@ -688,7 +675,7 @@ tree.addEventListener("contextmenu", e => {
       await api("pin", { rel, on: !it?.pinned });
       refresh();
     });
-    item("reveal", t("Показать в проводнике"), () => api("reveal", { folder: parentOf(rel) }));
+    if (caps.reveal !== false) item("reveal", t("Показать в проводнике"), () => api("reveal", { folder: parentOf(rel) }));
     sep();
     item("delete", t("Удалить (в папку .trash)"), () => remove(rel, false));
   } else {
@@ -697,7 +684,7 @@ tree.addEventListener("contextmenu", e => {
     item("newFolder", t("Новая папка"), () => createFolder(f));
     if (folderEl) {
       item("rename", t("Переименовать"), () => startRename(f, true));
-      item("reveal", t("Показать в проводнике"), () => api("reveal", { folder: f }));
+      if (caps.reveal !== false) item("reveal", t("Показать в проводнике"), () => api("reveal", { folder: f }));
       sep();
       item("delete", t("Удалить (в папку .trash)"), () => remove(f, true));
     }
@@ -720,6 +707,8 @@ async function start() {
   const st = await api("state");
   if (!st) return;
   setup.querySelector(".hd-notes-default small").textContent = st.suggested;
+  setup.querySelector(".hd-notes-default").hidden = st.noDefault === true;
+  if (st.label) setup.querySelector(".hd-notes-default b").textContent = st.label;
   if (!st.dir) {
     app.hidden = true;
     setup.hidden = false;
@@ -769,7 +758,7 @@ $(".hd-notes-change").addEventListener("click", async () => {
   await api("pick");
   start();
 });
-$(".hd-notes-folder").addEventListener("click", () => api("reveal", { folder: "" }));
+$(".hd-notes-folder").addEventListener("click", () => caps.reveal !== false && api("reveal", { folder: "" }));
 let searchTimer = 0;
 search.addEventListener("input", () => {
   window.clearTimeout(searchTimer);
@@ -931,6 +920,87 @@ function pickTemplate() {
     },
   });
 }
+/* ------------------------------ импорт ------------------------------ */
+
+const IMPORTS = [
+  { kind: "notion", name: "Notion", sub: t("Экспорт «Markdown & CSV», файл .zip"), pick: { mode: "file", filters: [["Notion (.zip)", "*.zip"]] } },
+  { kind: "evernote", name: "Evernote", sub: t("Экспорт блокнота, файл .enex"), pick: { mode: "file", filters: [["Evernote (.enex)", "*.enex"]] } },
+  { kind: "keep", name: "Google Keep", sub: t("Архив Google Takeout, файл .zip"), pick: { mode: "file", filters: [["Google Takeout (.zip)", "*.zip"]] } },
+  { kind: "folder", name: t("Папка с заметками"), sub: t("Obsidian, Joplin и другие файлы .md"), pick: { mode: "folder" } },
+];
+
+function importStatus() {
+  const box = document.createElement("div");
+  box.className = "hd-qs";
+  box.innerHTML = `<div class="hd-qs-card hd-notes-progress"><p></p><button type="button" hidden></button></div>`;
+  const p = box.querySelector("p");
+  const ok = box.querySelector("button");
+  ok.textContent = t("Готово");
+  ok.addEventListener("click", () => box.remove());
+  document.body.append(box);
+  return {
+    set: text => (p.textContent = text),
+    done: text => {
+      p.textContent = text;
+      ok.hidden = false;
+      ok.focus();
+    },
+  };
+}
+
+async function runImport(src) {
+  const picked = await api("importPick", src.pick);
+  if (!picked?.ok) {
+    if (picked?.error) importStatus().done(picked.error);
+    return;
+  }
+  const st = importStatus();
+  st.set(t("Читаю файлы…"));
+  try {
+    const { convert, fromB64, toB64 } = await import("./notes-import.mjs");
+    const input = picked.files
+      ? { name: picked.name, files: new Map(picked.files.map(f => [f.rel, fromB64(f.b64)])) }
+      : { name: picked.name, bytes: fromB64(picked.b64) };
+    const out = await convert(src.kind, input, t);
+    if (!out.notes.length) {
+      st.done(t("Заметок не нашлось. Проверьте, что выбран нужный файл."));
+      return;
+    }
+    const begin = await api("importBegin", { name: src.kind === "folder" ? picked.name : src.name });
+    if (!begin?.ok) {
+      st.done(begin?.error || t("Не получилось создать папку"));
+      return;
+    }
+    const items = [...out.notes.map(n => ({ rel: n.path, text: n.text })), ...out.files.map(f => ({ rel: f.path, bytes: f.bytes }))];
+    let done = 0;
+    let batch = [];
+    let size = 0;
+    const flush = async () => {
+      if (!batch.length) return;
+      const r = await api("importWrite", { folder: begin.folder, items: batch });
+      if (!r?.ok) throw new Error(r?.error || "write");
+      done += batch.length;
+      batch = [];
+      size = 0;
+      st.set(t("Импорт: {0} из {1}", done, items.length));
+    };
+    for (const it of items) {
+      const entry = it.bytes ? { rel: it.rel, b64: toB64(it.bytes) } : it;
+      batch.push(entry);
+      size += (entry.b64 || entry.text).length;
+      if (size > 4_000_000 || batch.length >= 200) await flush();
+    }
+    await flush();
+    for (const n of out.notes) if (n.pinned) await api("pin", { rel: begin.folder + "/" + n.path, on: true });
+    await refresh();
+    st.done(t("Импортировано заметок: {0}. Они в папке «{1}».", out.notes.length, begin.folder));
+    await openRel(begin.folder + "/" + out.notes[0].path);
+  } catch (e) {
+    st.done(t("Не удалось импортировать: {0}", String(e?.message || e)));
+  }
+}
+$(".hd-notes-import").addEventListener("click", () => chooser({ placeholder: t("Откуда импортировать…"), items: IMPORTS, pick: runImport }));
+
 await applySettings();
 start();
 
