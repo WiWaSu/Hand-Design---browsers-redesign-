@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Hand Design — Material You",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "Цвета рамки браузера для темы Hand Design «Material You». Theme colors for Hand Design.",
   "theme": {
     "colors": {
@@ -94,6 +94,10 @@
     },
     "properties": {
       "ntp_background_alignment": "bottom"
+    },
+    "images": {
+      "theme_frame": "images/frame.png",
+      "theme_frame_inactive": "images/frame.png"
     }
   }
 }
