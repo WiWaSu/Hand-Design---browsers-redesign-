@@ -19,7 +19,7 @@ let sel = 1;
 let done = false;
 
 const S = await load();
-await setLang(S.lang || "");
+setLang(S.lang || "");
 applyTheme(document.documentElement, S);
 document.documentElement.setAttribute("sw", S.switcherStyle || "ios");
 document.title = T("Вкладки", "Tabs");

@@ -6,12 +6,10 @@
    5. Проверка обновлений раз в сутки (latest.json в репозитории релизов). */
 import { load, onChange, patch, sanitize, KEY, VERSION } from "./shared/settings.js";
 import { THEMES } from "./shared/themes.js";
-import { T } from "./shared/i18n.js";
 
 let S = null;
 const ready = load().then(s => (S = s));
 onChange(s => {
-  if (S && S.imgEditor !== s.imgEditor) chrome.contextMenus.update("hd-edit-image", { visible: s.imgEditor !== false }, () => chrome.runtime.lastError);
   S = s;
   paintTopSoon();
   if (!s.checkUpdates) chrome.action.setBadgeText({ text: "" });
@@ -31,15 +29,12 @@ chrome.runtime.onInstalled.addListener(async details => {
     await chrome.storage.local.set({ hdLangReset: true });
   }
   await injectIntoOpenTabs();
-  contextMenus();
   chrome.alarms.create("hd-update", { periodInMinutes: 24 * 60, delayInMinutes: 1 });
   if (details.reason === "install") {
     chrome.tabs.create({ url: chrome.runtime.getURL("studio/studio.html#welcome") });
   }
 });
 chrome.runtime.onStartup.addListener(async () => {
-  contextMenus();
-  checkUpdate();
   await importInstaller(false);
   await ready;
   if (S.startPage !== false) openStartPage();
@@ -60,35 +55,12 @@ async function openStartPage(attempt = 0) {
 }
 
 /* settings.json пишет установщик. Новая «ревизия» (rev) = пользователь переустановил с другими
-   настройками → они важнее сохранённых. Расширение из Chrome Web Store не видит папку установщика —
-   тогда файлы отдаёт помощник (native messaging). */
-async function hostFile(name) {
-  const parts = [];
-  for (let offset = 0; ; ) {
-    const r = await hostSend({ cmd: "file", name, offset });
-    if (!r?.ok) throw new Error(r?.error || "host");
-    const bin = atob(r.b64 || "");
-    const buf = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
-    parts.push(buf);
-    offset += buf.length;
-    if (!buf.length || offset >= r.size) break;
-  }
-  const ext = name.split(".").pop().toLowerCase();
-  return new Blob(parts, { type: `image/${ext === "jpg" ? "jpeg" : ext}` });
-}
+   настройками → они важнее сохранённых. */
 async function importInstaller() {
   try {
-    let j = null;
-    let readFile = async name => (await fetch(chrome.runtime.getURL(name))).blob();
-    const res = await fetch(chrome.runtime.getURL("settings.json"), { cache: "no-store" }).catch(() => null);
-    if (res?.ok) j = await res.json();
-    else {
-      const r = await hostSend({ cmd: "settings" });
-      if (!r?.ok || !r.text) return;
-      j = JSON.parse(r.text);
-      readFile = hostFile;
-    }
+    const res = await fetch(chrome.runtime.getURL("settings.json"), { cache: "no-store" });
+    if (!res.ok) return;
+    const j = await res.json();
     const { hdInstallerRev } = await chrome.storage.local.get("hdInstallerRev");
     if (!j || !j.rev || j.rev === hdInstallerRev) return;
     const got = await chrome.storage.local.get(KEY);
@@ -100,7 +72,7 @@ async function importInstaller() {
     // своя картинка для обоев: установщик кладёт её рядом (wallpaper.jpg / .png / .webp)
     if (j.wallFile && /^wallpaper\.(jpe?g|png|webp|gif|bmp|avif)$/i.test(j.wallFile)) {
       try {
-        const blob = await readFile(j.wallFile);
+        const blob = await (await fetch(chrome.runtime.getURL(j.wallFile))).blob();
         const buf = new Uint8Array(await blob.arrayBuffer());
         let bin = "";
         for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
@@ -109,8 +81,8 @@ async function importInstaller() {
       } catch {}
     }
     await chrome.storage.local.set({ [KEY]: sanitize(merged), hdInstallerRev: j.rev, hdInstallDir: j.installDir || "" });
-  } catch {
-    // ни settings.json, ни помощника — расширение поставлено без установщика
+  } catch (e) {
+    // settings.json нет — расширение загружено вручную, без установщика
   }
 }
 
@@ -157,11 +129,10 @@ async function publish() {
     const tabId = Number(id);
     // музыка: последний игравший звук; на паузе — ещё 20 минут, чтобы можно было продолжить
     for (const r of Object.values(st.media || {})) {
-      // играет только то, что Chrome слышит во вкладке (значок динамика); иначе — пауза с названием трека, 20 минут
-      const playing = !!r?.playing && !!st.audible;
-      if (!r || r.gone || r.pip || (!playing && (!r.title || now - r.t > 20 * 60e3))) continue;
-      const score = (playing ? 1e13 : 0) + r.t;
-      if (!media || score > media.score) media = { ...r, playing, title: r.title || st.title || "", tabId, score, site: st.host || "", favicon: st.favicon || "" };
+      // плеер пропал или сайт ничего не играл по-настоящему — не показываем
+      if (!r || r.gone || (!r.playing && (!r.title || now - r.t > 20 * 60e3))) continue;
+      const score = (r.playing ? 1e13 : 0) + r.t;
+      if (!media || score > media.score) media = { ...r, tabId, score, site: st.host || "", favicon: st.favicon || "" };
     }
     // звонок: есть живой микрофон или камера; после пропажи ждём 30 с (смена устройства)
     let mic = "none";
@@ -193,7 +164,6 @@ async function remember(tab, kind, frameId, data) {
   st.host = hostOf(tab.url);
   st.title = tab.title || "";
   st.favicon = tab.favIconUrl || "";
-  st.audible = !!tab.audible;
   (st[kind] ||= {})[frameId] = { ...data, t: Date.now() };
   persist();
 }
@@ -216,15 +186,7 @@ chrome.tabs.onUpdated.addListener(async (id, info, tab) => {
     persist();
   }
   if (info.status === "complete" && tab.active) thumbSoon(tab.windowId);
-  if (tabsState[id] && ("audible" in info || "title" in info)) {
-    tabsState[id].audible = !!tab.audible;
-    tabsState[id].title = tab.title || "";
-    persist();
-  }
-  if (info.status === "loading" && tab.url && /^file:/i.test(tab.url)) ready.then(() => {
-    if (S.pdf) maybeLocalPdf(tab);
-    maybeLocalDoc(tab);
-  });
+  if (info.status === "loading" && tab.url && /^file:/i.test(tab.url)) ready.then(() => S.pdf && maybeLocalPdf(tab));
 });
 
 function sendCmd(tabId, cmd) {
@@ -273,9 +235,6 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
     case "hd:open-studio":
       chrome.runtime.openOptionsPage();
       return;
-    case "hd:open-page":
-      if (["docs/notes.html", "docs/docs.html", "docs/image.html"].includes(msg.page)) openPage(msg.page);
-      return;
   }
 });
 
@@ -284,7 +243,7 @@ function sanitizeMedia(d = {}) {
   return {
     playing: !!d.playing, title: str(d.title), artist: str(d.artist), album: str(d.album),
     artwork: /^(https?:|data:image\/)/.test(d.artwork || "") ? str(d.artwork, 2000) : "",
-    hasNext: !!d.hasNext, hasPrev: !!d.hasPrev, video: !!d.video, pip: !!d.pip, gone: !!d.gone,
+    hasNext: !!d.hasNext, hasPrev: !!d.hasPrev, video: !!d.video, gone: !!d.gone,
   };
 }
 function sanitizeCall(d = {}) {
@@ -304,7 +263,6 @@ chrome.commands.onCommand.addListener(async cmd => {
   await ready;
   if (cmd === "switcher") return openSwitcher();
   if (cmd === "open-studio") return chrome.runtime.openOptionsPage();
-  if (cmd === "open-notes") return openPage("docs/notes.html");
   const { hdLive } = await chrome.storage.session.get("hdLive");
   if ((cmd === "toggle-mic" || cmd === "toggle-cam") && hdLive?.call) {
     const kind = cmd === "toggle-mic" ? "mic" : "cam";
@@ -449,54 +407,6 @@ async function maybeLocalPdf(tab) {
   if (!(await chrome.extension.isAllowedFileSchemeAccess())) return;
   chrome.tabs.update(tab.id, { url: `${VIEWER}?file=${encodeURIComponent(tab.url)}` }).catch(() => {});
 }
-
-/* ---------------------------------------------------------------- документы */
-const DOC_PAGE = [
-  [/\.(md|markdown|mdown|mkd|mkdn)$/i, "docs/md.html", "mdEditor"],
-  [/\.(csv|tsv)$/i, "docs/csv.html", "csvEditor"],
-  [/\.(png|jpe?g|gif|webp|avif|bmp)$/i, "docs/image.html", "imgEditor"],
-];
-async function maybeLocalDoc(tab) {
-  const path = tab.url.split(/[?#]/)[0];
-  const hit = DOC_PAGE.find(([re]) => re.test(path));
-  if (!hit || S[hit[2]] === false || !(await chrome.extension.isAllowedFileSchemeAccess())) return;
-  chrome.tabs.update(tab.id, { url: chrome.runtime.getURL(`${hit[1]}?file=${encodeURIComponent(tab.url)}`) }).catch(() => {});
-}
-/* .csv Chrome не показывает, а скачивает — открываем в редакторе таблиц */
-chrome.downloads.onCreated.addListener(async d => {
-  await ready;
-  const url = d.finalUrl || d.url || "";
-  const csv = /\.(csv|tsv)([?#]|$)/i.test(url.split(/[?#]/)[0]) || /^text\/(csv|tab-separated-values)/i.test(d.mime || "");
-  if (!csv || S.csvEditor === false || !/^(https?|file):/i.test(url)) return;
-  if (/^file:/i.test(url) && !(await chrome.extension.isAllowedFileSchemeAccess())) return;
-  await chrome.downloads.cancel(d.id).catch(() => {});
-  chrome.downloads.erase({ id: d.id }).catch(() => {});
-  chrome.tabs.create({ url: chrome.runtime.getURL("docs/csv.html?file=" + encodeURIComponent(url)) });
-});
-async function openPage(page) {
-  const url = chrome.runtime.getURL(page);
-  const [open] = await chrome.tabs.query({ url: url + "*" }).catch(() => []);
-  if (open) {
-    chrome.tabs.update(open.id, { active: true });
-    chrome.windows.update(open.windowId, { focused: true }).catch(() => {});
-  } else {
-    chrome.tabs.create({ url });
-  }
-}
-function contextMenus() {
-  chrome.contextMenus.removeAll(() => {
-    chrome.contextMenus.create({ id: "hd-edit-image", title: T("Редактировать картинку", "Edit image"), contexts: ["image"], visible: S?.imgEditor !== false });
-    chrome.contextMenus.create({ id: "hd-notes", title: T("Заметки Hand Design", "Hand Design notes"), contexts: ["action"] });
-    chrome.contextMenus.create({ id: "hd-docs", title: T("Документы Hand Design", "Hand Design documents"), contexts: ["action"] });
-  });
-}
-chrome.contextMenus.onClicked.addListener(info => {
-  if (info.menuItemId === "hd-edit-image" && /^(https?|file|data):/i.test(info.srcUrl || "")) {
-    chrome.tabs.create({ url: chrome.runtime.getURL("docs/image.html?u=" + encodeURIComponent(info.srcUrl)) });
-  }
-  if (info.menuItemId === "hd-notes") openPage("docs/notes.html");
-  if (info.menuItemId === "hd-docs") openPage("docs/docs.html");
-});
 
 /* ---------------------------------------------------------------- обновления */
 const RELEASES = "WiWaSu/Hand-Design---browsers-redesign-";

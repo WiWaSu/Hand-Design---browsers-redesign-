@@ -34,24 +34,7 @@ function Send-Msg($obj) {
 try {
   $m = Read-Msg
   if (-not $m) { exit 0 }
-  if ($m.cmd -eq "ping") { Send-Msg @{ ok = $true; version = "2" }; exit 0 }
-  # настройки и обои из установщика — для расширения из Chrome Web Store, которое не видит его папку
-  $root = Split-Path -Parent $PSScriptRoot
-  if ($m.cmd -eq "settings") {
-    $f = Join-Path $root "settings.json"
-    if (Test-Path -LiteralPath $f) { Send-Msg @{ ok = $true; text = [IO.File]::ReadAllText($f) } } else { Send-Msg @{ ok = $false; reason = "none" } }
-    exit 0
-  }
-  if ($m.cmd -eq "file") {
-    $name = [string]$m.name
-    $f = Join-Path $root $name
-    if ($name -notmatch '^wallpaper\.(jpe?g|png|webp|gif|bmp|avif)$' -or -not (Test-Path -LiteralPath $f)) { Send-Msg @{ ok = $false; reason = "none" }; exit 0 }
-    $bytes = [IO.File]::ReadAllBytes($f)
-    $off = [int][Math]::Min([Math]::Max(0, [int64]$m.offset), $bytes.Length)
-    $n = [int][Math]::Min(600000, $bytes.Length - $off)
-    Send-Msg @{ ok = $true; size = $bytes.Length; b64 = $(if ($n) { [Convert]::ToBase64String($bytes, $off, $n) } else { "" }) }
-    exit 0
-  }
+  if ($m.cmd -eq "ping") { Send-Msg @{ ok = $true; version = "1" }; exit 0 }
   $key = $POL[[string]$m.browser]
   if (-not $key) { Send-Msg @{ ok = $false; reason = "unsupported" }; exit 0 }
   if ($m.cmd -eq "color" -and [string]$m.color -match '^#[0-9a-fA-F]{6}$') {

@@ -15,7 +15,7 @@ const mk = (tag, cls, text) => {
 };
 const root = document.documentElement;
 let cfg = await loadRaw();
-await setLang(cfg.lang || "");
+setLang(cfg.lang || "");
 const SCHEMA = schema();
 const controls = new Map();
 const eff = () => ({ ...DEFAULTS, ...cfg });
@@ -371,28 +371,6 @@ function buildControl(it) {
       const cur = v ?? DEFAULTS[it.key];
       for (const b of grid.children) b.toggleAttribute("on", b.dataset.v === cur);
     };
-  } else if (it.type === "details") {
-    const grid = mk("div", "details");
-    for (const [val, name] of it.options) {
-      const c = mk("button", `dcard dcard-${it.part}`);
-      c.dataset.v = val;
-      c.title = name;
-      if (val === "none") {
-        c.append(mk("span", "dnone", name));
-      } else {
-        const img = mk("img");
-        img.src = `../details/${it.part}-${val}.webp`;
-        img.alt = "";
-        img.loading = "lazy";
-        c.append(img, mk("span", "", name));
-      }
-      c.addEventListener("click", () => set(it.key, cfg[it.key] === val ? null : val));
-      grid.append(c);
-    }
-    r.append(grid);
-    update = v => {
-      for (const b of grid.children) b.toggleAttribute("on", b.dataset.v === v);
-    };
   } else if (it.type === "bool") {
     const sw = mk("button", "switch");
     sw.setAttribute("role", "switch");
@@ -486,8 +464,8 @@ for (const g of SCHEMA) {
       a.textContent = T("Проверяю…", "Checking…");
       const info = await chrome.runtime.sendMessage({ type: "hd:check-update" }).catch(() => null);
       if (!info || info.error) a.textContent = T("Не получилось проверить — нет связи с GitHub", "Could not check — GitHub unreachable");
-      else if (info.available) a.textContent = T("Доступна версия {0}", "Version {0} is available", info.latest);
-      else a.textContent = T("У вас последняя версия ({0})", "You have the latest version ({0})", VERSION);
+      else if (info.available) a.textContent = T(`Доступна версия ${info.latest}`, `Version ${info.latest} is available`);
+      else a.textContent = T(`У вас последняя версия (${VERSION})`, `You have the latest version (${VERSION})`);
     });
     d.append(a);
     box.lastChild.append(d);
@@ -541,7 +519,7 @@ for (const t of THEMES) {
     cfg.theme = t.id;
     refreshAll();
     save(true);
-    toast(T("Тема «{0}»", "Theme “{0}”", t.name));
+    toast(T(`Тема «${t.name}»`, `Theme “${t.name}”`));
   });
   themeRow.append(b);
 }
@@ -579,7 +557,7 @@ for (const [id, name, values] of presets()) {
     cfg = sanitize({ ...cfg, ...values });
     refreshAll();
     save(true);
-    toast(T("Набор «{0}» применён", "Preset “{0}” applied", name));
+    toast(T(`Набор «${name}» применён`, `Preset “${name}” applied`));
   });
   presetRow.append(b);
 }
@@ -663,7 +641,7 @@ refreshAll();
 welcome();
 const { hdUpdate } = await chrome.storage.local.get("hdUpdate");
 if (hdUpdate?.available) {
-  const a = mk("a", "upd", T(" · доступна {0}", " · {0} available", hdUpdate.latest));
+  const a = mk("a", "upd", T(` · доступна ${hdUpdate.latest}`, ` · ${hdUpdate.latest} available`));
   a.href = hdUpdate.url;
   a.target = "_blank";
   $("#ver").append(a);

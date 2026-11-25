@@ -163,15 +163,6 @@ h2 { font: 700 18px "Segoe UI Variable Display", "Segoe UI", sans-serif; margin:
 .card:hover { border-color: var(--line); }
 .card[on] { border-color: var(--acc); }
 .card small { color: var(--muted); font-size: 12px; }
-.details { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 8px; margin-top: 12px; }
-.dcard { display: flex; flex-direction: column; gap: 5px; padding: 5px; border-radius: 10px; background: var(--card2); border: 2px solid transparent; font-size: 12px; text-align: start; }
-.dcard:hover { border-color: var(--line); }
-.dcard[on] { border-color: var(--acc); }
-.dcard img { display: block; width: 100%; border-radius: 6px; }
-.dcard-clock img { aspect-ratio: 256 / 96; }
-.dcard-wall img { aspect-ratio: 256 / 150; }
-.dcard-search img { aspect-ratio: 256 / 115; }
-.dnone { display: grid; place-items: center; flex: 1; min-height: 44px; color: var(--muted); }
 .card b { margin-top: 6px; }
 
 /* мини-превью меню */

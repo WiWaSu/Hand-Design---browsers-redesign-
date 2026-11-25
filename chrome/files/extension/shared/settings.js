@@ -1,9 +1,9 @@
 /* Настройки Hand Design for Chrome.
    В chrome.storage.local (ключ "hd") лежат только изменённые значения — остальное берётся из DEFAULTS.
    Тот же набор ключей понимает установщик (settings.json рядом с manifest.json). */
-import { THEME_IDS, THEMES } from "./themes.js";
+import { THEME_IDS } from "./themes.js";
 import { WALLS } from "./walls.js";
-import { T, LANGS } from "./i18n.js";
+import { T } from "./i18n.js";
 
 export const KEY = "hd";
 export const VERSION = chrome.runtime.getManifest().version;
@@ -40,17 +40,13 @@ export const DEFAULTS = {
   searchSuggest: true,
   toolbar: true,
   autoFrame: true,
-  mdEditor: true,
-  notesSpell: false,
-  notesToolbar: false,
-  notesCompact: false,
 };
 
 /* описание настроек для Studio (тип, границы, подписи) */
 export function schema() {
   return [
     { group: "colors", title: T("Цвета", "Colors"), items: [
-      { key: "lang", type: "select", label: "Язык / Language", hint: T("«Как в браузере» — язык интерфейса Chrome", "“Browser” follows the Chrome interface language"), options: [["", T("Как в браузере", "Browser")], ...LANGS] },
+      { key: "lang", type: "select", label: "Язык / Language", hint: T("«Как в браузере» — язык интерфейса Chrome", "“Browser” follows the Chrome interface language"), options: [["", T("Как в браузере", "Browser")], ["ru", "Русский"], ["en", "English"]] },
       { key: "autoFrame", type: "bool", label: T("Красить верх браузера", "Paint the browser frame"), hint: T("Вкладки и адресная строка Chrome, Brave, Chromium — в цвет темы, сами при каждой смене. Из-за этого в меню браузера написано «Управляется вашей организацией»: это только цвет, браузером никто не управляет. Выключите — надпись пропадёт", "Chrome, Brave, Chromium tabs and address bar follow the theme automatically. Because of this the browser menu says “Managed by your organization” — it is only the color. Turn off to remove it") },
       { key: "accent", type: "color", label: T("Акцент", "Accent"), hint: T("Кнопки, выделение, ползунки — на новой вкладке, в панелях, PDF", "Buttons, selection, sliders — new tab, panels, PDF") },
       { key: "frame", type: "color", label: T("Фон страниц", "Page background"), hint: T("Studio, PDF, окно переключения вкладок", "Studio, PDF, tab switcher") },
@@ -64,11 +60,6 @@ export function schema() {
     { group: "shape", title: T("Форма", "Shape"), items: [
       { key: "radius", type: "range", label: T("Скругление карточек", "Card rounding"), min: 0, max: 36, step: 1, unit: "px" },
       { key: "rItem", type: "range", label: T("Скругление кнопок и пунктов", "Button rounding"), min: 0, max: 24, step: 1, unit: "px" },
-    ] },
-    { group: "details", title: T("Детали тем", "Theme details"), items: [
-      { key: "dClock", type: "details", part: "clock", label: T("Часы на новой вкладке", "New tab clock"), hint: T("Шрифт, размер, точки Nothing, окно Retro 98, фосфор Terminal, неон и т. д.", "Font, size, Nothing dots, Retro 98 window, Terminal phosphor, neon and more"), options: detailOptions() },
-      { key: "dWall", type: "details", part: "wall", label: T("Фон новой вкладки", "New tab background"), hint: T("Огни Night Drive, точечная сетка Nothing, строки развёртки, бумага, неоновая сетка и т. д. Обои из Studio остаются поверх", "Night Drive lights, Nothing dot grid, scan lines, paper, neon grid and more. Wallpapers from Studio stay on top"), options: detailOptions() },
-      { key: "dSearch", type: "details", part: "search", label: T("Поиск и ярлыки на новой вкладке", "Search and shortcuts on the new tab"), options: detailOptions() },
     ] },
     { group: "newtab", title: T("Новая вкладка", "New tab"), items: [
       { key: "wallDim", type: "range", label: T("Затемнение обоев", "Wallpaper dimming"), min: 0, max: 70, step: 5, unit: "%" },
@@ -113,64 +104,10 @@ export function schema() {
       { key: "pdfPage", type: "select", label: T("Тон страниц", "Page tone"), options: [["auto", T("Как в теме", "Theme")], ["paper", T("Бумага", "Paper")], ["sepia", T("Сепия", "Sepia")], ["night", T("Ночь", "Night")]] },
       { key: "pdfUi", type: "select", label: T("Интерфейс просмотрщика", "Viewer interface"), options: [["auto", T("Как в теме", "Theme")], ["light", T("Светлый", "Light")], ["dark", T("Тёмный", "Dark")]] },
     ] },
-    { group: "docs", title: T("Документы"), items: [
-    { key: "mdEditor", type: "bool", label: T("Редактор Markdown"), hint: T("Файлы .md открываются оформленными: просмотр, правка рядом, сохранение по Ctrl+S") },
-    { key: "csvEditor", type: "bool", label: T("Редактор таблиц CSV"), hint: T("Файлы .csv и .tsv открываются таблицей вместо скачивания: правка ячеек, сортировка, поиск, сохранение по Ctrl+S") },
-    { key: "imgEditor", type: "bool", label: T("Редактор картинок"), hint: T("Обрезка, поворот, стрелки, рамки, текст, размытие, сжатие и смена формата. Картинки с компьютера открываются в редакторе, в меню правой кнопки по картинке появляется «Редактировать картинку»") },
-    ] },
-    { group: "notes", title: T("Заметки"), items: [
-    { key: "notesLive", type: "bool", label: T("Live Preview"), hint: T("Вместо знаков разметки (#, **, [ ]) виден оформленный текст. Выкл.: виден исходный Markdown") },
-    { key: "notesMarks", type: "bool", label: T("Показывать разметку под курсором"), hint: T("Как в Obsidian: знаки #, **, ``` видны в строке с курсором. Выкл.: всегда виден только оформленный текст") },
-    { key: "notesSpell", type: "bool", label: T("Проверка орфографии") },
-    { key: "notesTitle", type: "bool", label: T("Название над заметкой"), hint: T("Это имя файла: поменяли — файл переименовался") },
-    { key: "notesWords", type: "bool", label: T("Счётчик слов") },
-    { key: "notesSelBar", type: "bool", label: T("Панелька при выделении текста"), hint: T("Жирный, курсив, выделение цветом, код, ссылка, заголовки") },
-    { key: "notesSlash", type: "bool", label: T("Меню по «/»"), hint: T("/ в начале строки — заголовок, список, задача, таблица и другие блоки") },
-    { key: "notesToolbar", type: "bool", label: T("Панель инструментов сверху") },
-    { key: "notesMenu", type: "bool", label: T("Своё меню правой кнопки"), hint: T("Выкл.: обычное меню браузера") },
-    { key: "notesSort", type: "select", label: T("Сортировка"), options: [["modified", T("По изменению")], ["name", T("По имени")], ["created", T("По созданию")]] },
-    { key: "notesPreview", type: "bool", label: T("Начало текста в списке") },
-    { key: "notesNewName", type: "select", label: T("Название новой заметки"), options: [["untitled", T("«Без названия»")], ["date", T("Дата и время")]] },
-    { key: "notesAttach", type: "select", label: T("Куда сохранять картинки"), hint: T("Вставленные (Ctrl+V) и перетащенные в заметку картинки"), options: [["root", T("В папку attachments")], ["near", T("Рядом с заметкой")]] },
-    { key: "notesDaily", type: "text", label: T("Папка заметок дня"), placeholder: T("например, Дневник"), hint: T("Кнопка с календарём в списке открывает заметку на сегодня. Пусто — в корне папки заметок") },
-    { key: "notesDailyFormat", type: "select", label: T("Название заметки дня"), options: [["ymd", "2026-11-17"], ["dmy", "17.11.2026"], ["long", T("17 ноября 2026")]] },
-    { key: "notesTemplates", type: "text", label: T("Папка шаблонов"), placeholder: T("например, Шаблоны"), hint: T("Заметки из этой папки вставляются через «/» → «Шаблон». {{title}}, {{date}}, {{time}} заменяются на название, дату и время") },
-    { key: "notesDailyTemplate", type: "text", label: T("Шаблон заметки дня"), placeholder: T("название шаблона"), hint: T("Новая заметка дня начнётся с этого шаблона") },
-    { key: "notesAutosave", type: "range", label: T("Автосохранение через"), min: 300, max: 5000, step: 100, unit: " мс", def: 600 },
-    ] },
-    { group: "notesLook", title: T("Заметки — оформление"), items: [
-    { key: "notesFont", type: "select", label: T("Шрифт текста"), options: [["ui", T("Обычный")], ["serif", T("С засечками")], ["mono", T("Моноширинный")], ["custom", T("Свой…")]] },
-    { key: "notesFontCustom", type: "text", label: T("Свой шрифт текста"), hint: T("Название шрифта, установленного в Windows") },
-    { key: "notesSize", type: "range", label: T("Размер текста"), min: 13, max: 24, step: 0.5, unit: " px", def: 16.5 },
-    { key: "notesLine", type: "range", label: T("Межстрочный интервал"), min: 1.2, max: 2.2, step: 0.05, unit: "", def: 1.7 },
-    { key: "notesWidth", type: "select", label: T("Ширина строки"), options: [["narrow", T("Узко")], ["normal", T("Обычно")], ["wide", T("Широко")], ["full", T("Во всю ширину")]] },
-    { key: "notesHeadFont", type: "select", label: T("Шрифт заголовков"), options: [["head", T("Как в интерфейсе")], ["text", T("Как текст")], ["serif", T("С засечками")], ["mono", T("Моноширинный")]] },
-    { key: "notesHeadScale", type: "range", label: T("Размер заголовков"), min: 80, max: 140, step: 5, unit: "%", def: 100 },
-    { key: "notesTitleSize", type: "range", label: T("Размер названия"), min: 20, max: 56, step: 1, unit: " px", def: 34 },
-    { key: "notesAccent", type: "color", label: T("Акцент заметок"), hint: T("Ссылки, теги, галочки, курсор, выделение") },
-    { key: "notesText", type: "color", label: T("Цвет текста") },
-    { key: "notesHead", type: "color", label: T("Цвет заголовков") },
-    { key: "notesBg", type: "select", label: T("Фон заметок"), options: [["theme", T("Как в теме")], ["paper", T("Бумага")], ["dark", T("Тёмный")]] },
-    { key: "notesBgColor", type: "color", label: T("Свой цвет фона"), hint: T("Перекрывает «Фон заметок»") },
-    { key: "notesSideColor", type: "color", label: T("Фон списка") },
-    { key: "notesRadius", type: "range", label: T("Скругления"), min: 0, max: 24, step: 1, unit: " px", def: 12, hint: T("Таблицы, код, блоки, картинки, свойства") },
-    { key: "notesCheck", type: "select", label: T("Галочки задач"), options: [["round", T("Круглые")], ["square", T("Квадратные")]] },
-    { key: "notesBullet", type: "select", label: T("Маркер списка"), options: [["dot", T("Точка")], ["dash", T("Тире")], ["square", T("Квадрат")]] },
-    { key: "notesTags", type: "select", label: T("Теги"), options: [["pill", T("Плашкой")], ["plain", T("Просто цветом")]] },
-    { key: "notesCallout", type: "select", label: T("Блоки [!note]"), options: [["fill", T("С фоном")], ["line", T("Только полоса")]] },
-    { key: "notesTable", type: "select", label: T("Таблицы"), options: [["lines", T("Линии")], ["zebra", T("Полосами")], ["minimal", T("Без рамок")]] },
-    { key: "notesSide", type: "range", label: T("Ширина списка"), min: 200, max: 460, step: 10, unit: " px", def: 300 },
-    { key: "notesCompact", type: "bool", label: T("Компактный список") },
-    ] },
     { group: "update", title: T("Обновления", "Updates"), items: [
-      { key: "checkUpdates", type: "bool", label: T("Проверять обновления", "Check for updates"), hint: T("При каждом запуске браузера и раз в сутки смотрит latest.json на github.com/WiWaSu/Hand-Design---browsers-redesign-. Ничего не скачивает", "Checks latest.json on github.com/WiWaSu/Hand-Design---browsers-redesign- at every browser start and once a day. Downloads nothing") },
+      { key: "checkUpdates", type: "bool", label: T("Проверять обновления", "Check for updates"), hint: T("Раз в сутки смотрит latest.json на github.com/WiWaSu/Hand-Design---browsers-redesign-. Ничего не скачивает", "Checks latest.json on github.com/WiWaSu/Hand-Design---browsers-redesign- once a day. Downloads nothing") },
     ] },
   ];
-}
-
-/* варианты «Деталей тем»: без особенностей или любая тема */
-function detailOptions() {
-  return [["none", T("Без особенностей", "No extras")], ...THEMES.map(t => [t.id, t.name])];
 }
 
 /* Готовые наборы: меняют сразу много настроек */
@@ -190,7 +127,7 @@ const FONT_TEXT = /^[\p{L}\p{N} ._-]{1,60}$/u;
 const ALLOWED = {
   theme: v => THEME_IDS.includes(v),
   mode: v => ["auto", "light", "dark"].includes(v),
-  lang: v => v === "" || LANGS.some(l => l[0] === v),
+  lang: v => ["", "ru", "en"].includes(v),
   sysAccent: v => COLOR.test(v),
   square: v => typeof v === "boolean",
   wall: v => v === "theme" || v === "custom" || WALLS.some(w => w[0] === v),
@@ -217,7 +154,7 @@ export function sanitize(raw) {
         out[it.key] = v.toUpperCase();
       } else if (it.type === "range" && typeof v === "number" && isFinite(v)) {
         out[it.key] = Math.min(it.max, Math.max(it.min, v));
-      } else if ((it.type === "select" || it.type === "cards" || it.type === "details") && it.options.some(o => o[0] === v)) {
+      } else if ((it.type === "select" || it.type === "cards") && it.options.some(o => o[0] === v)) {
         out[it.key] = v;
       } else if (it.type === "bool" && typeof v === "boolean") {
         out[it.key] = v;

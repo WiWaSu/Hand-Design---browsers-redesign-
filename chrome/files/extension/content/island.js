@@ -46,11 +46,8 @@
 .isl:hover .txt { max-width: 280px; }
 .t1 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
 .t2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: rgb(255 255 255 / .6); font-size: 12px; max-height: 0; max-width: 0; opacity: 0; transition: max-height .4s, opacity .3s; }
-.media .t2 { max-height: 16px; max-width: 220px; opacity: 1; font-size: 11.5px; }
-.art img { width: 18px; height: 18px; }
-.isl:hover .art img { width: 26px; height: 26px; }
 .isl:hover .t2 { max-height: 18px; max-width: 280px; opacity: 1; }
-.media:not(:hover) .b.big { width: 30px; height: 30px; }
+.media:not(:hover) .btns { display: none; }
 .btns { display: flex; gap: 4px; align-items: center; }
 .b { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: rgb(255 255 255 / .1);
   border: 0; cursor: pointer; padding: 0; transition: scale .3s cubic-bezier(.2,.9,.25,1.2), background-color .2s; }
@@ -64,6 +61,12 @@
 .b.none { opacity: .45; }
 .media .side { display: none; }
 .media:hover .side { display: grid; }
+.eq { display: flex; align-items: flex-end; gap: 2px; height: 14px; width: 16px; margin: 0 4px 0 0; flex: none; }
+.eq i { flex: 1; background: var(--acc, #30d158); border-radius: 2px; height: 100%; transform-origin: 50% 100%; transform: scaleY(.3); animation: eq 1s ease-in-out infinite; will-change: transform; }
+.eq i:nth-child(2) { animation-delay: -.35s; } .eq i:nth-child(3) { animation-delay: -.7s; }
+.eq.paused i { animation: none; transform: scaleY(.25); opacity: .5; }
+@keyframes eq { 0%, 100% { transform: scaleY(.25); } 50% { transform: scaleY(1); } }
+.media:hover .eq { display: none; }
 .dot { position: relative; width: 12px; height: 12px; border-radius: 50%; background: #30d158; box-shadow: 0 0 0 4px rgb(48 209 88 / .22); flex: none; margin-left: 6px; cursor: grab; }
 .dot::after { content: ""; position: absolute; inset: -7px; border-radius: 50%; border: 3px solid rgb(48 209 88 / .22); animation: beat 2s ease-in-out infinite; will-change: transform, opacity; }
 @keyframes beat { 0%, 100% { transform: scale(.75); opacity: .2; } 50% { transform: scale(1); opacity: 1; } }
@@ -155,26 +158,23 @@
   }
 
   function renderMedia(m) {
-    const k = "m" + JSON.stringify([m.tabId, m.title, m.artist, m.artwork, m.playing, m.hasNext, m.hasPrev, m.site, m.favicon]);
+    const k = "m" + JSON.stringify([m.tabId, m.title, m.artist, m.artwork, m.playing, m.hasNext, m.hasPrev, m.site]);
     if (k === key) return;
     key = k;
     mode = "media";
     isl.className = "isl media" + (cfg.square ? " square" : "");
     const art = h("div", { class: "art" });
     if (m.artwork) art.style.backgroundImage = `url("${m.artwork.replace(/["\\]/g, "")}")`;
-    else if (/^https?:/.test(m.favicon || "")) {
-      const img = h("img", { src: m.favicon, alt: "" });
-      img.addEventListener("error", () => img.replaceWith(icon("note")), { once: true });
-      art.append(img);
-    } else art.append(icon("note"));
+    else art.append(icon("note"));
     const sub = [m.artist, m.site].filter(Boolean).join(" · ");
     isl.replaceChildren(
       art,
       h("div", { class: "txt", "data-act": "go", title: T("Перейти во вкладку", "Go to tab") },
         h("div", { class: "t1" }, m.title || m.site || T("Музыка", "Media")), h("div", { class: "t2" }, sub)),
+      h("div", { class: "eq" + (m.playing ? "" : " paused") }, h("i"), h("i"), h("i")),
       h("div", { class: "btns" },
         m.hasPrev ? btn("prev", T("Назад", "Previous"), "prev", "side") : null,
-        btn("toggle", m.playing ? T("Пауза", "Pause") : T("Играть", "Play"), m.playing ? "pause" : "play", "big"),
+        btn("toggle", m.playing ? T("Пауза", "Pause") : T("Играть", "Play"), m.playing ? "pause" : "play", "big side"),
         m.hasNext ? btn("next", T("Дальше", "Next"), "next", "side") : null,
         btn("go", T("Перейти во вкладку", "Go to tab"), "go", "side"))
     );

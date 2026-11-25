@@ -19,7 +19,7 @@ if not (ver == man == inst):
     sys.exit(f"версии не совпадают: VERSION {ver}, manifest.json {man}, installer.ps1 {inst}")
 
 out = os.path.join(os.path.dirname(ROOT), f"Hand-Design-Chromium-v{ver}.zip")
-skip_top = {"build-exe.bat", "tools", "store"}
+skip_top = {"build-exe.bat", "tools"}
 with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
     for name in sorted(os.listdir(ROOT)):
         if name in skip_top or name.endswith((".zip", ".exe")):
@@ -28,8 +28,8 @@ with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
         if os.path.isdir(path):
             for d, _, files in os.walk(path):
                 for f in sorted(files):
-                    if f == "settings.json" or f.startswith("wallpaper.") or f == "Cached Theme.pak":
-                        continue  # их пишут установщик и Chrome
+                    if f == "settings.json" or f.startswith("wallpaper."):
+                        continue  # их пишет установщик
                     full = os.path.join(d, f)
                     z.write(full, os.path.relpath(full, ROOT))
         else:

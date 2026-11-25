@@ -29,7 +29,7 @@
     }
     if (medias.size > 300) medias.clear();
     medias.add(new WeakRef(el));
-    for (const ev of ["play", "playing", "pause", "ended", "emptied", "loadedmetadata", "enterpictureinpicture", "leavepictureinpicture"]) {
+    for (const ev of ["play", "playing", "pause", "ended", "emptied", "loadedmetadata"]) {
       el.addEventListener(ev, () => {
         if (ev === "play" || ev === "playing") lastPlayed = new WeakRef(el);
         reportMediaSoon();
@@ -55,10 +55,6 @@
   };
   // элементы в разметке: событие play не всплывает, но ловится на захвате
   document.addEventListener("play", e => e.target instanceof HTMLMediaElement && track(e.target), true);
-  window.documentPictureInPicture?.addEventListener("enter", e => {
-    reportMediaSoon();
-    e.window.addEventListener("pagehide", () => setTimeout(reportMedia, 50));
-  });
 
   const ms = navigator.mediaSession;
   if (ms) {
@@ -137,7 +133,6 @@
       hasNext: !!handlers.nexttrack,
       hasPrev: !!handlers.previoustrack,
       video: el.tagName === "VIDEO",
-      pip: document.pictureInPictureElement === el || !!window.documentPictureInPicture?.window,
     };
     const key = JSON.stringify(data);
     if (key === lastSent) return;
