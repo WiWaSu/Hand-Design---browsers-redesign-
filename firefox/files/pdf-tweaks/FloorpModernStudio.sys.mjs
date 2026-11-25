@@ -12,7 +12,7 @@ import { PARTS } from "resource://pdftweaks/themes/parts.sys.mjs";
 
 export const PREF = "floorp.modern.studio";
 // версия Hand Design — меняется вместе с VERSION (tools/build.sh проверяет)
-export const APP_VERSION = "2.2.0";
+export const APP_VERSION = "3.0.0";
 
 /* Описание всех настроек: из него рисуется страница, проверяются значения
    и собирается CSS. null = «как в теме». */
@@ -21,62 +21,84 @@ export const THEME_COLOR_KEYS = ["accent", "frame", "bar", "menuBg", "ink", "onA
 
 const DETAIL_THEMES = [["none", "Без особенностей"], ["ios", "iOS Liquid Glass"], ["material", "Material You"], ["fluent", "Windows 11"], ["macos", "macOS"], ["nothing", "Nothing"], ["nightdrive", "Night Drive"], ["aero", "Aero"], ["retro", "Retro 98"], ["terminal", "Terminal"], ["paper", "Paper"], ["cyber", "Cyberpunk"], ["arctic", "Arctic"], ["sakura", "Sakura"], ["mint", "Mint"], ["latte", "Latte"], ["midnight", "Midnight"], ["fjord", "Fjord"], ["ember", "Ember"], ["forest", "Forest"], ["ocean", "Ocean"], ["rose", "Rosé"], ["synthwave", "Synthwave"], ["contrast", "High Contrast"]];
 
+/* section — раздел в меню, icon — значок, area — что подсвечивает предпросмотр */
+const PACK_OPTIONS = [["oneui", "One UI"], ...DETAIL_THEMES.filter(o => o[0] !== "none")];
 export const SCHEMA = [
-  { group: "details", title: "Детали тем", items: [
-    { key: "dWindow", type: "details", part: "window", label: "Окно и меню", hint: "Выделенная вкладка, пункты меню, плитки главного меню, стекло, кнопки окна — как в выбранной теме. Не выбрано — как в текущей теме", options: DETAIL_THEMES },
-    { key: "dClock", type: "details", part: "clock", label: "Часы на новой вкладке", hint: "Шрифт, размер, точки Nothing, окно Retro 98, фосфор Terminal, неон и т. д.", options: DETAIL_THEMES },
-    { key: "dWall", type: "details", part: "wall", label: "Фон новой вкладки", hint: "Огни Night Drive, точечная сетка Nothing, строки развёртки, бумага, неоновая сетка и т. д. Обои из Studio остаются поверх", options: DETAIL_THEMES },
-    { key: "dSearch", type: "details", part: "search", label: "Поиск и ярлыки на новой вкладке", options: DETAIL_THEMES },
+  /* ---------------- Внешний вид ---------------- */
+  { group: "colors", section: "Внешний вид", icon: "palette", title: "Цвета", desc: "Главные цвета окна. Не выбрано — как в теме", area: "all", items: [
+    { key: "accent", type: "color", label: "Акцент", hint: "Главный цвет: выбранная вкладка, кнопки, ползунки, выделение" },
+    { key: "frame", type: "color", label: "Фон окна", hint: "Всё вокруг страницы: под вкладками, панелью и по краям", area: "toolbar" },
+    { key: "bar", type: "color", label: "Адресная строка и поля", hint: "Строка адреса, поиск и поля ввода в меню", area: "url" },
+    { key: "menuBg", type: "color", label: "Фон меню", hint: "Меню правой кнопки, главное меню ☰ и всплывающие панели", area: "menu" },
+    { key: "ink", type: "color", label: "Текст", hint: "Названия вкладок, пункты меню, подписи кнопок" },
   ] },
-  { group: "colors", title: "Цвета", items: [
-    { key: "accent", type: "color", label: "Акцент", hint: "Кнопки, выделение, ползунки" },
-    { key: "frame", type: "color", label: "Фон окна", hint: "Вокруг страницы и под вкладками" },
-    { key: "bar", type: "color", label: "Поля и адресная строка" },
-    { key: "menuBg", type: "color", label: "Фон меню и панелей" },
-    { key: "ink", type: "color", label: "Текст интерфейса" },
-    { key: "muted", type: "color", label: "Второстепенный текст", hint: "Подписи, подсказки, неактивные пункты" },
-    { key: "onAccent", type: "color", label: "Текст на акценте", hint: "Надписи на кнопках цвета акцента. Не выбрано — чёрный или белый по яркости акцента" },
-    { key: "field", type: "color", label: "Поля ввода", hint: "Поиск и поля в меню и на страницах. Не выбрано — как «Поля и адресная строка»" },
-    { key: "line", type: "color", label: "Линии и рамки" },
-    { key: "hover", type: "color", label: "Наведение", hint: "Подсветка под мышью, полупрозрачная" },
-    { key: "press", type: "color", label: "Нажатие", hint: "Полупрозрачное" },
-    { key: "soft", type: "color", label: "Мягкий акцент", hint: "Выбранная вкладка, пункт меню, строка в подсказках адреса. Полупрозрачный" },
-    { key: "toggle", type: "color", label: "Переключатели", hint: "Включённые переключатели в меню и настройках" },
-    { key: "menuAlpha", type: "range", label: "Прозрачность меню", min: 0, max: 60, step: 5, unit: "%" },
-    { key: "menuBlur", type: "range", label: "Размытие под меню", min: 0, max: 40, step: 2, unit: "px" },
+  { group: "colorsMore", section: "Внешний вид", icon: "pipette", title: "Цвета: тонкая настройка", desc: "Оттенки, которые обычно подбирает тема сама", area: "all", items: [
+    { key: "muted", type: "color", label: "Второстепенный текст", hint: "Подсказки, подписи, адреса под названиями" },
+    { key: "onAccent", type: "color", label: "Текст на акценте", hint: "Надписи на кнопках цвета акцента. Не выбрано — чёрный или белый, смотря что читается лучше" },
+    { key: "field", type: "color", label: "Поля ввода", hint: "Поиск и поля в меню и на страницах. Не выбрано — как адресная строка" },
+    { key: "line", type: "color", label: "Линии и рамки", hint: "Разделители в меню и тонкие рамки вокруг панелей" },
+    { key: "hover", type: "color", label: "Подсветка под мышью", hint: "Полупрозрачный фон кнопки или пункта, на который навели" },
+    { key: "press", type: "color", label: "Нажатие", hint: "Фон кнопки в момент нажатия" },
+    { key: "soft", type: "color", label: "Мягкий акцент", hint: "Бледный акцент: выбранная вкладка, выбранный пункт, строка в подсказках адреса", area: "tabs" },
+    { key: "toggle", type: "color", label: "Переключатели", hint: "Включённые переключатели в меню и настройках браузера" },
   ] },
-  { group: "shape", title: "Форма", items: [
-    { key: "square", type: "bool", label: "Без скруглений", hint: "Убирает все скругления: окно, вкладки, меню, кнопки, адресная строка, новая вкладка, PDF" },
-    { key: "radius", type: "range", label: "Скругление страницы", min: 0, max: 36, step: 1, unit: "px" },
-    { key: "gap", type: "range", label: "Отступ вокруг страницы", min: 0, max: 24, step: 1, unit: "px" },
-    { key: "pageShadow", type: "range", label: "Тень под страницей", min: 0, max: 100, step: 5, unit: "%" },
-    { key: "menuRadius", type: "range", label: "Скругление меню", min: 0, max: 32, step: 1, unit: "px" },
-    { key: "menuItemRadius", type: "range", label: "Скругление пунктов меню", min: 0, max: 24, step: 1, unit: "px" },
-    { key: "buttonShape", type: "select", label: "Кнопки панели", options: [["round", "Круглые"], ["rounded", "Скруглённые"], ["square", "Квадратные"]] },
-    { key: "density", type: "select", label: "Плотность", options: [["compact", "Компактно"], ["normal", "Обычно"], ["touch", "Крупно (сенсор)"]] },
+  { group: "shape", section: "Внешний вид", icon: "shape", title: "Форма", desc: "Скругления, отступы и размер кнопок", area: "page", items: [
+    { key: "square", type: "bool", label: "Без скруглений", hint: "Убирает скругления везде: окно, вкладки, меню, кнопки, адресная строка, новая вкладка, PDF", area: "all" },
+    { key: "radius", type: "range", label: "Скругление страницы", hint: "Углы области, где показывается сайт", min: 0, max: 36, step: 1, unit: "px" },
+    { key: "gap", type: "range", label: "Отступ вокруг страницы", hint: "Расстояние между сайтом и краями окна. 0 — сайт во всю ширину", min: 0, max: 24, step: 1, unit: "px" },
+    { key: "pageShadow", type: "range", label: "Тень под страницей", hint: "Насколько страница «приподнята» над фоном окна", min: 0, max: 100, step: 5, unit: "%" },
+    { key: "buttonShape", type: "select", label: "Форма кнопок", hint: "Подсветка кнопок на панели при наведении", area: "toolbar", options: [["round", "Круглые"], ["rounded", "Скруглённые"], ["square", "Квадратные"]] },
+    { key: "density", type: "select", label: "Размер кнопок", hint: "Крупно — удобнее на сенсорном экране, компактно — больше места сайту", area: "toolbar", options: [["compact", "Компактно"], ["normal", "Обычно"], ["touch", "Крупно"]] },
   ] },
-  { group: "tabs", title: "Вкладки", items: [
-    { key: "tabShape", type: "select", label: "Форма вкладок", options: [["pill", "Таблетки"], ["rounded", "Скруглённые"], ["square", "Прямые"], ["underline", "Подчёркивание"], ["card", "Карточки"], ["chrome", "Как в Chrome"]] },
-    { key: "tabSelected", type: "select", label: "Выбранная вкладка", options: [["soft", "Мягкий акцент"], ["accent", "Залита акцентом"], ["outline", "Обводка"], ["glass", "Стекло"], ["contrast", "Контрастная"], ["none", "Без подсветки"]] },
-    { key: "tabHeight", type: "range", label: "Высота вкладок", min: 26, max: 48, step: 1, unit: "px" },
-    { key: "tabMinWidth", type: "range", label: "Мин. ширина вкладки", min: 40, max: 260, step: 10, unit: "px" },
-    { key: "tabClose", type: "select", label: "Крестик на вкладке", options: [["always", "Всегда"], ["hover", "При наведении"], ["never", "Скрыть"]] },
-    { key: "tabWeight", type: "range", label: "Жирность названия", min: 300, max: 800, step: 100 },
-    { key: "tabsHide", type: "select", label: "Скрыть вкладки", hint: "«У края» — вкладки спрятаны и выезжают, когда подводите мышь к краю окна. «Полностью» — их не видно совсем (Alt+Shift+T — показать / спрятать). Не компактный вид, а скрытие целиком", options: [["edge", "У края"], ["always", "Полностью"]] },
-    { key: "tabPreview", type: "cards", label: "Превью при наведении", options: [
+  { group: "icons", section: "Внешний вид", icon: "star", title: "Значки", desc: "Как нарисованы все значки браузера и Hand Design", area: "toolbar", items: [
+    { key: "iconPack", type: "packs", label: "Набор значков", hint: "У каждой темы свой набор: другая форма и стиль у всех значков на панели, во вкладках, меню, боковых панелях, заметках и PDF. Можно взять набор любой темы или нарисованный от руки", options: [...PACK_OPTIONS, ["sketch", "Набросок"], ["marker", "Маркер"], ["doodle", "Каракули"], ["brush", "Кисть"]] },
+  ] },
+  { group: "font", section: "Внешний вид", icon: "text", title: "Шрифт", desc: "Шрифт и размер текста интерфейса", area: "all", items: [
+    { key: "font", type: "select", label: "Шрифт", hint: "Вкладки, меню, адресная строка и подписи", options: [["segoe", "Segoe UI Variable"], ["inter", "Inter"], ["roboto", "Roboto"], ["system", "Системный"], ["arial", "Arial"], ["mono", "Моноширинный"], ["custom", "Свой…"]] },
+    { key: "fontCustom", type: "text", label: "Свой шрифт", hint: "Точное название шрифта, установленного в Windows", placeholder: "например, JetBrains Mono" },
+    { key: "fontSize", type: "range", label: "Размер текста", hint: "Текст интерфейса. Сайты не меняются", min: 11, max: 17, step: 0.5, unit: "px" },
+  ] },
+  { group: "motion", section: "Внешний вид", icon: "speed", title: "Анимации", desc: "Скорость и характер движения", area: "all", items: [
+    { key: "speed", type: "range", label: "Скорость", hint: "Меньше — быстрее. 1× — как задумано в теме", min: 0.3, max: 2, step: 0.1, unit: "×" },
+    { key: "bounce", type: "select", label: "Пружинка", hint: "Меню и плашки слегка проскакивают и возвращаются, как в телефоне", options: [["none", "Без пружинки"], ["soft", "Чуть-чуть"], ["ios", "Как в iOS"], ["strong", "Сильно"]] },
+  ] },
+  { group: "details", section: "Внешний вид", icon: "customize", title: "Детали тем", desc: "Взять отдельную часть оформления у другой темы", area: "tabs", items: [
+    { key: "dWindow", type: "details", part: "window", label: "Вкладки и меню", hint: "Выделенная вкладка, пункты меню, плитки главного меню, кнопки окна. Не выбрано — как в текущей теме", options: DETAIL_THEMES },
+    { key: "dClock", type: "details", part: "clock", label: "Часы на новой вкладке", hint: "Шрифт и вид часов: точки Nothing, окно Retro 98, фосфор Terminal, неон", area: "newtab", options: DETAIL_THEMES },
+    { key: "dWall", type: "details", part: "wall", label: "Фон новой вкладки", hint: "Огни Night Drive, сетка Nothing, бумага, неоновая сетка. Свои обои остаются поверх", area: "newtab", options: DETAIL_THEMES },
+    { key: "dSearch", type: "details", part: "search", label: "Поиск и ярлыки", hint: "Строка поиска и плитки сайтов на новой вкладке", area: "newtab", options: DETAIL_THEMES },
+  ] },
+
+  /* ---------------- Окно браузера ---------------- */
+  { group: "tabs", section: "Окно браузера", icon: "tab", title: "Вкладки", desc: "Как выглядят и ведут себя вкладки", area: "tabs", items: [
+    { key: "tabShape", type: "select", label: "Форма", hint: "Очертание каждой вкладки", options: [["pill", "Таблетки"], ["rounded", "Скруглённые"], ["square", "Прямые"], ["underline", "Подчёркивание"], ["card", "Карточки"], ["chrome", "Как в Chrome"]] },
+    { key: "tabSelected", type: "select", label: "Открытая вкладка", hint: "Чем вкладка, которую вы сейчас смотрите, отличается от остальных", options: [["soft", "Мягкий акцент"], ["accent", "Залита акцентом"], ["outline", "Обводка"], ["glass", "Стекло"], ["contrast", "Контрастная"], ["none", "Ничем"]] },
+    { key: "tabHeight", type: "range", label: "Высота", hint: "Ниже — компактнее, выше — легче попасть мышью", min: 26, max: 48, step: 1, unit: "px" },
+    { key: "tabMinWidth", type: "range", label: "Самая узкая вкладка", hint: "Уже этого вкладки не сжимаются: когда их много, появляется прокрутка", min: 40, max: 260, step: 10, unit: "px" },
+    { key: "tabClose", type: "select", label: "Крестик закрытия", hint: "Когда показывать крестик на вкладке", options: [["always", "Всегда"], ["hover", "При наведении"], ["never", "Никогда"]] },
+    { key: "tabWeight", type: "range", label: "Жирность названия", hint: "Толщина шрифта в названиях вкладок", min: 300, max: 800, step: 100 },
+    { key: "tabsHide", type: "select", label: "Прятать вкладки", hint: "«У края» — вкладки выезжают, когда мышь у края окна. «Совсем» — их не видно, показать можно Alt+Shift+T", options: [["edge", "У края"], ["always", "Совсем"]] },
+    { key: "tabPreview", type: "cards", label: "Превью при наведении", hint: "Что появляется, если задержать мышь на вкладке", options: [
       ["card", "Карточка", "Миниатюра, под ней название и адрес"],
       ["compact", "Компактное", "Только название и адрес"],
       ["wide", "Крупное", "Большая миниатюра"],
     ] },
   ] },
-  { group: "urlbar", title: "Адресная строка", items: [
+  { group: "urlbar", section: "Окно браузера", icon: "link", title: "Адресная строка", desc: "Строка с адресом сайта и поиском", area: "url", items: [
     { key: "urlHeight", type: "range", label: "Высота", min: 28, max: 52, step: 1, unit: "px" },
-    { key: "urlRadius", type: "range", label: "Скругление", min: 0, max: 26, step: 1, unit: "px" },
-    { key: "urlAlign", type: "select", label: "Адрес", options: [["center", "По центру"], ["start", "Слева"]] },
-    { key: "urlBorder", type: "select", label: "Рамка", options: [["glow", "Свечение"], ["line", "Тонкая линия"], ["none", "Без рамки"]] },
+    { key: "urlRadius", type: "range", label: "Скругление углов", hint: "0 — прямоугольная, больше — таблетка", min: 0, max: 26, step: 1, unit: "px" },
+    { key: "urlAlign", type: "select", label: "Где адрес", hint: "Положение адреса, пока вы не начали печатать", options: [["center", "По центру"], ["start", "Слева"]] },
+    { key: "urlBorder", type: "select", label: "Рамка", options: [["glow", "Мягкое свечение"], ["line", "Тонкая линия"], ["none", "Без рамки"]] },
   ] },
-  { group: "menus", title: "Меню правой кнопки", items: [
-    { key: "menuStyle", type: "cards", label: "Стиль", options: [
+  { group: "toolbar", section: "Окно браузера", icon: "toolbar", title: "Панель и кнопки", desc: "Какие кнопки и панели видны", area: "toolbar", items: [
+    { key: "showBookmarks", type: "bool", label: "Панель закладок", hint: "Ряд закладок под адресной строкой", area: "bookmarks" },
+    { key: "showSidebarButton", type: "bool", label: "Кнопка боковой панели" },
+    { key: "showTabList", type: "bool", label: "Кнопка «Все вкладки»", hint: "Стрелка со списком всех открытых вкладок", area: "tabs" },
+    { key: "showNewTabButton", type: "bool", label: "Кнопка «Новая вкладка»", hint: "Плюс рядом с вкладками", area: "tabs" },
+    { key: "showExtensions", type: "bool", label: "Кнопка расширений", hint: "Значок-пазл со списком дополнений" },
+  ] },
+  { group: "menus", section: "Окно браузера", icon: "menu", title: "Меню", desc: "Меню правой кнопки и всплывающие панели", area: "menu", items: [
+    { key: "menuStyle", type: "cards", label: "Стиль меню", options: [
       ["oneui", "One UI", "Крупные пункты-таблетки"],
       ["glass", "Стекло iOS", "Полупрозрачное, с размытием"],
       ["fluent", "Windows 11", "Компактное, полоска акцента"],
@@ -87,129 +109,131 @@ export const SCHEMA = [
     ] },
     { key: "menuItemHeight", type: "range", label: "Высота пункта", min: 22, max: 52, step: 1, unit: "px" },
     { key: "menuFont", type: "range", label: "Размер текста", min: 11, max: 17, step: 0.5, unit: "px" },
-    { key: "menuIcons", type: "bool", label: "Значки в меню" },
+    { key: "menuIcons", type: "bool", label: "Значки у пунктов", hint: "Маленький значок слева от каждого пункта" },
+    { key: "menuRadius", type: "range", label: "Скругление меню", hint: "Углы самого меню", min: 0, max: 32, step: 1, unit: "px" },
+    { key: "menuItemRadius", type: "range", label: "Скругление пунктов", hint: "Углы подсветки пункта под мышью", min: 0, max: 24, step: 1, unit: "px" },
+    { key: "menuAlpha", type: "range", label: "Прозрачность", hint: "0 — меню сплошное, больше — сквозь него видно страницу", min: 0, max: 60, step: 5, unit: "%" },
+    { key: "menuBlur", type: "range", label: "Размытие под меню", hint: "Заметно, только если меню прозрачное", min: 0, max: 40, step: 2, unit: "px" },
   ] },
-  { group: "appmenu", title: "Главное меню ☰", items: [
-    { key: "tileShape", type: "select", label: "Плитки под значками", options: [["circle", "Круглые"], ["rounded", "Скруглённые"], ["square", "Квадратные"], ["none", "Без плиток"]] },
-    { key: "tileColor", type: "color", label: "Цвет плиток", hint: "Не выбрано — как в теме" },
+  { group: "appmenu", section: "Окно браузера", icon: "dashboard", title: "Главное меню ☰", desc: "Меню за кнопкой с тремя полосками", area: "toolbar", items: [
+    { key: "tileShape", type: "select", label: "Подложка под значками", hint: "Цветные плитки за значками пунктов", options: [["circle", "Круги"], ["rounded", "Скруглённые"], ["square", "Квадраты"], ["none", "Без подложки"]] },
+    { key: "tileColor", type: "color", label: "Цвет подложки", hint: "Не выбрано — у каждого пункта свой цвет из темы" },
   ] },
-  { group: "ctrltab", title: "Переключатель Ctrl+Tab", items: [
-    { key: "ctrlTabPreview", type: "bool", label: "Показывать окно с превью", hint: "Ctrl+Tab переключает по недавно открытым и показывает миниатюры" },
-    { key: "ctrlTabStyle", type: "cards", label: "Стиль", options: [
+  { group: "ctrltab", section: "Окно браузера", icon: "tabs", title: "Переключение Ctrl+Tab", desc: "Как переключаться между вкладками с клавиатуры", area: "tabs", items: [
+    { key: "ctrlTabPreview", type: "bool", label: "Окно с миниатюрами", hint: "Ctrl+Tab листает вкладки в порядке, в каком вы их открывали, и показывает миниатюры. Выкл. — просто следующая вкладка" },
+    { key: "ctrlTabStyle", type: "cards", label: "Вид окна", options: [
       ["ios", "iOS", "Большие карточки на размытом фоне"],
       ["windows", "Windows 11", "Как Alt+Tab: акрил и рамка"],
       ["list", "Список", "Только названия, без миниатюр"],
       ["neon", "Неон", "Тёмный, выбранная светится"],
     ] },
   ] },
-  { group: "font", title: "Шрифт", items: [
-    { key: "font", type: "select", label: "Шрифт интерфейса", options: [["segoe", "Segoe UI Variable"], ["inter", "Inter"], ["roboto", "Roboto"], ["system", "Системный"], ["arial", "Arial"], ["mono", "Моноширинный"], ["custom", "Свой…"]] },
-    { key: "fontCustom", type: "text", label: "Свой шрифт", hint: "Название шрифта, установленного в Windows" },
-    { key: "fontSize", type: "range", label: "Размер текста", min: 11, max: 17, step: 0.5, unit: "px" },
+  { group: "bars", section: "Окно браузера", icon: "sound", title: "Плашки и полоски", desc: "Now Bar, плашка звонка и полоска загрузки", area: "nowbar", items: [
+    { key: "showNowBar", type: "bool", label: "Now Bar", hint: "Плашка внизу, когда музыка или видео играют в другой вкладке: пауза, назад, вперёд, звук" },
+    { key: "showCallBar", type: "bool", label: "Плашка звонка", hint: "Сверху по центру, когда в другой вкладке идёт звонок: микрофон и камера в один щелчок", area: "toolbar" },
+    { key: "showProgress", type: "bool", label: "Полоска загрузки", hint: "Тонкая полоска под панелью, пока открывается страница", area: "progress" },
+    { key: "loadBar", type: "select", label: "Вид полоски загрузки", hint: "У каждой темы своя: блоки Retro 98, волна Ocean, огонь Ember и другие. Не выбрано — как в теме", area: "progress", options: PACK_OPTIONS },
   ] },
-  { group: "motion", title: "Анимации", items: [
-    { key: "speed", type: "range", label: "Длительность", min: 0.3, max: 2, step: 0.1, unit: "×" },
-    { key: "bounce", type: "select", label: "Пружинистость", options: [["none", "Без перелёта"], ["soft", "Мягкая"], ["ios", "Как в iOS"], ["strong", "Сильная"]] },
-  ] },
-  { group: "newtab", title: "Новая вкладка", items: [
+
+  /* ---------------- Новая вкладка ---------------- */
+  { group: "newtab", section: "Новая вкладка", icon: "home", title: "Новая вкладка", desc: "Часы, поиск, ярлыки и обои", area: "newtab", items: [
+    { key: "clockPos", type: "select", label: "Часы", options: [["top", "Сверху"], ["center", "По центру"], ["hidden", "Не показывать"]] },
     { key: "clockSize", type: "range", label: "Размер часов", min: 40, max: 220, step: 4, unit: "px" },
     { key: "clockWeight", type: "range", label: "Толщина цифр", min: 100, max: 900, step: 100 },
     { key: "clockFont", type: "select", label: "Шрифт часов", options: [["ui", "Как интерфейс"], ["serif", "С засечками"], ["mono", "Моноширинный"], ["rounded", "Округлый"]] },
-    { key: "clockPos", type: "select", label: "Где часы", options: [["top", "Сверху"], ["center", "По центру"], ["hidden", "Скрыть"]] },
     { key: "showDate", type: "bool", label: "Дата под часами" },
-    { key: "searchWidth", type: "range", label: "Ширина поиска", min: 30, max: 90, step: 5, unit: "%" },
-    { key: "tiles", type: "bool", label: "Ярлыки сайтов" },
-    { key: "wallBlur", type: "range", label: "Размытие обоев", min: 0, max: 40, step: 2, unit: "px" },
+    { key: "searchWidth", type: "range", label: "Ширина поиска", hint: "Доля ширины окна", min: 30, max: 90, step: 5, unit: "%" },
+    { key: "tiles", type: "bool", label: "Ярлыки сайтов", hint: "Плитки часто открываемых сайтов под поиском" },
+    { key: "wallBlur", type: "range", label: "Размытие обоев", hint: "Обои меняются кнопкой слева внизу на самой новой вкладке", min: 0, max: 40, step: 2, unit: "px" },
   ] },
-  { group: "pdf", title: "Просмотрщик PDF", items: [
-    { key: "pdfUi", type: "select", label: "Оформление просмотрщика", options: [["auto", "Как в системе"], ["light", "Светлое"], ["dark", "Тёмное"]] },
-    { key: "pdfPage", type: "select", label: "Цвет страниц", options: [["auto", "Как есть"], ["paper", "Бумага"], ["sepia", "Сепия"], ["night", "Ночь"]] },
+
+  /* ---------------- Функции ---------------- */
+  { group: "passwords", section: "Функции", icon: "key", title: "Пароли", desc: "Окно сохранённых паролей", area: "page", items: [
+    { key: "passwordsPanel", type: "bool", label: "Компактное окно паролей", hint: "Пароли открываются небольшим окном у края, со стороны кнопки, а не отдельной вкладкой. Кнопка «Развернуть» открывает полный менеджер" },
+  ] },
+  { group: "docs", section: "Функции", icon: "file", title: "Файлы", desc: "Что открывается прямо в браузере, без программ", area: "page", items: [
+    { key: "mdEditor", type: "bool", label: "Markdown (.md)", hint: "Файлы открываются оформленными: просмотр, правка рядом, сохранение по Ctrl+S" },
+    { key: "csvEditor", type: "bool", label: "Таблицы (.csv, .tsv)", hint: "Открываются таблицей, а не скачиваются: правка ячеек, сортировка, поиск, Ctrl+S" },
+    { key: "imgEditor", type: "bool", label: "Редактор картинок", hint: "Обрезка, поворот, стрелки, рамки, текст, размытие, сжатие. В меню правой кнопки по картинке появляется «Редактировать картинку»" },
+  ] },
+  { group: "pdf", section: "Функции", icon: "pdf", title: "PDF: просмотр", desc: "Вид просмотрщика и кнопки на его панели", area: "page", items: [
+    { key: "pdfUi", type: "select", label: "Оформление", options: [["auto", "Как в системе"], ["light", "Светлое"], ["dark", "Тёмное"]] },
+    { key: "pdfPage", type: "select", label: "Цвет страниц", hint: "Бумага и сепия мягче для глаз, ночь — для темноты", options: [["auto", "Как в файле"], ["paper", "Бумага"], ["sepia", "Сепия"], ["night", "Ночь"]] },
     { key: "pdfBar", type: "color", label: "Цвет панели" },
-    { key: "pdfWell", type: "color", label: "Фон групп кнопок на панели" },
-    { key: "pdfAutoParams", type: "bool", label: "Панель инструмента открывается сама", hint: "Выкл.: нажатие на карандаш / текст только выбирает инструмент, настройки — по стрелочке ▾ рядом" },
-    { key: "pdfSteppers", type: "bool", label: "Кнопки − / + и готовые размеры", hint: "В панели «Толщина / Размер»" },
-    { key: "pdfColors", type: "bool", label: "Своя палитра цветов", hint: "Выкл.: системное окно «Цвет» Windows" },
-    { key: "pdfClear", type: "bool", label: "Кнопка «Очистить»", hint: "Убрать все рисунки / убрать всё" },
-    { key: "pdfBookmarks", type: "bool", label: "Закладки страниц", hint: "Кнопка в панели и Ctrl+B" },
-    { key: "pdfThemeButton", type: "bool", label: "Кнопка темы в панели" },
-    { key: "pdfQuickText", type: "bool", label: "Быстрый текст", hint: "Двойной клик по пустому месту или по «……» — сразу поле для текста. Действует после перезагрузки PDF" },
-    { key: "pdfResume", type: "bool", label: "Открывать там, где остановились", hint: "Действует после перезагрузки PDF" },
+    { key: "pdfWell", type: "color", label: "Фон групп кнопок", hint: "Подложка под кнопками инструментов на панели" },
+    { key: "pdfResume", type: "bool", label: "Открывать там, где остановились", hint: "Документ открывается на той же странице. Начнёт работать после перезагрузки PDF" },
+    { key: "pdfBookmarks", type: "bool", label: "Закладки страниц", hint: "Кнопка на панели и Ctrl+B" },
+    { key: "pdfThemeButton", type: "bool", label: "Кнопка цвета страниц", hint: "Быстрый переход между бумагой, сепией и ночью" },
     { key: "pdfAnim", type: "bool", label: "Анимации панелей" },
   ] },
-  { group: "pdfink", title: "PDF: карандаш и тайминги", items: [
-    { key: "pdfInkSelect", type: "bool", label: "Выделять рисунок сразу после рисования", hint: "Выкл.: нарисованное не выделяется и панелька не выезжает — чтобы выделить, щёлкни по рисунку" },
-    { key: "pdfInkGroup", type: "bool", label: "Собирать штрихи в один рисунок", hint: "Буква или слово из нескольких штрихов — один рисунок (удаляется и двигается целиком). Выкл.: каждый штрих отдельно" },
-    { key: "pdfInkIdle", type: "range", label: "Пауза до нового рисунка", min: 150, max: 3000, step: 50, unit: " мс", def: 900, hint: "Не рисовали дольше — следующий штрих начнёт новый рисунок" },
-    { key: "pdfInkGap", type: "range", label: "Расстояние до нового рисунка", min: 4, max: 150, step: 2, unit: " px", def: 28, hint: "Штрих дальше этого от предыдущего — новый рисунок" },
-    { key: "pdfInkMaxW", type: "range", label: "Макс. ширина рисунка", min: 60, max: 1200, step: 20, unit: " px", def: 260, hint: "Примерно одно слово. Больше — начинается новый рисунок" },
-    { key: "pdfInkMaxH", type: "range", label: "Макс. высота рисунка", min: 40, max: 800, step: 10, unit: " px", def: 140 },
-    { key: "pdfGrab", type: "range", label: "Захват линии мышью", min: 2, max: 24, step: 1, unit: " px", def: 5, hint: "Насколько близко к линии надо навести, чтобы её выделить" },
-    { key: "pdfShiftLine", type: "bool", label: "Shift — ровная линия", hint: "Как в Paint: зажать Shift во время рисования" },
-    { key: "pdfShiftStep", type: "select", label: "Шаг угла с Shift", options: [["45", "45°"], ["15", "15°"], ["90", "Только гориз. / верт."]] },
-    { key: "pdfHoldSpeed", type: "range", label: "Скорость − / + при зажатии", min: 30, max: 300, step: 10, unit: " мс", def: 70 },
-    { key: "pdfHoldDelay", type: "range", label: "Задержка до автоповтора − / +", min: 150, max: 1000, step: 50, unit: " мс", def: 380 },
+  { group: "pdfink", section: "Функции", icon: "pen", title: "PDF: рисование и текст", desc: "Карандаш, текст и как собираются рисунки", area: "page", items: [
+    { key: "pdfAutoParams", type: "bool", label: "Настройки инструмента сразу", hint: "Выбрали карандаш или текст — сразу открываются толщина и цвет. Выкл. — они по стрелочке ▾ рядом" },
+    { key: "pdfSteppers", type: "bool", label: "Кнопки − и + у толщины", hint: "И готовые размеры рядом с ползунком" },
+    { key: "pdfColors", type: "bool", label: "Своя палитра цветов", hint: "Выкл. — открывается системное окно выбора цвета Windows" },
+    { key: "pdfClear", type: "bool", label: "Кнопка «Очистить»", hint: "Убирает все рисунки или всё сразу" },
+    { key: "pdfQuickText", type: "bool", label: "Быстрый текст", hint: "Двойной щелчок по пустому месту или по «……» сразу создаёт поле для текста. После перезагрузки PDF" },
+    { key: "pdfShiftLine", type: "bool", label: "Ровная линия с Shift", hint: "Как в Paint: зажмите Shift, пока рисуете" },
+    { key: "pdfShiftStep", type: "select", label: "Углы ровной линии", options: [["45", "Через 45°"], ["15", "Через 15°"], ["90", "Только по горизонтали и вертикали"]] },
+    { key: "pdfInkSelect", type: "bool", label: "Выделять нарисованное", hint: "После рисования рисунок выделяется и появляется панелька. Выкл. — чтобы выделить, щёлкните по рисунку" },
+    { key: "pdfInkGroup", type: "bool", label: "Собирать штрихи в один рисунок", hint: "Буква или слово из нескольких штрихов двигается и удаляется целиком. Выкл. — каждый штрих отдельно" },
+    { key: "pdfInkIdle", type: "range", label: "Пауза до нового рисунка", hint: "Не рисовали дольше — следующий штрих начнёт новый рисунок", min: 150, max: 3000, step: 50, unit: " мс", def: 900 },
+    { key: "pdfInkGap", type: "range", label: "Расстояние до нового рисунка", hint: "Штрих дальше этого от прошлого начнёт новый рисунок", min: 4, max: 150, step: 2, unit: " px", def: 28 },
+    { key: "pdfInkMaxW", type: "range", label: "Самый широкий рисунок", hint: "Примерно одно слово. Шире — начинается новый", min: 60, max: 1200, step: 20, unit: " px", def: 260 },
+    { key: "pdfInkMaxH", type: "range", label: "Самый высокий рисунок", min: 40, max: 800, step: 10, unit: " px", def: 140 },
+    { key: "pdfGrab", type: "range", label: "Как точно наводить на линию", hint: "Насколько близко к линии надо навести мышь, чтобы её выделить", min: 2, max: 24, step: 1, unit: " px", def: 5 },
+    { key: "pdfHoldDelay", type: "range", label: "Задержка перед повтором − и +", hint: "Через сколько начинает повторяться нажатие, если держать кнопку", min: 150, max: 1000, step: 50, unit: " мс", def: 380 },
+    { key: "pdfHoldSpeed", type: "range", label: "Скорость повтора − и +", min: 30, max: 300, step: 10, unit: " мс", def: 70 },
   ] },
-  { group: "docs", title: "Документы", items: [
-    { key: "mdEditor", type: "bool", label: "Редактор Markdown", hint: "Файлы .md открываются оформленными: просмотр, правка рядом, сохранение по Ctrl+S" },
-    { key: "csvEditor", type: "bool", label: "Редактор таблиц CSV", hint: "Файлы .csv и .tsv открываются таблицей вместо скачивания: правка ячеек, сортировка, поиск, сохранение по Ctrl+S" },
-    { key: "imgEditor", type: "bool", label: "Редактор картинок", hint: "Обрезка, поворот, стрелки, рамки, текст, размытие, сжатие и смена формата. Картинки с компьютера открываются в редакторе, в меню правой кнопки по картинке появляется «Редактировать картинку»" },
-  ] },
-  { group: "notes", title: "Заметки", items: [
-    { key: "notesLive", type: "bool", label: "Live Preview", hint: "Вместо знаков разметки (#, **, [ ]) виден оформленный текст. Выкл.: виден исходный Markdown" },
-    { key: "notesMarks", type: "bool", label: "Показывать разметку под курсором", hint: "Как в Obsidian: знаки #, **, ``` видны в строке с курсором. Выкл.: всегда виден только оформленный текст" },
+  { group: "notes", section: "Функции", icon: "note", title: "Заметки: работа", desc: "Как ведёт себя редактор заметок", area: "page", items: [
+    { key: "notesLive", type: "bool", label: "Оформленный текст", hint: "Вместо знаков #, ** и [ ] сразу виден заголовок, жирный текст и галочки. Выкл. — исходный Markdown" },
+    { key: "notesMarks", type: "bool", label: "Знаки разметки в строке с курсором", hint: "Как в Obsidian: в строке, где стоит курсор, видны # и **. Выкл. — знаков не видно нигде" },
+    { key: "notesToolbar", type: "bool", label: "Панель кнопок сверху", hint: "Жирный, курсив, списки, таблица и другие кнопки над текстом" },
+    { key: "notesSelBar", type: "bool", label: "Панелька при выделении", hint: "Выделили текст — рядом появляются жирный, курсив, цвет, код, ссылка" },
+    { key: "notesSlash", type: "bool", label: "Меню по «/»", hint: "Наберите / в начале строки: заголовок, список, задача, таблица, шаблон" },
+    { key: "notesMenu", type: "bool", label: "Своё меню правой кнопки", hint: "Выкл. — обычное меню браузера" },
     { key: "notesSpell", type: "bool", label: "Проверка орфографии" },
-    { key: "notesTitle", type: "bool", label: "Название над заметкой", hint: "Это имя файла: поменяли — файл переименовался" },
+    { key: "notesTitle", type: "bool", label: "Название над заметкой", hint: "Это имя файла: поменяете — файл переименуется" },
     { key: "notesWords", type: "bool", label: "Счётчик слов" },
-    { key: "notesSelBar", type: "bool", label: "Панелька при выделении текста", hint: "Жирный, курсив, выделение цветом, код, ссылка, заголовки" },
-    { key: "notesSlash", type: "bool", label: "Меню по «/»", hint: "/ в начале строки — заголовок, список, задача, таблица и другие блоки" },
-    { key: "notesToolbar", type: "bool", label: "Панель инструментов сверху" },
-    { key: "notesMenu", type: "bool", label: "Своё меню правой кнопки", hint: "Выкл.: обычное меню браузера" },
-    { key: "notesSort", type: "select", label: "Сортировка", options: [["modified", "По изменению"], ["name", "По имени"], ["created", "По созданию"]] },
-    { key: "notesPreview", type: "bool", label: "Начало текста в списке" },
-    { key: "notesNewName", type: "select", label: "Название новой заметки", options: [["untitled", "«Без названия»"], ["date", "Дата и время"]] },
-    { key: "notesAttach", type: "select", label: "Куда сохранять картинки", hint: "Вставленные (Ctrl+V) и перетащенные в заметку картинки", options: [["root", "В папку attachments"], ["near", "Рядом с заметкой"]] },
-    { key: "notesDaily", type: "text", label: "Папка заметок дня", placeholder: "например, Дневник", hint: "Кнопка с календарём в списке открывает заметку на сегодня. Пусто — в корне папки заметок" },
-    { key: "notesDailyFormat", type: "select", label: "Название заметки дня", options: [["ymd", "2026-11-17"], ["dmy", "17.11.2026"], ["long", "17 ноября 2026"]] },
-    { key: "notesTemplates", type: "text", label: "Папка шаблонов", placeholder: "например, Шаблоны", hint: "Заметки из этой папки вставляются через «/» → «Шаблон». {{title}}, {{date}}, {{time}} заменяются на название, дату и время" },
-    { key: "notesDailyTemplate", type: "text", label: "Шаблон заметки дня", placeholder: "название шаблона", hint: "Новая заметка дня начнётся с этого шаблона" },
-    { key: "notesAutosave", type: "range", label: "Автосохранение через", min: 300, max: 5000, step: 100, unit: " мс", def: 600 },
+    { key: "notesAutosave", type: "range", label: "Сохранять через", hint: "Сколько ждать после последней правки", min: 300, max: 5000, step: 100, unit: " мс", def: 600 },
+    { key: "notesNewName", type: "select", label: "Имя новой заметки", options: [["untitled", "«Без названия»"], ["date", "Дата и время"]] },
+    { key: "notesAttach", type: "select", label: "Куда класть картинки", hint: "Вставленные Ctrl+V и перетащенные в заметку", options: [["root", "В папку attachments"], ["near", "Рядом с заметкой"]] },
   ] },
-  { group: "notesLook", title: "Заметки — оформление", items: [
+  { group: "notesList", section: "Функции", icon: "folder", title: "Заметки: список и папки", desc: "Список заметок, заметка дня и шаблоны", area: "page", items: [
+    { key: "notesSort", type: "select", label: "Порядок в списке", options: [["modified", "Недавно изменённые"], ["name", "По имени"], ["created", "Недавно созданные"]] },
+    { key: "notesPreview", type: "bool", label: "Начало текста в списке", hint: "Под названием видна первая строка заметки" },
+    { key: "notesCompact", type: "bool", label: "Компактный список" },
+    { key: "notesSide", type: "range", label: "Ширина списка", min: 200, max: 460, step: 10, unit: " px", def: 300 },
+    { key: "notesDaily", type: "text", label: "Папка заметок дня", placeholder: "например, Дневник", hint: "Кнопка с календарём открывает заметку на сегодня. Пусто — в корне папки заметок" },
+    { key: "notesDailyFormat", type: "select", label: "Имя заметки дня", options: [["ymd", "2026-11-17"], ["dmy", "17.11.2026"], ["long", "17 ноября 2026"]] },
+    { key: "notesTemplates", type: "text", label: "Папка шаблонов", placeholder: "например, Шаблоны", hint: "Заметки из неё вставляются через «/» → «Шаблон». {{title}}, {{date}} и {{time}} заменяются на название, дату и время" },
+    { key: "notesDailyTemplate", type: "text", label: "Шаблон заметки дня", placeholder: "название шаблона", hint: "С него начнётся каждая новая заметка дня" },
+  ] },
+  { group: "notesLook", section: "Функции", icon: "edit", title: "Заметки: оформление", desc: "Шрифт, цвета и вид блоков в заметках", area: "page", items: [
     { key: "notesFont", type: "select", label: "Шрифт текста", options: [["ui", "Обычный"], ["serif", "С засечками"], ["mono", "Моноширинный"], ["custom", "Свой…"]] },
-    { key: "notesFontCustom", type: "text", label: "Свой шрифт текста", hint: "Название шрифта, установленного в Windows" },
+    { key: "notesFontCustom", type: "text", label: "Свой шрифт текста", hint: "Точное название шрифта, установленного в Windows" },
     { key: "notesSize", type: "range", label: "Размер текста", min: 13, max: 24, step: 0.5, unit: " px", def: 16.5 },
-    { key: "notesLine", type: "range", label: "Межстрочный интервал", min: 1.2, max: 2.2, step: 0.05, unit: "", def: 1.7 },
-    { key: "notesWidth", type: "select", label: "Ширина строки", options: [["narrow", "Узко"], ["normal", "Обычно"], ["wide", "Широко"], ["full", "Во всю ширину"]] },
+    { key: "notesLine", type: "range", label: "Расстояние между строками", min: 1.2, max: 2.2, step: 0.05, unit: "", def: 1.7 },
+    { key: "notesWidth", type: "select", label: "Ширина текста", options: [["narrow", "Узко"], ["normal", "Обычно"], ["wide", "Широко"], ["full", "Во всю ширину"]] },
     { key: "notesHeadFont", type: "select", label: "Шрифт заголовков", options: [["head", "Как в интерфейсе"], ["text", "Как текст"], ["serif", "С засечками"], ["mono", "Моноширинный"]] },
     { key: "notesHeadScale", type: "range", label: "Размер заголовков", min: 80, max: 140, step: 5, unit: "%", def: 100 },
     { key: "notesTitleSize", type: "range", label: "Размер названия", min: 20, max: 56, step: 1, unit: " px", def: 34 },
     { key: "notesAccent", type: "color", label: "Акцент заметок", hint: "Ссылки, теги, галочки, курсор, выделение" },
     { key: "notesText", type: "color", label: "Цвет текста" },
     { key: "notesHead", type: "color", label: "Цвет заголовков" },
-    { key: "notesBg", type: "select", label: "Фон заметок", options: [["theme", "Как в теме"], ["paper", "Бумага"], ["dark", "Тёмный"]] },
-    { key: "notesBgColor", type: "color", label: "Свой цвет фона", hint: "Перекрывает «Фон заметок»" },
+    { key: "notesBg", type: "select", label: "Фон", options: [["theme", "Как в теме"], ["paper", "Бумага"], ["dark", "Тёмный"]] },
+    { key: "notesBgColor", type: "color", label: "Свой цвет фона", hint: "Важнее, чем «Фон»" },
     { key: "notesSideColor", type: "color", label: "Фон списка" },
-    { key: "notesRadius", type: "range", label: "Скругления", min: 0, max: 24, step: 1, unit: " px", def: 12, hint: "Таблицы, код, блоки, картинки, свойства" },
+    { key: "notesRadius", type: "range", label: "Скругления", hint: "Таблицы, код, выноски, картинки, свойства", min: 0, max: 24, step: 1, unit: " px", def: 12 },
     { key: "notesCheck", type: "select", label: "Галочки задач", options: [["round", "Круглые"], ["square", "Квадратные"]] },
-    { key: "notesBullet", type: "select", label: "Маркер списка", options: [["dot", "Точка"], ["dash", "Тире"], ["square", "Квадрат"]] },
-    { key: "notesTags", type: "select", label: "Теги", options: [["pill", "Плашкой"], ["plain", "Просто цветом"]] },
-    { key: "notesCallout", type: "select", label: "Блоки [!note]", options: [["fill", "С фоном"], ["line", "Только полоса"]] },
+    { key: "notesBullet", type: "select", label: "Значок списка", options: [["dot", "Точка"], ["dash", "Тире"], ["square", "Квадрат"]] },
+    { key: "notesTags", type: "select", label: "Теги", options: [["pill", "Плашкой"], ["plain", "Цветом"]] },
+    { key: "notesCallout", type: "select", label: "Выноски [!note]", options: [["fill", "С фоном"], ["line", "Полоса слева"]] },
     { key: "notesTable", type: "select", label: "Таблицы", options: [["lines", "Линии"], ["zebra", "Полосами"], ["minimal", "Без рамок"]] },
-    { key: "notesSide", type: "range", label: "Ширина списка", min: 200, max: 460, step: 10, unit: " px", def: 300 },
-    { key: "notesCompact", type: "bool", label: "Компактный список" },
   ] },
-  { group: "update", title: "Обновления", items: [
-    { key: "checkUpdates", type: "bool", label: "Проверять обновления", hint: "При каждом запуске браузера смотрит на github.com/WiWaSu/Hand-Design---browsers-redesign- — есть ли новая версия. Ничего не скачивает сам" },
-  ] },
-  { group: "hide", title: "Показать / скрыть", items: [
-    { key: "showBookmarks", type: "bool", label: "Панель закладок" },
-    { key: "showSidebarButton", type: "bool", label: "Кнопка боковой панели" },
-    { key: "showTabList", type: "bool", label: "Кнопка «Все вкладки»" },
-    { key: "showNewTabButton", type: "bool", label: "Кнопка «Новая вкладка»" },
-    { key: "showExtensions", type: "bool", label: "Кнопка расширений" },
-    { key: "showNowBar", type: "bool", label: "Плашка Now Bar" },
-    { key: "showCallBar", type: "bool", label: "Плашка звонка", hint: "Сверху по центру, когда в другой вкладке идёт звонок" },
-    { key: "showProgress", type: "bool", label: "Полоска загрузки страницы" },
+
+  /* ---------------- Система ---------------- */
+  { group: "update", section: "Система", icon: "download", title: "Обновления", desc: "Новые версии Hand Design", area: "all", items: [
+    { key: "checkUpdates", type: "bool", label: "Проверять при запуске", hint: "Раз за запуск браузера смотрит на GitHub, есть ли новая версия, и сообщает. Сам ничего не скачивает" },
   ] },
 ];
 
@@ -242,7 +266,7 @@ export function sanitize(raw) {
         out[it.key] = v.toUpperCase();
       } else if (it.type === "range" && typeof v === "number" && isFinite(v)) {
         out[it.key] = Math.min(it.max, Math.max(it.min, v));
-      } else if ((it.type === "select" || it.type === "cards" || it.type === "details") && it.options.some(o => o[0] === v)) {
+      } else if ((it.type === "select" || it.type === "cards" || it.type === "details" || it.type === "packs") && it.options.some(o => o[0] === v)) {
         out[it.key] = v;
       } else if (it.type === "bool" && typeof v === "boolean") {
         out[it.key] = v;
@@ -266,7 +290,7 @@ const SPRINGS = {
     "linear(0, 0.0661, 0.2032, 0.3554, 0.4963, 0.6161, 0.7127, 0.7881, 0.8454, 0.8883, 0.9199, 0.9429, 0.9596, 0.9715, 0.98, 0.986, 0.9902, 0.9932, 0.9953, 0.9967, 0.9978, 0.9985, 0.9989, 0.9993, 1)",
   ],
 };
-const FONTS = {
+export const FONTS = {
   segoe: '"Segoe UI Variable Display", "Segoe UI Variable Text", "Segoe UI", sans-serif',
   inter: '"Inter", "Inter Variable", "Segoe UI", sans-serif',
   roboto: '"Roboto", "Roboto Flex", "Segoe UI", sans-serif',
@@ -274,7 +298,7 @@ const FONTS = {
   arial: "Arial, Helvetica, sans-serif",
   mono: '"Cascadia Code", "Cascadia Mono", Consolas, monospace',
 };
-const CLOCK_FONTS = {
+export const CLOCK_FONTS = {
   serif: '"Georgia", "Times New Roman", serif',
   mono: '"Cascadia Code", "Cascadia Mono", Consolas, monospace',
   rounded: '"Nunito", "Varela Round", "Segoe UI Variable Display", sans-serif',

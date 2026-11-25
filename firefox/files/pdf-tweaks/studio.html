@@ -7,6 +7,7 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Cdefs%3E%3ClinearGradient%20id='g'%20x1='0'%20y1='0'%20x2='1'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%238b6cff'/%3E%3Cstop%20offset='1'%20stop-color='%233e8bff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width='32'%20height='32'%20rx='8'%20fill='url(%23g)'/%3E%3Cg%20fill='none'%20stroke='white'%20stroke-width='3'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M10.5%208.5v15M21.5%208.5v15M10.5%2016h11'/%3E%3C/g%3E%3C/svg%3E">
   <title>Hand Design Studio</title>
   <link rel="stylesheet" href="studio.css">
+  <link rel="stylesheet" href="progress.css">
   <script type="module" src="studio.js"></script>
 </head>
 <body>
@@ -15,32 +16,53 @@
       <div class="logo" aria-hidden="true"></div>
       <div>
         <h1>Hand Design Studio</h1>
-        <p class="sub">Изменения сразу видны в окне браузера. <span id="ver"></span></p>
+        <p class="sub" id="ver"></p>
       </div>
     </div>
+    <label class="find">
+      <i class="hd-ic" style="--i: var(--fm-ic-search)" aria-hidden="true"></i>
+      <input id="q" type="search" placeholder="Найти настройку…" autocomplete="off" spellcheck="false">
+    </label>
     <div class="actions">
-      <a id="github" class="ghost" href="https://github.com/WiWaSu/Hand-Design---browsers-redesign-" target="_blank" rel="noopener" title="Страница Hand Design на GitHub: новые версии, описание, вопросы">GitHub</a>
-      <button id="export" class="ghost">Сохранить в файл</button>
-      <button id="import" class="ghost">Загрузить из файла</button>
-      <button id="reset" class="ghost danger">Сбросить всё</button>
+      <details class="more">
+        <summary class="ghost" title="Ещё"><i class="hd-ic" style="--i: var(--fm-ic-more)" aria-hidden="true"></i></summary>
+        <div class="more-menu">
+          <a id="github" href="https://github.com/WiWaSu/Hand-Design---browsers-redesign-" target="_blank" rel="noopener">GitHub</a>
+          <button id="export">Сохранить в файл</button>
+          <button id="import">Загрузить из файла</button>
+          <hr>
+          <button id="reset" class="danger">Сбросить всё</button>
+        </div>
+      </details>
     </div>
   </header>
-  <section class="presets">
-    <h2>Тема <span id="theme-current" class="muted"></span></h2>
-    <div id="theme-filter" class="filter-row"></div>
-    <div id="themes" class="theme-row"></div>
-  </section>
-  <section class="presets">
-    <h2>Скругления</h2>
-    <div id="square-row" class="square-row"></div>
-  </section>
-  <section class="presets">
-    <h2>Готовые наборы</h2>
-    <div id="presets" class="preset-row"></div>
-  </section>
   <div class="layout">
     <nav id="nav" class="nav"></nav>
-    <main id="groups" class="groups"></main>
+    <main id="groups" class="groups">
+      <section id="g-start" class="group start">
+        <h2 class="sec-title">Начало</h2>
+        <div class="box start-box">
+          <div class="start-head">
+            <h3>Тема <span id="theme-current" class="muted"></span></h3>
+            <div id="theme-filter" class="filter-row"></div>
+          </div>
+          <div id="themes" class="gallery"></div>
+          <h3>Готовые наборы</h3>
+          <p class="hint">Меняют сразу форму, меню, вкладки и анимации. Цвета темы остаются</p>
+          <div id="presets" class="preset-row"></div>
+        </div>
+      </section>
+      <p id="empty" class="empty" hidden>Ничего не нашлось</p>
+    </main>
+    <aside class="side">
+      <section class="mb-wrap" id="preview">
+        <div class="mb-bar">
+          <b>Предпросмотр</b>
+          <span id="mb-note" class="muted mb-note">Всё применяется сразу. Наведите на настройку — подсветится, где она в окне</span>
+        </div>
+        <div id="mb" class="mb"></div>
+      </section>
+    </aside>
   </div>
   <div id="toast" class="toast" hidden></div>
   <noscript>Страница работает только в браузере с установленным Hand Design.</noscript>

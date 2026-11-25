@@ -598,6 +598,7 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
         .then(r => done(JSON.stringify(r ?? null)));
     }, api, { defineAs: "call" });
     Cu.exportFunction((s, ...a) => t(String(s), ...a.map(String)), api, { defineAs: "t" });
+    Cu.waiveXrays(api).caps = Cu.cloneInto({ import: true }, win);
     win.dispatchEvent(new win.CustomEvent("hd-notes-ready"));
   }
 

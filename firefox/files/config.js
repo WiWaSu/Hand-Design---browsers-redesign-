@@ -11,6 +11,12 @@ try {
     const res = io.getProtocolHandler("resource").QueryInterface(Ci.nsIResProtocolHandler);
     res.setSubstitution("pdftweaks", io.newFileURI(dir));
     res.setSubstitution("handdesign", io.newFileURI(dir));
+    // пак значков: подключаем до первого окна, чтобы не было мигания
+    try {
+      ChromeUtils.importESModule("resource://pdftweaks/FloorpModernIcons.sys.mjs").startup();
+    } catch (e) {
+      Components.utils.reportError(e);
+    }
 
     // 1. просмотрщик PDF: тема и рисование
     ChromeUtils.registerWindowActor("FloorpPdfTweaks", {

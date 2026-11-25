@@ -1,4 +1,7 @@
 /* Hand Design — редактор картинок. Файл читает и пишет браузер через window.hdImg (FloorpPdfTweaksChild). */
+import { ensureIcons } from "./hd-icons.mjs";
+
+ensureIcons();
 
 await new Promise(resolve => {
   if (window.hdImg) resolve();
@@ -10,25 +13,8 @@ const api = (op, data = null) => new Promise(resolve => {
   window.hdImg.call(op, JSON.stringify(data), json => resolve(JSON.parse(json)));
 });
 
-const P = d => `<path d="${d}"/>`;
-const svg = body => `<svg viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
-const ICON = {
-  move: P("M5.5 3.5l13 6.5-5.6 1.9-2.4 5.6z"),
-  crop: P("M6 2v14a2 2 0 0 0 2 2h14") + P("M2 6h14a2 2 0 0 1 2 2v14"),
-  pen: P("M4 20l4-1 11-11a2.1 2.1 0 0 0-3-3L5 16z"),
-  arrow: P("M5 19L19 5M10 5h9v9"),
-  rect: `<rect x="4" y="5" width="16" height="14" rx="1.5"/>`,
-  text: P("M5 7V4.5h14V7M12 4.5v15M9 19.5h6"),
-  blur: P("M4 4h5v5H4zM15 4h5v5h-5zM9.5 9.5h5v5h-5zM4 15h5v5H4zM15 15h5v5h-5z"),
-  rotL: P("M3 4v5h5") + P("M3.6 9a8.5 8.5 0 1 1 1.2 8"),
-  rotR: P("M21 4v5h-5") + P("M20.4 9a8.5 8.5 0 1 0-1.2 8"),
-  flip: P("M12 3v18") + P("M8.5 7L3 17h5.5zM15.5 7L21 17h-5.5z"),
-  undo: P("M9 14L4 9l5-5") + P("M4 9h10.5a5.5 5.5 0 0 1 0 11H11"),
-  redo: P("M15 14l5-5-5-5") + P("M20 9H9.5a5.5 5.5 0 0 0 0 11H13"),
-  del: P("M4 7h16M9.5 7V4.5h5V7M6.5 7l1 12.5h9l1-12.5"),
-  zoomOut: P("M6 12h12"),
-  zoomIn: P("M6 12h12M12 6v12"),
-};
+const svg = name => `<i class="hd-ic" style="--i: var(--fm-ic-${name})" aria-hidden="true"></i>`;
+const ICON = { move: "cursor", crop: "crop", pen: "pen", arrow: "arrow", rect: "shape", text: "text", blur: "blur", rotL: "rotateLeft", rotR: "rotateRight", flip: "flip", undo: "undo", redo: "redo", del: "delete", zoomOut: "minus", zoomIn: "plus" };
 const TOOLS = ["move", "crop", "pen", "arrow", "rect", "text", "blur"];
 const KEYS = { move: "V", crop: "C", pen: "P", arrow: "A", rect: "R", text: "T", blur: "B" };
 const CODES = Object.fromEntries(Object.entries(KEYS).map(([k, l]) => ["Key" + l, k]));

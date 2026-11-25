@@ -4,6 +4,8 @@
 import { SCHEMA, PRESETS, sanitize } from "./FloorpModernStudio.sys.mjs";
 import { THEMES, GROUPS } from "./FloorpModernThemes.sys.mjs";
 import { t as tr, LANGS, LANG_PREF, pickLang, currentLang, langSetting, useDicts } from "./FloorpModernL10n.sys.mjs";
+import { createPreview } from "./studio-preview.js";
+import { dataUrl, ensureIcons } from "./hd-icons.mjs";
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const mk = (tag, cls, text) => {
@@ -64,8 +66,26 @@ document.documentElement.lang = currentLang();
     if (s && /[А-Яа-яЁё]/.test(s)) n.nodeValue = raw.replace(s, tr(s));
   }
   for (const el of root.querySelectorAll("[title]")) el.title = tr(el.title);
+  for (const el of root.querySelectorAll("[placeholder]")) el.placeholder = tr(el.placeholder);
 })(document.body);
 document.title = tr(document.title);
+
+ensureIcons();
+const ic = (name, cls = "") => {
+  const i = mk("i", "hd-ic" + (cls ? " " + cls : ""));
+  i.style.setProperty("--i", `var(--fm-ic-${name})`);
+  i.setAttribute("aria-hidden", "true");
+  return i;
+};
+
+/* ---------- предпросмотр: окно 860px, уменьшенное под ширину колонки ---------- */
+const mbRoot = $("#mb");
+const preview = createPreview(mbRoot);
+const pv = () => preview.render(cfg, theme);
+new ResizeObserver(() => {
+  const w = mbRoot.clientWidth;
+  if (w) mbRoot.style.setProperty("--mb-zoom", Math.min(1, w / 860).toFixed(3));
+}).observe(mbRoot);
 
 let theme = "";
 let saveTimer = 0;
@@ -84,6 +104,9 @@ function save(now = false) {
   };
   if (now) send();
   else saveTimer = setTimeout(send, 120);
+  // окно браузера применяет настройки не сразу — потом сверяем предпросмотр с ним
+  clearTimeout(save.pvTimer);
+  save.pvTimer = setTimeout(pv, 700);
 }
 window.addEventListener("fm-studio-config", e => {
   connected = true;
@@ -113,7 +136,7 @@ window.addEventListener("fm-studio-config", e => {
 
 function showVer(v) {
   const el = $("#ver");
-  el.textContent = "· " + tr("версия") + " ";
+  el.textContent = tr("версия") + " ";
   el.append(mk("span", "ver-pill", v));
 }
 
@@ -133,22 +156,29 @@ function set(key, value) {
   if (value === null || value === undefined || value === "") delete cfg[key];
   else cfg[key] = value;
   refresh(key);
+  pv();
   save();
 }
 
 /* ---------- элементы управления ---------- */
-function row(it) {
+const WHERE = { tabs: "Вкладки", url: "Адресная строка", toolbar: "Панель", bookmarks: "Закладки", page: "Страница", newtab: "Новая вкладка", menu: "Меню", nowbar: "Now Bar", progress: "Полоска загрузки", all: "Всё окно" };
+function row(it, g) {
   const r = mk("div", "row");
   r.dataset.key = it.key;
+  r.dataset.area = it.area || g.area || "";
   const head = mk("div", "row-head");
   const lab = mk("div", "label", tr(it.label));
+  if (it.area && it.area !== g.area && WHERE[it.area]) lab.append(mk("span", "where", tr(WHERE[it.area])));
   head.append(lab);
-  const reset = mk("button", "reset", "↺");
-  reset.title = tr("Как в теме");
+  const reset = mk("button", "reset");
+  reset.append(ic("undo"));
+  reset.title = tr("Вернуть как в теме");
   reset.addEventListener("click", () => set(it.key, null));
   head.append(reset);
   r.append(head);
   if (it.hint) r.append(mk("div", "hint", tr(it.hint)));
+  r.addEventListener("mouseenter", () => preview.highlight(r.dataset.area));
+  r.addEventListener("mouseleave", () => preview.highlight(null));
   return r;
 }
 
@@ -369,8 +399,8 @@ function openPicker(anchor, key) {
   if (r.bottom > innerHeight - 12) el.style.translate = `0 ${-Math.min(r.bottom - innerHeight + 12, r.top - 12)}px`;
 }
 
-function buildControl(it) {
-  const r = row(it);
+function buildControl(it, g) {
+  const r = row(it, g);
   let update;
   if (it.type === "color") {
     const wrap = mk("div", "color");
@@ -430,6 +460,33 @@ function buildControl(it) {
     r.append(seg);
     update = v => {
       for (const b of seg.children) b.toggleAttribute("on", b.dataset.v === v);
+    };
+  } else if (it.type === "packs") {
+    // набор значков: на карточке шесть значков этого набора
+    const SAMPLE = ["back", "reload", "star", "folder", "settings", "search"];
+    const grid = mk("div", "packs");
+    const card = (val, name) => {
+      const c = mk("button", "pcard");
+      c.dataset.v = val || "";
+      const row = mk("span", "pcard-icons");
+      for (const n of SAMPLE) {
+        const i = mk("i");
+        if (val) i.style.setProperty("--i", dataUrl(n, val));
+        else i.style.setProperty("--i", `var(--fm-ic-${n})`);
+        row.append(i);
+      }
+      c.append(row, mk("span", "", name));
+      c.title = name;
+      c.addEventListener("click", () => set(it.key, val && cfg[it.key] !== val ? val : null));
+      c.addEventListener("mouseenter", () => preview.render({ ...cfg, iconPack: val || undefined }, theme));
+      c.addEventListener("mouseleave", pv);
+      grid.append(c);
+    };
+    card(null, tr("Как в теме"));
+    for (const [val, name] of it.options) card(val, tr(name));
+    r.append(grid);
+    update = v => {
+      for (const b of grid.children) b.toggleAttribute("on", b.dataset.v === (v || ""));
     };
   } else if (it.type === "details") {
     const grid = mk("div", "details");
@@ -493,53 +550,111 @@ function buildControl(it) {
       input.value = v || "";
     };
   }
-  controls.set(it.key, { row: r, update });
+  controls.set(it.key, { row: r, update, group: g.group });
   return r;
 }
 
+// поля «Свой шрифт» видны только при выборе «Свой…»
+const DEPENDS = { fontCustom: () => cfg.font === "custom", notesFontCustom: () => cfg.notesFont === "custom" };
 function refresh(key) {
   const c = controls.get(key);
   if (c) {
     c.update(cfg[key]);
     c.row.toggleAttribute("changed", cfg[key] !== undefined);
+    const link = navLinks.get(c.group);
+    if (link) link.toggleAttribute("changed", [...controls.values()].some(x => x.group === c.group && x.row.hasAttribute("changed")));
   }
-  // свой шрифт виден только при выборе «Свой…»
-  const fc = controls.get("fontCustom");
-  if (fc) fc.row.hidden = cfg.font !== "custom";
+  for (const [k, ok] of Object.entries(DEPENDS)) {
+    const d = controls.get(k);
+    if (d) d.row.toggleAttribute("off", !ok());
+  }
 }
 function refreshAll() {
   for (const k of controls.keys()) refresh(k);
-  try {
-    markSquare();
-  } catch {}
+  pv();
 }
 
-/* ---------- страница ---------- */
+/* ---------- страница: разделы и меню слева ---------- */
 const nav = $("#nav");
 const groups = $("#groups");
+const empty = $("#empty");
+const navLinks = new Map();
+const navItem = (id, title, icon) => {
+  const a = mk("a");
+  a.href = "#g-" + id;
+  a.append(ic(icon), mk("span", "", tr(title)));
+  nav.append(a);
+  return a;
+};
+navItem("start", "Тема и наборы", "themeAuto");
+let section = "";
 for (const g of SCHEMA) {
+  if (g.section !== section) {
+    section = g.section;
+    const ns = mk("div", "nav-sec", tr(section));
+    ns.dataset.section = section;
+    nav.append(ns);
+    const h = mk("h2", "sec-title", tr(section));
+    h.dataset.section = section;
+    groups.insertBefore(h, empty);
+  }
   const sec = mk("section", "group");
   sec.id = "g-" + g.group;
-  sec.append(mk("h2", "", tr(g.title)));
+  sec.dataset.section = section;
+  const head = mk("div", "group-head");
+  head.append(ic(g.icon, "group-ic"));
+  const ttl = mk("div");
+  ttl.append(mk("h3", "", tr(g.title)));
+  if (g.desc) ttl.append(mk("p", "hint", tr(g.desc)));
+  head.append(ttl);
+  head.addEventListener("mouseenter", () => preview.highlight(g.area));
+  head.addEventListener("mouseleave", () => preview.highlight(null));
   const box = mk("div", "box");
-  for (const it of g.items) box.append(buildControl(it));
-  sec.append(box);
-  groups.append(sec);
-  const a = mk("a", "", tr(g.title));
-  a.href = "#g-" + g.group;
-  nav.append(a);
+  for (const it of g.items) box.append(buildControl(it, g));
+  sec.append(head, box);
+  groups.insertBefore(sec, empty);
+  navLinks.set(g.group, navItem(g.group, g.title, g.icon));
 }
-// подсветка раздела в меню слева
-const io = new IntersectionObserver(entries => {
-  for (const en of entries) {
-    if (en.isIntersecting) {
-      for (const a of nav.children) a.toggleAttribute("on", a.getAttribute("href") === "#" + en.target.id);
-    }
-  }
-}, { rootMargin: "-40% 0px -55% 0px" });
-for (const s of groups.children) io.observe(s);
+// подсветка раздела в меню слева: последний, чей заголовок выше трети окна
+function markNav() {
+  const list = [...groups.querySelectorAll(".group:not([hidden])")];
+  if (!list.length) return;
+  const end = innerHeight + scrollY >= document.documentElement.scrollHeight - 4;
+  const cur = end ? list.at(-1) : list.findLast(s => s.getBoundingClientRect().top < innerHeight / 3) || list[0];
+  for (const a of nav.querySelectorAll("a")) a.toggleAttribute("on", a.getAttribute("href") === "#" + cur.id);
+}
+addEventListener("scroll", markNav, { passive: true });
+markNav();
 
-/* ---------- тема: компактные «таблетки» и фильтр ---------- */
+/* ---------- поиск по названиям и подсказкам ---------- */
+const norm = s => s.toLowerCase().replace(/ё/g, "е");
+$("#q").addEventListener("input", e => {
+  const q = norm(e.target.value.trim());
+  document.documentElement.toggleAttribute("searching", !!q);
+  let any = false;
+  const shown = new Set();
+  for (const sec of groups.querySelectorAll(".group:not(.start)")) {
+    const title = norm(sec.querySelector(".group-head").textContent);
+    let n = 0;
+    for (const r of sec.querySelectorAll(".row")) {
+      const hit = !q || title.includes(q) || norm(r.textContent).includes(q);
+      r.toggleAttribute("miss", !hit);
+      if (hit) n++;
+    }
+    sec.hidden = !n;
+    if (n) shown.add(sec.dataset.section);
+    any ||= n > 0;
+    const link = navLinks.get(sec.id.slice(2));
+    if (link) link.hidden = sec.hidden;
+  }
+  for (const h of groups.querySelectorAll(".sec-title[data-section]")) h.hidden = !shown.has(h.dataset.section);
+  for (const s of nav.querySelectorAll(".nav-sec")) s.hidden = !shown.has(s.dataset.section);
+  empty.hidden = !q || any;
+  window.scrollTo({ top: 0 });
+  markNav();
+});
+
+/* ---------- тема: галерея карточек и фильтр ---------- */
 const themeRow = $("#themes");
 const themeFilter = $("#theme-filter");
 const themeName = $("#theme-current");
@@ -548,6 +663,7 @@ function markTheme() {
   for (const b of themeRow.children) b.toggleAttribute("on", b.dataset.id === theme);
   const t = THEMES.find(x => x[0] === theme);
   themeName.textContent = t ? "· " + t[1] : "";
+  pv();
   for (const k of Object.keys(THEME_SLOT)) if (controls.has(k)) refresh(k);
 }
 function filterThemes() {
@@ -568,10 +684,12 @@ for (const [id, name, sw, groups] of THEMES) {
   b.dataset.id = id;
   b.dataset.groups = groups || "";
   b.title = name;
-  const dot = mk("span", "theme-dot");
-  dot.style.background = `conic-gradient(from 200deg, ${sw[2]} 0 25%, ${sw[1]} 0 62%, ${sw[0]} 0)`;
-  dot.style.boxShadow = `inset 0 0 0 1px ${sw[3]}33`;
-  b.append(dot, mk("span", "theme-name", name));
+  const win = mk("span", "tw");
+  for (const [k, i] of [["f", 0], ["b", 1], ["a", 2], ["i", 3]]) win.style.setProperty("--" + k, sw[i]);
+  win.append(mk("span", "tw-tabs"), mk("span", "tw-url"), mk("span", "tw-page"));
+  b.append(win, mk("span", "theme-name", name));
+  b.addEventListener("mouseenter", () => preview.hover(id));
+  b.addEventListener("mouseleave", () => preview.hover(null));
   b.addEventListener("click", async () => {
     theme = id;
     // свои цвета сбрасываются вместе со сменой темы (это делает и сам браузер)
@@ -581,6 +699,7 @@ for (const [id, name, sw, groups] of THEMES) {
     try {
       if (themesApi) await themesApi.setTheme(id);
       else window.dispatchEvent(new CustomEvent("fm-theme-set", { detail: id }));
+      setTimeout(pv, 400);
       toast(tr("Тема «{0}»", name));
     } catch (e) {
       console.error(e);
@@ -591,29 +710,12 @@ for (const [id, name, sw, groups] of THEMES) {
 }
 filterThemes();
 
-/* ---------- скругления: одна большая кнопка вверху ---------- */
-const sqRow = $("#square-row");
-function markSquare() {
-  for (const b of sqRow.children) b.toggleAttribute("on", (b.dataset.v === "none") === (cfg.square === true));
-}
-for (const [v, label, hint] of [["theme", "Как в теме", "Скругления выбранной темы"], ["none", "Без скруглений", "Совсем ноль: окно, вкладки, меню, кнопки, страницы, PDF"]]) {
-  const b = mk("button", "sq sq-" + v);
-  b.dataset.v = v;
-  b.append(mk("span", "sq-pv"), mk("b", "", tr(label)), mk("small", "", tr(hint)));
-  b.addEventListener("click", () => {
-    if (v === "none") cfg.square = true;
-    else delete cfg.square;
-    refreshAll();
-    save(true);
-    toast(tr(v === "none" ? "Скругления убраны везде" : "Скругления как в теме"));
-  });
-  sqRow.append(b);
-}
-
 const presetRow = $("#presets");
 for (const [id, name, values] of PRESETS) {
   const b = mk("button", `preset preset-${id}`);
   b.append(mk("span", "dot"), mk("span", "", tr(name)));
+  b.addEventListener("mouseenter", () => preview.render(sanitize({ ...cfg, ...values }), theme));
+  b.addEventListener("mouseleave", pv);
   b.addEventListener("click", () => {
     cfg = sanitize({ ...cfg, ...values });
     refreshAll();
@@ -623,6 +725,9 @@ for (const [id, name, values] of PRESETS) {
   presetRow.append(b);
 }
 
+const more = $(".more");
+more.addEventListener("click", e => e.target.closest(".more-menu button, .more-menu a") && more.removeAttribute("open"));
+document.addEventListener("pointerdown", e => !more.contains(e.target) && more.removeAttribute("open"));
 $("#reset").addEventListener("click", () => {
   cfg = {};
   refreshAll();
@@ -822,7 +927,8 @@ const GUIDE = [
   dlg.append(top, body);
   dlg.addEventListener("click", e => e.target === dlg && dlg.close());
   document.body.append(dlg);
-  const help = mk("button", "ghost help", "i");
+  const help = mk("button", "ghost help");
+  help.append(ic("help"));
   help.title = tr("Как пользоваться Hand Design");
   help.addEventListener("click", () => dlg.showModal());
   $(".actions").prepend(help);

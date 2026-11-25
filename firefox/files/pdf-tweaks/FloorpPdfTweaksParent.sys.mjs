@@ -288,6 +288,21 @@ async function writeMd(path, text, mtime) {
   return { ok: true, mtime: await stamp() };
 }
 
+/* менеджер паролей: окно браузера может показать его своей панелью (win.hdPasswords) вместо вкладки */
+export function routePasswords() {
+  const { LoginHelper } = ChromeUtils.importESModule("resource://gre/modules/LoginHelper.sys.mjs");
+  if (LoginHelper.hdOpenTab) {
+    return;
+  }
+  LoginHelper.hdOpenTab = LoginHelper.openPasswordManager;
+  LoginHelper.openPasswordManager = (window, opts) => {
+    const top = Services.wm.getMostRecentWindow("navigator:browser");
+    if (!top?.hdPasswords?.(opts || {})) {
+      LoginHelper.hdOpenTab(window, opts);
+    }
+  };
+}
+
 export const NOTES_URL = "resource://handdesign/notes.html";
 const NOTES_DIR_PREF = "floorp.modern.notes.dir";
 const NOTES_PIN_PREF = "floorp.modern.notes.pinned";
@@ -674,6 +689,89 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
         }
         await IOUtils.write(path, bytes);
         return { ok: true, name: PathUtils.filename(path) };
+      }
+      if (op === "importPick") {
+        const folderMode = data?.mode === "folder";
+        const file = await new Promise(resolve => {
+          const fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
+          fp.init(this.browsingContext, t("Импорт заметок"), folderMode ? Ci.nsIFilePicker.modeGetFolder : Ci.nsIFilePicker.modeOpen);
+          if (!folderMode) {
+            for (const [label, mask] of data?.filters || []) {
+              fp.appendFilter(String(label), String(mask));
+            }
+          }
+          fp.open(r => resolve(r === Ci.nsIFilePicker.returnOK ? fp.file.path : null));
+        });
+        if (!file) {
+          return { ok: false, cancel: true };
+        }
+        const LIMIT = 400 * 1024 * 1024;
+        if (!folderMode) {
+          const info = await IOUtils.stat(file);
+          if (info.size > LIMIT) {
+            return { ok: false, error: t("Файл слишком большой") };
+          }
+          return { ok: true, name: PathUtils.filename(file), b64: toBase64(await IOUtils.read(file)) };
+        }
+        const files = [];
+        let total = 0;
+        const visit = async (abs, rel, depth) => {
+          for (const child of await IOUtils.getChildren(abs).catch(() => [])) {
+            const name = PathUtils.filename(child);
+            if (name.startsWith(".") || name === "node_modules") {
+              continue;
+            }
+            const info = await IOUtils.stat(child).catch(() => null);
+            const r = rel ? `${rel}/${name}` : name;
+            if (info?.type === "directory") {
+              if (depth < 8) {
+                await visit(child, r, depth + 1);
+              }
+            } else if (info && files.length < 5000 && total + info.size <= LIMIT) {
+              total += info.size;
+              files.push({ rel: r, b64: toBase64(await IOUtils.read(child)) });
+            }
+          }
+        };
+        await visit(file, "", 0);
+        return { ok: true, name: PathUtils.filename(file), files };
+      }
+      if (op === "importBegin") {
+        const root = PathUtils.join(dir, cleanName(t("Импорт")) || "Import");
+        await IOUtils.makeDirectory(root, { ignoreExisting: true });
+        const target = await freePath(root, cleanName(data?.name) || "Import", "");
+        await IOUtils.makeDirectory(target);
+        return { ok: true, folder: `${PathUtils.filename(root)}/${PathUtils.filename(target)}` };
+      }
+      if (op === "importWrite") {
+        const base = relPath(dir, String(data?.folder || ""), false);
+        if (!base || base === dir) {
+          return { ok: false, error: "bad path" };
+        }
+        let written = 0;
+        for (const it of data?.items || []) {
+          const parts = String(it?.rel || "").split("/").map(p => cleanName(p).replace(/[. ]+$/, ""));
+          if (!parts.length || parts.some(p => !p)) {
+            continue;
+          }
+          const parent = PathUtils.join(base, ...parts.slice(0, -1));
+          await IOUtils.makeDirectory(parent, { ignoreExisting: true });
+          const last = parts.at(-1);
+          const ext = (last.match(/\.[^.]+$/) || [""])[0];
+          const path = await freePath(parent, last.slice(0, last.length - ext.length), ext);
+          if (typeof it.text === "string") {
+            await IOUtils.writeUTF8(path, it.text);
+          } else {
+            const bin = atob(String(it.b64 || ""));
+            const bytes = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) {
+              bytes[i] = bin.charCodeAt(i);
+            }
+            await IOUtils.write(path, bytes);
+          }
+          written++;
+        }
+        return { ok: true, written };
       }
       if (op === "asset") {
         const src = decodeURIComponent(String(data?.src || "")).replace(/\\/g, "/").replace(/^\.\//, "");

@@ -119,15 +119,25 @@
     if (toolbox) {
       toolbox.append(bar);
     }
+    // вид полоски: выбранный в Studio или вид текущей темы
+    const studio = ChromeUtils.importESModule("resource://pdftweaks/FloorpModernStudio.sys.mjs");
+    const pickStyle = () => (bar.dataset.s = studio.readConfig().loadBar || Services.prefs.getStringPref("floorp.modern.theme", "oneui"));
+    pickStyle();
+    Services.prefs.addObserver("floorp.modern.theme", pickStyle);
+    Services.prefs.addObserver("floorp.modern.studio", pickStyle);
+    onUnload.push(() => {
+      Services.prefs.removeObserver("floorp.modern.theme", pickStyle);
+      Services.prefs.removeObserver("floorp.modern.studio", pickStyle);
+    });
     let hideTimer = 0;
     const setProgress = value => {
       win.clearTimeout(hideTimer);
       bar.classList.add("fm-active");
-      fill.style.transform = `scaleX(${Math.max(0.04, Math.min(1, value))})`;
+      fill.style.width = Math.max(0.04, Math.min(1, value)) * 100 + "%";
       if (value >= 1) {
         hideTimer = win.setTimeout(() => {
           bar.classList.remove("fm-active");
-          hideTimer = win.setTimeout(() => (fill.style.transform = "scaleX(0)"), 250);
+          hideTimer = win.setTimeout(() => (fill.style.width = "0"), 250);
         }, 350);
       }
     };
@@ -164,7 +174,7 @@
         if (!busy) {
           win.clearTimeout(hideTimer);
           bar.classList.remove("fm-active");
-          fill.style.transform = "scaleX(0)";
+          fill.style.width = "0";
         }
       });
     }
@@ -277,6 +287,9 @@
     onUnload.push(() => Services.prefs.removeObserver(THEME_PREFS[0], prefObserver));
     syncThemeButton();
 
+  });
+  safe("icons", () => {
+    ChromeUtils.importESModule("resource://pdftweaks/FloorpModernIcons.sys.mjs").init();
   });
   safe("studio", () => {
     /* ------- Hand Design Studio: тонкая настройка дизайна -------
@@ -1032,13 +1045,15 @@
     };
     // значок звука у вкладки гаснет с задержкой ~3 с; «уже тихо» видно по soundplaying-scheduledremoval
     const audible = tab => tab.hasAttribute("soundplaying") && !tab.hasAttribute("soundplaying-scheduledremoval");
+    // видео вынесено в маленькое окно — у него свои кнопки, плашка не нужна
+    const skip = tab => inCall(tab) || tab.hasAttribute("pictureinpicture");
     const pick = () => {
-      if (current && current.isConnected && !inCall(current) && (current.hasAttribute("soundplaying") || pausedByUs)) {
+      if (current && current.isConnected && !skip(current) && (current.hasAttribute("soundplaying") || pausedByUs)) {
         return current;
       }
       pausedByUs = false;
       mutedByUs = false;
-      return [...gB.tabs].reverse().find(t => t.hasAttribute("soundplaying") && !dismissed.has(t) && !inCall(t)) || null;
+      return [...gB.tabs].reverse().find(t => t.hasAttribute("soundplaying") && !dismissed.has(t) && !skip(t)) || null;
     };
     // появилась / пропала плашка звонка — перерисовать плеер
     try {
@@ -1375,10 +1390,548 @@
     tc.addEventListener("TabAttrModified", onAttr);
     tc.addEventListener("TabSelect", render);
     tc.addEventListener("TabClose", () => win.setTimeout(render, 0));
+    const pipObs = new win.MutationObserver(render);
+    pipObs.observe(tc, { subtree: true, attributeFilter: ["pictureinpicture"] });
     onUnload.push(() => {
+      pipObs.disconnect();
       tc.removeEventListener("TabAttrModified", onAttr);
       tc.removeEventListener("TabSelect", render);
     });
+  });
+
+  safe("passwords", () => {
+    /* менеджер паролей — компактное окно у края (Studio → Пароли) */
+    const gB = win.gBrowser;
+    const tabbox = doc.getElementById("tabbrowser-tabbox");
+    if (!gB || !tabbox) {
+      return;
+    }
+    const parent = ChromeUtils.importESModule("resource://pdftweaks/FloorpPdfTweaksParent.sys.mjs");
+    const studio = ChromeUtils.importESModule("resource://pdftweaks/FloorpModernStudio.sys.mjs");
+    const { LoginHelper } = ChromeUtils.importESModule("resource://gre/modules/LoginHelper.sys.mjs");
+    parent.routePasswords();
+
+    // окно встаёт с той стороны, где нажали кнопку (для пункта меню — где кнопка меню)
+    let clickX = 0, clickY = 0, clickT = 0;
+    win.addEventListener("mousedown", e => {
+      let n = e.target;
+      for (let p; (p = n?.closest?.("panel, menupopup")); ) {
+        n = p.anchorNode || p.triggerNode;
+      }
+      const r = n?.localName !== "browser" && n?.getBoundingClientRect?.();
+      clickX = r?.width ? r.left + r.width / 2 : e.screenX - win.mozInnerScreenX;
+      clickY = r?.height ? r.top + r.height / 2 : e.screenY - win.mozInnerScreenY;
+      clickT = Date.now();
+    }, true);
+    // кнопка с ключом в боковой панели Floorp открывает about:logins сама, в обход менеджера
+    win.addEventListener("command", e => {
+      if (e.target.id === "panel-sidebar-passwords-icon" && win.hdPasswords({ entryPoint: "floorp-sidebar" })) {
+        e.stopPropagation();
+      }
+    }, true);
+
+    const SIZE_PREF = "floorp.modern.passwords.size";
+    const host = o => {
+      try {
+        return new URL(o).host.replace(/^www\./, "");
+      } catch (e) {
+        return o;
+      }
+    };
+    const btn = (cls, tip) => {
+      const b = el("button", "fm-pw-btn " + cls);
+      b.title = T(tip);
+      return b;
+    };
+    const copy = (text, sensitive, done) => {
+      const ch = Cc["@mozilla.org/widget/clipboardhelper;1"].getService(Ci.nsIClipboardHelper);
+      try {
+        ch.copyString(text, null, sensitive ? ch.Sensitive : ch.NotSensitive);
+      } catch (e) {
+        ch.copyString(text);
+      }
+      toast(T(done));
+    };
+    let authUntil = 0;
+    const AUTH_MSG = { reveal: "reveal-password", copy: "copy-password", edit: "edit-login" };
+    const auth = async kind => {
+      if (Date.now() < authUntil) {
+        return true;
+      }
+      let msg = "", cap = "";
+      if (LoginHelper.getOSAuthEnabled()) {
+        [msg, cap] = await new win.Localization(["branding/brand.ftl", "browser/aboutLogins.ftl"]).formatValues([
+          { id: `about-logins-${AUTH_MSG[kind]}-os-auth-dialog-message-${AppConstants.platform}` },
+          { id: "about-logins-os-auth-dialog-caption" },
+        ]);
+      }
+      const { isAuthorized } = await LoginHelper.requestReauth(gB.selectedBrowser, authUntil, msg, cap, kind + "_logins");
+      if (isAuthorized) {
+        authUntil = Date.now() + 5 * 60 * 1000;
+      }
+      return isAuthorized;
+    };
+
+    // основной пароль: им шифруется ключ ко всем паролям, без него их не прочитает другая программа
+    const token = () => Cc["@mozilla.org/security/internalkeytoken;1"].createInstance(Ci.nsIPKCS11Token);
+    const HINT_PREF = "floorp.modern.passwords.protectHint";
+    const protect = async () => {
+      if (LoginHelper.getOSAuthEnabled()) {
+        const [msg, cap] = await new win.Localization(["browser/preferences/preferences.ftl", "branding/brand.ftl"]).formatValues([
+          { id: "primary-password-os-auth-dialog-message-" + AppConstants.platform },
+          { id: "master-password-os-auth-dialog-caption" },
+        ]);
+        const { OSKeyStore } = ChromeUtils.importESModule("resource://gre/modules/OSKeyStore.sys.mjs");
+        if (!(await OSKeyStore.ensureLoggedIn(msg, cap, win, false)).authenticated) {
+          return;
+        }
+      }
+      state = { item: "protect", edit: null, del: false, reveal: false };
+      render();
+    };
+
+    let box = null;
+    let logins = [];
+    let locked = false;
+    let state = {};
+    let render = () => {};
+    const load = async () => {
+      try {
+        logins = (await Services.logins.getAllLogins()).filter(l => !l.origin.startsWith("chrome:"));
+        locked = token().hasPassword && !token().isLoggedIn;
+      } catch (e) {
+        logins = [];
+        locked = true;
+      }
+      logins.sort((a, b) => host(a.origin).localeCompare(host(b.origin)) || a.username.localeCompare(b.username));
+      render();
+    };
+    const onStorage = () => box && load();
+    const close = () => {
+      if (box) {
+        Services.obs.removeObserver(onStorage, "passwordmgr-storage-changed");
+        box.remove();
+        box = null;
+      }
+    };
+    onUnload.push(close, () => delete win.hdPasswords);
+
+    win.hdPasswords = (opts = {}) => {
+      if (studio.readConfig().passwordsPanel === false) {
+        return false;
+      }
+      close();
+      const recent = Date.now() - clickT < 3000;
+      const start = recent && clickX < win.innerWidth / 2;
+      const bottom = recent && clickY > win.innerHeight / 2;
+      state = { item: opts.loginGuid || null, edit: null, del: false, reveal: false };
+
+      box = el("div", "fm-pw");
+      box.toggleAttribute("data-start", start);
+      box.toggleAttribute("data-bottom", bottom);
+      const head = el("div", "fm-pw-head");
+      const title = el("span", "fm-pw-title");
+      title.textContent = T("Пароли");
+      const count = el("span", "fm-pw-count");
+      const lock = btn("fm-pw-lock", "Заблокировать");
+      const add = btn("fm-pw-add", "Добавить пароль");
+      const gear = btn("fm-pw-gear", "Настройки паролей");
+      const full = btn("fm-pw-full", "Развернуть");
+      const x = btn("fm-pw-close", "Закрыть");
+      head.append(title, count, lock, add, gear, full, x);
+      const search = el("input", "fm-pw-search");
+      search.type = "search";
+      search.placeholder = T("Поиск паролей");
+      search.value = opts.filterString || "";
+      const body = el("div", "fm-pw-body");
+      const grip = el("div", "fm-pw-grip");
+      box.append(head, search, body, grip);
+
+      const r = tabbox.getBoundingClientRect();
+      const m = /^(\d+),(\d+)$/.exec(Services.prefs.getStringPref(SIZE_PREF, ""));
+      const size = (w, h) => {
+        box.style.width = Math.min(Math.max(w, 300), win.innerWidth - 40) + "px";
+        box.style.height = Math.min(Math.max(h, 320), r.bottom - r.top - 24) + "px";
+      };
+      box.style[bottom ? "bottom" : "top"] = (bottom ? win.innerHeight - r.bottom : r.top) + 12 + "px";
+      box.style[start ? "left" : "right"] = (start ? r.left : win.innerWidth - r.right) + 20 + "px";
+      size(m ? +m[1] : 360, m ? +m[2] : 500);
+      (doc.getElementById("browser") || doc.documentElement).append(box);
+
+      const avatar = origin => {
+        const a = el("span", "fm-pw-av");
+        a.textContent = (host(origin)[0] || "?").toUpperCase();
+        PlacesUtils.favicons.getFaviconForPage(Services.io.newURI(origin + "/")).then(f => {
+          if (f) {
+            const img = el("img");
+            img.alt = "";
+            img.src = f.dataURI.spec;
+            a.append(img);
+            a.toggleAttribute("data-img", true);
+          }
+        }, () => {});
+        return a;
+      };
+      const empty = (text, hint) => {
+        const e = el("div", "fm-pw-empty");
+        const b = el("b");
+        b.textContent = T(text);
+        e.append(b);
+        if (hint) {
+          const p = el("p");
+          p.textContent = T(hint);
+          e.append(p);
+        }
+        body.append(e);
+      };
+      const copyPw = async l => (await auth("copy")) && copy(l.password, true, "Пароль скопирован");
+
+      const renderList = () => {
+        const q = search.value.trim().toLowerCase();
+        const list = logins.filter(l => !q || host(l.origin).toLowerCase().includes(q) || l.username.toLowerCase().includes(q));
+        const here = host(LoginHelper.getLoginOrigin(gB.currentURI?.spec) || "");
+        const mine = here ? list.filter(l => host(l.origin) === here) : [];
+        if (locked) {
+          empty("Пароли заблокированы", "Чтобы их открыть, введите основной пароль.");
+          const u = el("button", "fm-pw-primary");
+          u.textContent = T("Разблокировать");
+          u.addEventListener("click", load);
+          body.lastChild.append(u);
+          return;
+        }
+        if (!token().hasPassword && Services.prefs.getBoolPref(HINT_PREF, true)) {
+          const c = el("div", "fm-pw-protect");
+          const b = el("b");
+          b.textContent = T("Пароль на менеджер");
+          const p = el("p");
+          p.textContent = T("Пароли уже хранятся в зашифрованном виде. Если задать основной пароль, без него их не откроет ни другой браузер, ни другая программа на компьютере.");
+          const go = el("button", "fm-pw-primary");
+          go.textContent = T("Задать пароль");
+          go.addEventListener("click", protect);
+          const hide = btn("fm-pw-close", "Скрыть");
+          hide.addEventListener("click", () => {
+            Services.prefs.setBoolPref(HINT_PREF, false);
+            render();
+          });
+          c.append(hide, b, p, go);
+          body.append(c);
+        }
+        if (!logins.length) {
+          return empty("Сохранённых паролей нет", "Браузер предложит сохранить пароль, когда вы войдёте на сайт.");
+        }
+        if (!list.length) {
+          return empty("Ничего не найдено");
+        }
+        const section = (label, items) => {
+          if (label) {
+            const h = el("div", "fm-pw-section");
+            h.textContent = T(label);
+            body.append(h);
+          }
+          for (const l of items) {
+            const row = el("div", "fm-pw-row");
+            row.tabIndex = 0;
+            const text = el("span", "fm-pw-text");
+            const a = el("b");
+            a.textContent = host(l.origin);
+            const u = el("span");
+            u.textContent = l.username || T("Без логина");
+            text.append(a, u);
+            const c = btn("fm-pw-copy", "Копировать пароль");
+            row.append(avatar(l.origin), text, c);
+            row.addEventListener("click", () => {
+              state = { item: l.guid, edit: null, del: false, reveal: false };
+              render();
+            });
+            row.addEventListener("keydown", e => e.key === "Enter" && row.click());
+            c.addEventListener("click", e => {
+              e.stopPropagation();
+              copyPw(l);
+            });
+            body.append(row);
+          }
+        };
+        section(mine.length ? "Для этого сайта" : "", mine);
+        section(mine.length ? "Все пароли" : "", mine.length ? list.filter(l => !mine.includes(l)) : list);
+      };
+
+      const field = (label, value, buttons, cls = "") => {
+        const f = el("div", "fm-pw-field " + cls);
+        const l = el("span", "fm-pw-label");
+        l.textContent = T(label);
+        const v = el("span", "fm-pw-value");
+        v.textContent = value;
+        f.append(l, v, ...buttons);
+        return f;
+      };
+      const input = (label, value, type = "text") => {
+        const f = el("label", "fm-pw-field fm-pw-edit");
+        const l = el("span", "fm-pw-label");
+        l.textContent = T(label);
+        const i = el("input", "fm-pw-input");
+        i.type = type;
+        i.value = value;
+        f.append(l, i);
+        return [f, i];
+      };
+      const back = () => {
+        const b = el("button", "fm-pw-back");
+        b.textContent = T("Все пароли");
+        b.addEventListener("click", () => {
+          state = { item: null, edit: null, del: false, reveal: false };
+          render();
+        });
+        return b;
+      };
+
+      // своя форма основного пароля вместо системного окна
+      const renderProtect = () => {
+        body.append(back());
+        const head = el("div", "fm-pw-site");
+        const b = el("b");
+        b.textContent = T("Пароль на менеджер");
+        head.append(b);
+        const note = el("p", "fm-pw-note");
+        note.textContent = T("Браузер спросит его один раз за запуск, когда понадобятся сохранённые пароли.");
+        const [f1, p1] = input("Новый пароль", "", "password");
+        const [f2, p2] = input("Ещё раз", "", "password");
+        const meter = el("div", "fm-pw-meter");
+        const bar = el("i");
+        meter.append(bar);
+        const warn = el("p", "fm-pw-note");
+        warn.textContent = T("Запомните его: если забыть основной пароль, сохранённые пароли не восстановить.");
+        const err = el("p", "fm-pw-error");
+        err.hidden = true;
+        const row = el("div", "fm-pw-actions");
+        const save = el("button", "fm-pw-primary");
+        save.textContent = T("Задать пароль");
+        const cancel = el("button", "fm-pw-plain");
+        cancel.textContent = T("Отмена");
+        row.append(save, cancel);
+        body.append(head, note, f1, f2, meter, warn, err, row);
+        p1.focus();
+        p1.addEventListener("input", () => {
+          const v = p1.value;
+          const kinds = [/[a-zа-яё]/, /[A-ZА-ЯЁ]/, /\d/, /[^\p{L}\d]/u].filter(r => r.test(v)).length;
+          const score = Math.min(100, v.length * 6 + kinds * 12);
+          bar.style.width = (v ? score : 0) + "%";
+          bar.style.background = score < 45 ? "#e5484d" : score < 75 ? "#f5a524" : "#30a46c";
+        });
+        cancel.addEventListener("click", () => {
+          state = { item: null, edit: null, del: false, reveal: false };
+          render();
+        });
+        const submit = () => {
+          err.hidden = true;
+          if (!p1.value) {
+            return p1.focus();
+          }
+          if (p1.value !== p2.value) {
+            err.textContent = T("Пароли не совпадают");
+            err.hidden = false;
+            return p2.focus();
+          }
+          try {
+            token().changePassword("", p1.value);
+            Services.obs.notifyObservers(null, "passwordmgr-primary-pw-changed");
+            toast(T("Основной пароль задан"));
+            state = { item: null, edit: null, del: false, reveal: false };
+            load();
+          } catch (e) {
+            err.textContent = T("Не удалось задать пароль");
+            err.hidden = false;
+          }
+        };
+        save.addEventListener("click", submit);
+        p2.addEventListener("keydown", e => e.key === "Enter" && submit());
+      };
+
+      const renderEdit = l => {
+        const isNew = !l;
+        body.append(back());
+        const [siteF, site] = input("Сайт", "", "url");
+        site.placeholder = "example.com";
+        const [userF, user] = input("Логин", l?.username || "");
+        const [passF, pass] = input("Пароль", l?.password || "", "password");
+        const eye = btn("fm-pw-eye", "Показать пароль");
+        eye.type = "button";
+        eye.addEventListener("click", () => {
+          pass.type = pass.type === "password" ? "text" : "password";
+          eye.toggleAttribute("data-on", pass.type === "text");
+        });
+        passF.append(eye);
+        if (isNew) {
+          body.append(siteF);
+        } else {
+          const t = el("div", "fm-pw-site");
+          const b = el("b");
+          b.textContent = host(l.origin);
+          t.append(avatar(l.origin), b);
+          body.append(t);
+        }
+        body.append(userF, passF);
+        const row = el("div", "fm-pw-actions");
+        const save = el("button", "fm-pw-primary");
+        save.textContent = T("Сохранить");
+        const cancel = el("button", "fm-pw-plain");
+        cancel.textContent = T("Отмена");
+        row.append(save, cancel);
+        body.append(row);
+        (isNew ? site : user).focus();
+        cancel.addEventListener("click", () => {
+          state.edit = null;
+          render();
+        });
+        save.addEventListener("click", async () => {
+          if (!pass.value) {
+            return pass.focus();
+          }
+          try {
+            if (isNew) {
+              const raw = site.value.trim();
+              const origin = LoginHelper.getLoginOrigin(/^[a-z]+:\/\//i.test(raw) ? raw : "https://" + raw);
+              if (!raw || !origin) {
+                return site.focus();
+              }
+              const li = Cc["@mozilla.org/login-manager/loginInfo;1"].createInstance(Ci.nsILoginInfo);
+              li.init(origin, "", null, user.value, pass.value, "", "");
+              const saved = await Services.logins.addLoginAsync(li);
+              state = { item: saved.guid, edit: null, del: false, reveal: false };
+            } else {
+              const nl = l.clone().QueryInterface(Ci.nsILoginInfo);
+              nl.username = user.value;
+              nl.password = pass.value;
+              await Services.logins.modifyLoginAsync(l, nl);
+              state.edit = null;
+            }
+            toast(T("Сохранено"));
+          } catch (e) {
+            toast(/already exists/i.test(String(e)) ? T("Такой пароль уже есть") : T("Не удалось сохранить"), "warn");
+          }
+        });
+      };
+
+      const renderItem = l => {
+        body.append(back());
+        const t = el("div", "fm-pw-site");
+        const name = el("b");
+        name.textContent = host(l.origin);
+        const go = btn("fm-pw-go", "Открыть сайт");
+        go.addEventListener("click", () => win.openWebLinkIn(l.origin, "tab"));
+        t.append(avatar(l.origin), name, go);
+        body.append(t);
+        const cu = btn("fm-pw-copy", "Копировать");
+        cu.addEventListener("click", () => copy(l.username, false, "Логин скопирован"));
+        body.append(field("Логин", l.username || T("Без логина"), l.username ? [cu] : []));
+        const eye = btn("fm-pw-eye", state.reveal ? "Скрыть пароль" : "Показать пароль");
+        eye.toggleAttribute("data-on", state.reveal);
+        eye.addEventListener("click", async () => {
+          if (state.reveal || await auth("reveal")) {
+            state.reveal = !state.reveal;
+            render();
+          }
+        });
+        const cp = btn("fm-pw-copy", "Копировать");
+        cp.addEventListener("click", () => copyPw(l));
+        body.append(field("Пароль", state.reveal ? l.password : "•".repeat(10), [eye, cp], "fm-pw-secret"));
+        const when = el("div", "fm-pw-when");
+        when.textContent = T("Изменён: {0}", new Date(l.QueryInterface(Ci.nsILoginMetaInfo).timePasswordChanged).toLocaleDateString());
+        body.append(when);
+        const row = el("div", "fm-pw-actions");
+        const edit = el("button", "fm-pw-plain");
+        edit.textContent = T("Изменить");
+        edit.addEventListener("click", async () => {
+          if (await auth("edit")) {
+            state.edit = l.guid;
+            render();
+          }
+        });
+        const del = el("button", "fm-pw-danger");
+        del.textContent = T(state.del ? "Точно удалить?" : "Удалить");
+        del.toggleAttribute("data-confirm", state.del);
+        del.addEventListener("click", () => {
+          if (!state.del) {
+            state.del = true;
+            return render();
+          }
+          state = { item: null, edit: null, del: false, reveal: false };
+          Services.logins.removeLoginAsync(l).then(() => toast(T("Пароль удалён")));
+        });
+        row.append(edit, del);
+        body.append(row);
+      };
+
+      render = () => {
+        if (!box) {
+          return;
+        }
+        body.replaceChildren();
+        count.textContent = logins.length || "";
+        const l = state.item && logins.find(x => x.guid === state.item);
+        if (state.item && !l && state.item !== "new" && state.item !== "protect") {
+          state.item = null;
+        }
+        box.toggleAttribute("data-list", !state.item);
+        lock.hidden = !token().hasPassword || locked;
+        search.hidden = locked;
+        add.hidden = locked;
+        if (state.item === "protect") {
+          renderProtect();
+        } else if (state.item === "new") {
+          renderEdit(null);
+        } else if (l && state.edit) {
+          renderEdit(l);
+        } else if (l) {
+          renderItem(l);
+        } else {
+          renderList();
+        }
+      };
+
+      search.addEventListener("input", render);
+      search.addEventListener("keydown", e => e.key === "Enter" && body.querySelector(".fm-pw-row")?.click());
+      box.addEventListener("keydown", e => {
+        if (e.key === "Escape") {
+          e.stopPropagation();
+          state.item ? body.querySelector(".fm-pw-back")?.click() : close();
+        }
+      });
+      add.addEventListener("click", () => {
+        state = { item: "new", edit: null, del: false, reveal: false };
+        render();
+      });
+      gear.addEventListener("click", () => win.openPreferences("privacy-logins"));
+      full.addEventListener("click", () => {
+        const guid = state.item !== "new" ? state.item : null;
+        close();
+        LoginHelper.hdOpenTab(win, { ...opts, loginGuid: guid });
+      });
+      x.addEventListener("click", close);
+      lock.addEventListener("click", async () => {
+        await token().logout();
+        authUntil = 0;
+        state = { item: null, edit: null, del: false, reveal: false };
+        logins = [];
+        locked = true;
+        render();
+      });
+      grip.addEventListener("pointerdown", e => {
+        const b = box.getBoundingClientRect();
+        const sx = e.clientX, sy = e.clientY;
+        grip.setPointerCapture(e.pointerId);
+        const move = ev => size(b.width + (start ? ev.clientX - sx : sx - ev.clientX), b.height + (bottom ? sy - ev.clientY : ev.clientY - sy));
+        const up = () => {
+          grip.removeEventListener("pointermove", move);
+          Services.prefs.setStringPref(SIZE_PREF, `${parseInt(box.style.width)},${parseInt(box.style.height)}`);
+        };
+        grip.addEventListener("pointermove", move);
+        grip.addEventListener("lostpointercapture", up, { once: true });
+      });
+
+      Services.obs.addObserver(onStorage, "passwordmgr-storage-changed");
+      load().then(() => !state.item && search.focus());
+      return true;
+    };
   });
 
   /* ------- меню без серых углов -------
@@ -1467,10 +2020,9 @@
         transition: opacity .25s ease, translate calc(.4s * var(--fm-k, 1)) var(--fm-spring, ease); }
       .fm-callbar[hidden] { display: none; }
       .fm-callbar.fm-in { opacity: 1; translate: -50% 0; pointer-events: auto; }
-      .fm-callbar-dot { flex: none; width: 30px; height: 30px; border-radius: 50%; position: relative; background: #2fbf71 center / 16px no-repeat;
-        -moz-context-properties: fill; fill: #fff;
-        background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='context-fill'><path d='M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z'/></svg>"); }
-      .fm-callbar[data-kind="camera"] .fm-callbar-dot { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='context-fill'><rect x='2.5' y='6' width='13' height='12' rx='3'/><path d='M17 10.2l4.1-2.6a.6.6 0 0 1 .9.5v7.8a.6.6 0 0 1-.9.5L17 13.8z'/></svg>"); }
+      .fm-callbar-dot { flex: none; width: 30px; height: 30px; border-radius: 50%; position: relative; background: #2fbf71; display: grid; place-items: center; --i: var(--fm-ic-phone); }
+      .fm-callbar-dot::before { content: ""; width: 16px; height: 16px; background: #fff; mask: var(--i) center / 16px no-repeat; }
+      .fm-callbar[data-kind="camera"] .fm-callbar-dot { --i: var(--fm-ic-camera); }
       .fm-callbar-dot::after { content: ""; position: absolute; inset: -3px; border-radius: 50%; border: 2px solid #2fbf71; animation: fm-call-ring 1.6s ease-out infinite; }
       .fm-callbar[data-mic-off] .fm-callbar-dot { background-color: #e5484d; }
       .fm-callbar[data-mic-off] .fm-callbar-dot::after { border-color: #e5484d; }
@@ -1479,18 +2031,19 @@
       .fm-callbar-site { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
       .fm-callbar-time { font-size: 11.5px; opacity: .7; font-variant-numeric: tabular-nums; }
       .fm-callbar-text:hover .fm-callbar-site { color: var(--fm-accent, AccentColor); }
-      .fm-callbar-btn { flex: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; background: center / 17px no-repeat;
-        -moz-context-properties: fill; fill: currentColor; transition: background-color .2s, scale calc(.3s * var(--fm-k, 1)) var(--fm-spring, ease); }
+      .fm-callbar-btn { flex: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: grid; place-items: center;
+        transition: background-color .2s, scale calc(.3s * var(--fm-k, 1)) var(--fm-spring, ease); }
+      .fm-callbar-btn::before { content: ""; width: 17px; height: 17px; background: currentColor; mask: var(--i) center / 17px no-repeat; }
       .fm-callbar-btn:hover { background-color: var(--fm-hover, rgb(128 128 128 / .15)); }
       .fm-callbar-btn:active { scale: .9; }
       .fm-callbar-btn[hidden] { display: none; }
-      .fm-callbar-btn[data-off] { background-color: #e5484d; fill: #fff; }
-      .fm-callbar-mic { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='2' stroke-linecap='round'><rect x='9' y='3' width='6' height='11' rx='3' fill='context-fill'/><path d='M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21'/></svg>"); }
-      .fm-callbar-mic[data-off] { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='2' stroke-linecap='round'><rect x='9' y='3' width='6' height='11' rx='3' fill='context-fill'/><path d='M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M4 4l16 16'/></svg>"); }
-      .fm-callbar-cam { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='context-fill'><rect x='2.5' y='6' width='13' height='12' rx='3'/><path d='M17 10.2l4.1-2.6a.6.6 0 0 1 .9.5v7.8a.6.6 0 0 1-.9.5L17 13.8z'/></svg>"); }
-      .fm-callbar-cam[data-off] { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='context-fill' stroke='context-fill' stroke-width='2' stroke-linecap='round'><rect x='2.5' y='6' width='13' height='12' rx='3' stroke='none'/><path d='M17 10.2l4.1-2.6a.6.6 0 0 1 .9.5v7.8a.6.6 0 0 1-.9.5L17 13.8z' stroke='none'/><path d='M3 3l18 18' fill='none'/></svg>"); }
-      .fm-callbar-go { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5'/></svg>"); }
-      .fm-callbar-hide { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='2' stroke-linecap='round'><path d='M7 7l10 10M17 7L7 17'/></svg>"); background-size: 14px; opacity: .7; }
+      .fm-callbar-btn[data-off] { background-color: #e5484d; color: #fff; }
+      .fm-callbar-mic { --i: var(--fm-ic-mic); }
+      .fm-callbar-mic[data-off] { --i: var(--fm-ic-micOff); }
+      .fm-callbar-cam { --i: var(--fm-ic-camera); }
+      .fm-callbar-cam[data-off] { --i: var(--fm-ic-cameraOff); }
+      .fm-callbar-go { --i: var(--fm-ic-external); }
+      .fm-callbar-hide { --i: var(--fm-ic-close); }
       .fm-callbar.fm-mini { padding: 4px 12px 4px 4px; }
       .fm-callbar.fm-mini .fm-callbar-btn, .fm-callbar.fm-mini .fm-callbar-site { display: none; }
       .fm-callbar.fm-mini .fm-callbar-dot { width: 24px; height: 24px; background-size: 13px; }

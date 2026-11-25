@@ -34,7 +34,7 @@ def cmd_keys():
             i+=1
         return out
     B='files/pdf-tweaks/'
-    files=['FloorpModernStudio.sys.mjs','FloorpModernThemes.sys.mjs','FloorpModernUpdate.sys.mjs','FloorpPdfTweaksChild.sys.mjs','floorp-modern.uc.js','studio.js']
+    files=['FloorpModernStudio.sys.mjs','FloorpModernThemes.sys.mjs','FloorpModernUpdate.sys.mjs','FloorpPdfTweaksChild.sys.mjs','floorp-modern.uc.js','studio.js','studio-preview.js']
     keys={}
     skip_line=re.compile(r'\blog\(|bootLog|msg:|console\.|writeLog|log\.push')
     for f in files:

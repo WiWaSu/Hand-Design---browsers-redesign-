@@ -1,6 +1,8 @@
 /* Hand Design — просмотр и правка Markdown-файлов, открытых в браузере.
  * Сырой HTML из файла не выполняется: всё экранируется, ссылки проходят проверку схемы. */
 
+import { cssVars, BASE_PACK } from "./hd-icons.mjs";
+
 const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 function safeUrl(url, image) {
@@ -420,36 +422,13 @@ function findTask(src, n) {
 
 /* --------------------------------- редактор -------------------------------- */
 
-const P = d => `<path d="${d}"/>`;
-const ICONS = {
-  heading: P("M6 5v14M18 5v14M6 12h12"),
-  bold: P("M7 5h6a3.5 3.5 0 0 1 0 7H7zM7 12h7a3.5 3.5 0 0 1 0 7H7z"),
-  italic: P("M10 5h8M6 19h8M14 5l-4 14"),
-  strike: P("M16.5 7.5C15.7 6 14.2 5 12 5c-2.8 0-4.8 1.4-4.8 3.6 0 1.3.7 2.3 2.2 3M7.5 16.5C8.3 18 9.8 19 12 19c2.8 0 4.8-1.4 4.8-3.6 0-.5-.1-1-.4-1.4M4 12h16"),
-  code: P("M9 8l-4 4 4 4M15 8l4 4-4 4"),
-  link: P("M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"),
-  list: P("M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"),
-  ordered: P("M10 6h10M10 12h10M10 18h10M4 4.5l1.5-1V9M3.5 13.3c.4-.8 2.2-.8 2.2.4 0 1-2.2 1.8-2.2 3h2.4"),
-  task: `<rect x="3.5" y="4.5" width="6" height="6" rx="1.5"/>` + P("M4 16.5l1.8 1.8 3.4-3.6M13 7.5h7.5M13 16.5h7.5"),
-  quote: P("M6 7h4v4.5c0 2.5-1.3 4.2-3.5 5M14 7h4v4.5c0 2.5-1.3 4.2-3.5 5"),
-  table: `<rect x="3.5" y="4.5" width="17" height="15" rx="2"/>` + P("M3.5 10h17M3.5 15h17M10 4.5v15"),
-  codeblock: `<rect x="3.5" y="4.5" width="17" height="15" rx="2"/>` + P("M10 10l-2 2 2 2M14 10l2 2-2 2"),
-  hr: P("M4 12h16M7 7.5h10M7 16.5h10"),
-};
-const TABLE_ICONS = {
-  rowAdd: `<rect x="4" y="4.5" width="16" height="9" rx="2"/>` + P("M12 16.5v5M9.5 19h5"),
-  colAdd: `<rect x="4.5" y="4" width="9" height="16" rx="2"/>` + P("M16.5 12h5M19 9.5v5"),
-  rowDel: `<rect x="4" y="4.5" width="16" height="9" rx="2"/>` + P("M9.5 19h5"),
-  colDel: `<rect x="4.5" y="4" width="9" height="16" rx="2"/>` + P("M16.5 12h5"),
-  left: P("M4 6h16M4 10h10M4 14h16M4 18h10"),
-  center: P("M4 6h16M7 10h10M4 14h16M7 18h10"),
-  right: P("M4 6h16M10 10h10M4 14h16M10 18h10"),
-};
+const ICONS = { heading: "heading", bold: "bold", italic: "italic", strike: "strike", code: "code", link: "link", list: "list", ordered: "ordered", task: "task", quote: "quoteMarks", table: "table", codeblock: "codeBlock", hr: "rule" };
+const TABLE_ICONS = { rowAdd: "rowAdd", colAdd: "colAdd", rowDel: "rowDel", colDel: "colDel", left: "alignLeft", center: "alignCenter", right: "alignRight" };
 const TABLE_BAR = [["rowAdd", "colAdd"], ["rowDel", "colDel"], ["left", "center", "right"]]
-  .map(g => g.map(k => `<button type="button" data-tact="${k}"><svg viewBox="0 0 24 24" aria-hidden="true">${TABLE_ICONS[k]}</svg></button>`).join(""))
+  .map(g => g.map(k => `<button type="button" data-tact="${k}"><i class="hd-ic" style="--i: var(--fm-ic-${TABLE_ICONS[k]})" aria-hidden="true"></i></button>`).join(""))
   .join("<i></i>");
 const TOOLS = [["heading"], ["bold", "italic", "strike", "code", "link"], ["list", "ordered", "task", "quote"], ["table", "codeblock", "hr"]]
-  .map(g => g.map(k => `<button type="button" data-act="${k}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg></button>`).join(""))
+  .map(g => g.map(k => `<button type="button" data-act="${k}"><i class="hd-ic" style="--i: var(--fm-ic-${ICONS[k]})" aria-hidden="true"></i></button>`).join(""))
   .join("<i></i>");
 
 
@@ -470,6 +449,14 @@ export function mount(win, doc, { text, mtime = 0, name, folder, t, save, stat, 
     link.href = cssUrl;
     doc.head.append(link);
   }
+  // значки пака: страница с диска не получает лист стилей пака, ставим переменные сами
+  const icons = doc.createElement("style");
+  let pack = BASE_PACK;
+  try {
+    pack = Services.prefs.getStringPref("floorp.modern.icons", "") || BASE_PACK;
+  } catch (e) {}
+  icons.textContent = cssVars(pack);
+  doc.head.append(icons);
   const icon = doc.createElement("link");
   icon.rel = "icon";
   icon.href = MD_ICON;
