@@ -1,0 +1,57 @@
+Ответы для вкладки Privacy (Конфиденциальность) в панели разработчика Chrome Web Store.
+Поля заполняются по-английски: их читают проверяющие Google. Каждый блок вставляется в своё поле.
+
+=== Single purpose description ===
+Hand Design restyles the browser with a theme system: one of 24 themes is applied to the new tab page and to the tools the extension adds (media and call controls, tab switcher, PDF viewer, notes and document editors), so they share one look. All features exist to give the browser a consistent design and are configured in one place (Studio).
+
+=== storage ===
+Saves the user's settings (theme, colors, layout), pinned notes and recently opened documents.
+
+=== unlimitedStorage ===
+A custom wallpaper picked by the user is stored locally as an image and can exceed the default storage quota.
+
+=== tabs ===
+Now Bar and the call bar need to know which tab plays media or uses the microphone to show controls and switch to that tab. The tab switcher (Alt+Q) lists open tabs with titles and previews. The extension also opens its own pages (Studio, notes, documents) in tabs.
+
+=== topSites ===
+Shows the most visited sites as tiles on the new tab page.
+
+=== search ===
+The search box on the new tab page searches with the user's default search engine through chrome.search.query.
+
+=== favicon ===
+Shows site icons in the new tab tiles, search suggestions, tab switcher and Now Bar.
+
+=== history ===
+The new tab search box suggests pages from the user's history and lets the user remove a page from these suggestions. Nothing leaves the computer.
+
+=== alarms ===
+Schedules a daily check for a new version (reads latest.json from the project's GitHub repository).
+
+=== nativeMessaging ===
+Talks to an optional helper installed by the Hand Design Windows installer. The helper sets the browser frame color through the BrowserThemeColor policy, because extensions cannot change it, and passes the settings chosen in the installer. Without the helper the extension works as usual.
+
+=== webRequest ===
+Reads response headers of top-level navigations to detect PDF files (Content-Type) and open them in the extension's PDF viewer when the user has turned it on.
+
+=== scripting ===
+After installation or update, injects the extension's own content scripts into tabs that were already open, so Now Bar and the call bar work there without reloading the page.
+
+=== contextMenus ===
+Adds "Edit image" to the context menu of images and "Notes" and "Documents" to the toolbar button menu.
+
+=== downloads ===
+When a CSV file starts downloading, the extension opens it in its table editor instead (if the user has the CSV editor on) and cancels that download.
+
+=== Host permission (<all_urls>) ===
+Content scripts run on all sites to show Now Bar and the call bar: they read the page's media session and whether a site uses the microphone or camera, and let the user pause media or mute the microphone. The PDF viewer, CSV editor and image editor fetch the file the user opened from its site.
+
+=== Remote code ===
+No, I am not using remote code. (Нет. Весь код лежит в пакете.)
+
+=== Data usage ===
+Не отмечать ни одного пункта: расширение ничего не собирает и не отправляет разработчику.
+Отметить все три подтверждения (не продаю данные, не использую не по назначению, не для кредитных целей).
+
+=== Privacy policy URL ===
+https://github.com/WiWaSu/Hand-Design---browsers-redesign-/blob/main/chrome/PRIVACY.md

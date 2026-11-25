@@ -1,0 +1,44 @@
+Публикация Hand Design в Chrome Web Store
+
+Что лежит в этой папке
+- ..\..\releases\chrome\Hand-Design-Chromium-Store-v1.1.0.zip — архив для загрузки (собирается командой python chrome\tools\store.py).
+- listing-en.txt, listing-ru.txt — описание для карточки.
+- privacy-tab.txt — ответы для вкладки Privacy.
+- 1-newtab-ios.jpg … 5-import.jpg — скриншоты 1280×800.
+- promo-small-440x280.jpg — малая плитка (обязательна), promo-marquee-1400x560.jpg — большая (по желанию).
+- store-icon-128.png — значок карточки.
+
+1. Залить на GitHub файл chrome/PRIVACY.md. Ссылка на него нужна в шаге 6, страница должна открываться.
+
+2. Зарегистрироваться разработчиком: https://chrome.google.com/webstore/devconsole
+   Вход через Google-аккаунт, взнос 5 $ один раз, подтвердить почту. Это делаешь ты сам: оплату и вход я не делаю.
+
+3. «New item» (Новый элемент) → загрузить Hand-Design-Chromium-Store-v1.1.0.zip.
+   Сразу после загрузки у элемента появится ID — 32 латинские буквы в адресе страницы. Пришли его мне.
+
+4. Вкладка Store listing:
+   - Description — текст из listing-en.txt.
+   - Category — Make Chrome Yours → Functionality & UI.
+   - Language — English.
+   - Store icon — store-icon-128.png.
+   - Screenshots — пять файлов 1-…5-.
+   - Small promo tile — promo-small-440x280.jpg; Marquee — promo-marquee-1400x560.jpg.
+   - Homepage URL — https://github.com/WiWaSu/Hand-Design---browsers-redesign-
+   - Support URL — https://github.com/WiWaSu/Hand-Design---browsers-redesign-/issues
+   Короткое описание (summary) Store берёт из расширения сам, на 11 языках.
+
+5. Там же добавить русский язык (Add language → Russian) и вставить listing-ru.txt. Скриншоты можно оставить те же.
+
+6. Вкладка Privacy: каждое поле из privacy-tab.txt в своё поле.
+
+7. Вкладка Distribution: Public, все регионы, бесплатно.
+
+8. «Submit for review». Проверка обычно занимает от нескольких дней до пары недель. Расширению нужен доступ ко всем сайтам (Now Bar, плашка звонка, PDF), поэтому Google проверяет его дольше обычного. Если откажут, пришли письмо целиком: поправлю и соберу новый архив.
+
+После того как пришлёшь ID
+- Я впишу его в установщик ($StoreId в chrome\files\installer.ps1) и соберу 1.1.0.
+- Установщик пропишет Hand Design в реестр, и Chrome при следующем запуске сам предложит его включить. В остальных браузерах кнопка в установщике откроет страницу в Store, там одна кнопка «Установить».
+- Админ-права для этого не нужны: ключ пишется в раздел текущего пользователя.
+
+Обновления
+- Новая версия: поднять version в manifest.json, python chrome\tools\store.py, в панели Package → Upload new package. Chrome обновит расширение у всех сам.

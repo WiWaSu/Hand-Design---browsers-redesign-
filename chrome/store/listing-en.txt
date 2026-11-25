@@ -1,0 +1,38 @@
+Hand Design gives Chrome a theme system with 24 themes: One UI, iOS Liquid Glass, Material You, Windows 11, macOS, Nothing, Night Drive, Retro 98, Terminal, Cyberpunk, Synthwave, High Contrast and more. A theme changes the new tab page and every tool the extension adds, so they look like one piece.
+
+New tab
+- Large clock and date, a search box with suggestions from Google and your history, site tiles.
+- Wallpapers: each theme has its own, animated ones included, or use your own picture.
+- Clock, wallpaper and search box can each come from a different theme (Studio → Theme details).
+
+Studio
+- All settings on one page with a live preview of the new tab: themes, presets, accent color, light or dark mode, corners, fonts.
+- Save settings to a file and load them on another computer.
+
+Quick panel
+- Click the Hand Design icon to switch theme, mode and wallpaper without leaving the page.
+
+Now Bar and call bar
+- Now Bar shows what is playing in any tab, with pause, next and previous. It ignores short site sounds and hides while a video is in picture-in-picture.
+- The call bar appears when a site uses your microphone or camera and lets you mute them with Alt+Shift+M.
+
+Tab switcher
+- Alt+Q opens a grid of open tabs with previews.
+
+Notes
+- Markdown notes in a folder you choose, compatible with Obsidian: live preview, folders, search, [[links]] and backlinks, #tags, callouts, tables, checklists, images, graph view, daily note and templates.
+- Import from Notion (Markdown & CSV export), Evernote (.enex), Google Keep (Google Takeout) and any folder of .md files.
+
+Documents and editors
+- Markdown files open formatted, with a table of contents and editing in place.
+- CSV and TSV files open as an editable table instead of downloading.
+- Image editor: crop, rotate, arrows, frames, text, blur, compression and format change. Right-click any image → Edit image.
+- PDF viewer in the theme's colors.
+
+10 interface languages: English, Russian, Ukrainian, German, French, Spanish, Portuguese, Polish, Turkish, Chinese.
+
+Notes for local files: to open .md, .csv and .pdf files from your computer, turn on "Allow access to file URLs" on the extension's details page.
+
+Chrome does not let extensions restyle its own tabs and toolbar. The free Hand Design installer for Windows (GitHub) can paint the browser frame in the theme's color.
+
+Source code, installer and changelog: https://github.com/WiWaSu/Hand-Design---browsers-redesign-
