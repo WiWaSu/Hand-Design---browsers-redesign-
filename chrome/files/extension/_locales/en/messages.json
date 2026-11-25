@@ -1,0 +1,32 @@
+{
+  "extName": {
+    "message": "Hand Design"
+  },
+  "extDesc": {
+    "message": "24 themes for Chrome: new tab with wallpapers and clock, Studio, Now Bar, call bar, tab previews, notes and a PDF viewer."
+  },
+  "actionTitle": {
+    "message": "Hand Design: design"
+  },
+  "cmdAction": {
+    "message": "Quick design panel"
+  },
+  "cmdSwitcher": {
+    "message": "Tab switcher with previews"
+  },
+  "cmdMic": {
+    "message": "Call bar: microphone on or off"
+  },
+  "cmdStudio": {
+    "message": "Open Hand Design Studio"
+  },
+  "cmdCam": {
+    "message": "Call bar: camera on or off"
+  },
+  "cmdMedia": {
+    "message": "Now Bar: play or pause"
+  },
+  "cmdNotes": {
+    "message": "Hand Design notes"
+  }
+}

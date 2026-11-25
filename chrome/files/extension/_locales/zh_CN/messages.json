@@ -1,0 +1,32 @@
+{
+  "extName": {
+    "message": "Hand Design"
+  },
+  "extDesc": {
+    "message": "Chrome 的 24 款主题：带壁纸和时钟的新标签页、Studio、Now Bar、通话条、标签页预览、笔记和 PDF 阅读器。"
+  },
+  "actionTitle": {
+    "message": "Hand Design：设计"
+  },
+  "cmdAction": {
+    "message": "“设计”快捷面板"
+  },
+  "cmdSwitcher": {
+    "message": "带预览的标签页切换器"
+  },
+  "cmdMic": {
+    "message": "通话条：开关麦克风"
+  },
+  "cmdStudio": {
+    "message": "打开 Hand Design Studio"
+  },
+  "cmdCam": {
+    "message": "通话条：开关摄像头"
+  },
+  "cmdMedia": {
+    "message": "Now Bar：暂停或继续"
+  },
+  "cmdNotes": {
+    "message": "Hand Design 笔记"
+  }
+}

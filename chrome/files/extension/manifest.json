@@ -1,9 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Hand Design",
-  "short_name": "Hand Design",
-  "version": "1.0.0",
-  "description": "Hand Design for Chromium: 24 темы, новая вкладка с обоями и часами, Studio, Now Bar, плашка звонка, превью вкладок, PDF.",
+  "name": "__MSG_extName__",
+  "short_name": "__MSG_extName__",
+  "default_locale": "en",
+  "version": "1.1.0",
+  "description": "__MSG_extDesc__",
   "author": "WiWaSu",
   "homepage_url": "https://github.com/WiWaSu/Hand-Design---browsers-redesign-",
   "minimum_chrome_version": "140",
@@ -14,7 +15,7 @@
     "128": "icons/icon128.png"
   },
   "action": {
-    "default_title": "Hand Design — дизайн",
+    "default_title": "__MSG_actionTitle__",
     "default_popup": "popup/popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -89,34 +90,34 @@
       "suggested_key": {
         "default": "Alt+Shift+D"
       },
-      "description": "Быстрая панель «Дизайн» / Quick design panel"
+      "description": "__MSG_cmdAction__"
     },
     "switcher": {
       "suggested_key": {
         "default": "Alt+Q"
       },
-      "description": "Переключатель вкладок с превью / Tab switcher with previews"
+      "description": "__MSG_cmdSwitcher__"
     },
     "toggle-mic": {
       "suggested_key": {
         "default": "Alt+Shift+M"
       },
-      "description": "Плашка звонка: микрофон вкл/выкл / Call bar: toggle microphone"
+      "description": "__MSG_cmdMic__"
     },
     "open-studio": {
       "suggested_key": {
         "default": "Alt+Shift+S"
       },
-      "description": "Открыть Hand Design Studio / Open Hand Design Studio"
+      "description": "__MSG_cmdStudio__"
     },
     "toggle-cam": {
-      "description": "Плашка звонка: камера вкл/выкл / Call bar: toggle camera"
+      "description": "__MSG_cmdCam__"
     },
     "media-toggle": {
-      "description": "Now Bar: пауза / продолжить / Now Bar: play or pause"
+      "description": "__MSG_cmdMedia__"
     },
     "open-notes": {
-      "description": "Заметки Hand Design / Hand Design notes"
+      "description": "__MSG_cmdNotes__"
     }
   },
   "web_accessible_resources": [

@@ -1,0 +1,32 @@
+{
+  "extName": {
+    "message": "Hand Design"
+  },
+  "extDesc": {
+    "message": "24 temas para o Chrome: nova guia com fundo e relógio, Studio, Now Bar, barra de chamada, prévia de guias, notas e PDF."
+  },
+  "actionTitle": {
+    "message": "Hand Design: design"
+  },
+  "cmdAction": {
+    "message": "Painel rápido “Design”"
+  },
+  "cmdSwitcher": {
+    "message": "Alternador de guias com prévia"
+  },
+  "cmdMic": {
+    "message": "Barra de chamada: microfone liga/desliga"
+  },
+  "cmdStudio": {
+    "message": "Abrir o Hand Design Studio"
+  },
+  "cmdCam": {
+    "message": "Barra de chamada: câmera liga/desliga"
+  },
+  "cmdMedia": {
+    "message": "Now Bar: pausar ou continuar"
+  },
+  "cmdNotes": {
+    "message": "Notas do Hand Design"
+  }
+}

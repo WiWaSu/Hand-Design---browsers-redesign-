@@ -1,0 +1,32 @@
+{
+  "extName": {
+    "message": "Hand Design"
+  },
+  "extDesc": {
+    "message": "Chrome için 24 tema: duvar kağıdı ve saatli yeni sekme, Studio, Now Bar, arama çubuğu, sekme önizleme, notlar ve PDF."
+  },
+  "actionTitle": {
+    "message": "Hand Design: tasarım"
+  },
+  "cmdAction": {
+    "message": "Hızlı “Tasarım” paneli"
+  },
+  "cmdSwitcher": {
+    "message": "Önizlemeli sekme değiştirici"
+  },
+  "cmdMic": {
+    "message": "Arama çubuğu: mikrofon aç/kapat"
+  },
+  "cmdStudio": {
+    "message": "Hand Design Studio’yu aç"
+  },
+  "cmdCam": {
+    "message": "Arama çubuğu: kamera aç/kapat"
+  },
+  "cmdMedia": {
+    "message": "Now Bar: duraklat veya devam"
+  },
+  "cmdNotes": {
+    "message": "Hand Design notları"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "extName": {
+    "message": "Hand Design"
+  },
+  "extDesc": {
+    "message": "24 темы для Chrome: новая вкладка с обоями и часами, Studio, Now Bar, плашка звонка, превью вкладок, заметки и PDF."
+  },
+  "actionTitle": {
+    "message": "Hand Design: дизайн"
+  },
+  "cmdAction": {
+    "message": "Быстрая панель «Дизайн»"
+  },
+  "cmdSwitcher": {
+    "message": "Переключатель вкладок с превью"
+  },
+  "cmdMic": {
+    "message": "Плашка звонка: микрофон вкл/выкл"
+  },
+  "cmdStudio": {
+    "message": "Открыть Hand Design Studio"
+  },
+  "cmdCam": {
+    "message": "Плашка звонка: камера вкл/выкл"
+  },
+  "cmdMedia": {
+    "message": "Now Bar: пауза или продолжить"
+  },
+  "cmdNotes": {
+    "message": "Заметки Hand Design"
+  }
+}

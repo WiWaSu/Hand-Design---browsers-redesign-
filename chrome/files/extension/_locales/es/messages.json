@@ -1,0 +1,32 @@
+{
+  "extName": {
+    "message": "Hand Design"
+  },
+  "extDesc": {
+    "message": "24 temas para Chrome: nueva pestaña con fondo y reloj, Studio, Now Bar, barra de llamada, vista de pestañas, notas y PDF."
+  },
+  "actionTitle": {
+    "message": "Hand Design: diseño"
+  },
+  "cmdAction": {
+    "message": "Panel rápido «Diseño»"
+  },
+  "cmdSwitcher": {
+    "message": "Selector de pestañas con vista previa"
+  },
+  "cmdMic": {
+    "message": "Barra de llamada: micrófono sí/no"
+  },
+  "cmdStudio": {
+    "message": "Abrir Hand Design Studio"
+  },
+  "cmdCam": {
+    "message": "Barra de llamada: cámara sí/no"
+  },
+  "cmdMedia": {
+    "message": "Now Bar: pausa o seguir"
+  },
+  "cmdNotes": {
+    "message": "Notas de Hand Design"
+  }
+}

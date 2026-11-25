@@ -12,10 +12,9 @@ English: see [below](#english).
 
 1. Скачайте `Hand-Design-Chromium-v<версия>.zip` со страницы [Releases](https://github.com/WiWaSu/Hand-Design---browsers-redesign-/releases) и распакуйте.
 2. Запустите `Setup.cmd`. Выберите язык, тему, обои, акцент и браузеры, нажмите «Установить».
-3. Браузер откроет страницу расширений. Включите «Режим разработчика» (переключатель справа сверху), нажмите «Загрузить распакованное», вставьте путь (Ctrl+V) и нажмите «Выбрать папку».
-4. Только для Edge, Opera и Яндекса: ещё раз «Загрузить распакованное», папка `frame`. В Chrome, Brave и Chromium вкладки и адресная строка красятся сами.
+3. Установщик откроет страницу расширений браузера и сам подключит Hand Design: включит «Режим разработчика», нажмёт «Загрузить распакованное» и выберет папку. Для Edge, Opera и Яндекса он так же подключит рамку браузера. Несколько секунд не трогайте мышь и клавиатуру.
 
-Шаги 3 и 4 делаются один раз. Chrome не даёт программам ставить расширения в обход магазина, поэтому последнюю кнопку приходится нажать самому. Установщик хотя бы открывает нужную страницу и копирует путь.
+Если подключить само не получилось, установщик покажет, что нажать: включить «Режим разработчика», «Загрузить распакованное», вставить путь (Ctrl+V) и выбрать папку.
 
 Файлы ставятся в `%LOCALAPPDATA%\HandDesign\Chrome`. Браузер читает расширение оттуда, так что эту папку не удаляйте.
 
@@ -137,10 +136,9 @@ To install:
 
 1. Download the zip from [Releases](https://github.com/WiWaSu/Hand-Design---browsers-redesign-/releases) and unzip it.
 2. Run `Setup.cmd`, pick a language, theme, wallpaper, accent and browsers, press Install.
-3. The browser opens its extensions page. Turn on Developer mode, click Load unpacked, paste the path with Ctrl+V and select the folder.
-4. Edge, Opera and Yandex only: click Load unpacked once more and pick the `frame` folder. Chrome, Brave and Chromium color the tab strip by themselves.
+3. The installer opens the browser's extensions page and connects Hand Design by itself: it turns on Developer mode, clicks Load unpacked and picks the folder. For Edge, Opera and Yandex it adds the browser frame the same way. Leave the mouse and keyboard alone for a few seconds.
 
-Chrome doesn't let programs install extensions outside the store, so steps 3 and 4 have to be done by hand, once. To update, run the new installer and press ⟳ on the Hand Design card.
+If that fails, the installer shows what to click by hand. To update, run the new installer and press ⟳ on the Hand Design card.
 
 The Chromium UI is closed to extensions, so right-click menus and the tab shape can't be changed the way the Firefox edition does it. Vivaldi is the exception.
 

@@ -27,7 +27,7 @@ $ErrorActionPreference = "Stop"
 try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch {}
 
 # версия (меняется вместе с файлом VERSION, manifest.json и CHANGELOG.md)
-$Version = "1.0.0"
+$Version = "1.1.0"
 $Here = $PSScriptRoot
 # файл VERSION рядом с Setup.cmd главнее — номер не разойдётся с релизом
 try { $vf = Join-Path (Split-Path -Parent $Here) "VERSION"; if (Test-Path -LiteralPath $vf) { $v = ([IO.File]::ReadAllText($vf)).Trim(); if ($v -match '^\d+\.\d+\.\d+$') { $Version = $v } } } catch {}
@@ -126,6 +126,7 @@ function Find-Browsers {
 function Test-Connected($b) {
   if (-not (Test-Path -LiteralPath $b.Data)) { return $false }
   $needle = (Join-Path $Dest "extension").ToLower().Replace("\", "\\")
+  if ($StoreId) { $needle = '"' + $StoreId + '"' }
   $dirs = @($b.Data) + @(Get-ChildItem -LiteralPath $b.Data -Directory -ErrorAction SilentlyContinue |
     Where-Object { $_.Name -eq "Default" -or $_.Name -like "Profile *" } | ForEach-Object { $_.FullName })
   foreach ($d in $dirs) {
@@ -197,6 +198,10 @@ function Copy-Dir($from, $to) {
 # Помощник (native messaging) ставит политику BrowserThemeColor в HKCU — Chrome, Brave и Chromium
 # красят вкладки и адресную строку сами при каждой смене темы. Без прав администратора.
 $HostName = "com.handdesign.host"
+# ID в Chrome Web Store. Пока пусто — расширение подключается вручную («Загрузить распакованное»).
+$StoreId = ""
+$StoreUrl = "https://chromewebstore.google.com/detail/$StoreId"
+$StoreKeys = @("HKCU:\Software\Google\Chrome\Extensions")
 $HostKeys = @(
   "HKCU:\Software\Google\Chrome\NativeMessagingHosts", "HKCU:\Software\BraveSoftware\Brave-Browser\NativeMessagingHosts",
   "HKCU:\Software\Chromium\NativeMessagingHosts", "HKCU:\Software\Microsoft\Edge\NativeMessagingHosts",
@@ -215,7 +220,7 @@ function Get-UnpackedId([string]$path) {
 function Register-Host($extDir) {
   $dir = Join-Path $Dest "host"
   Copy-Dir (Join-Path $Here "host") $dir
-  $ids = @(Get-UnpackedId $extDir)
+  $ids = @(Get-UnpackedId $extDir) + @($StoreId | Where-Object { $_ })
   $mf = [ordered]@{
     name = $HostName; description = "Hand Design helper: browser frame color"
     path = (Join-Path $dir "hd-host.cmd"); type = "stdio"
@@ -229,7 +234,20 @@ function Register-Host($extDir) {
   Say ((T "  ✓ верх браузера в цвет темы (Chrome, Brave, Chromium), ID " "  ✓ browser frame in theme color (Chrome, Brave, Chromium), ID ") + ($ids -join ", ")) Green
 }
 
+# Chrome при следующем запуске сам предложит включить Hand Design из Web Store
+function Register-Store {
+  if (-not $StoreId) { return }
+  foreach ($k in $StoreKeys) {
+    try {
+      $key = "$k\$StoreId"
+      if (-not (Test-Path -LiteralPath $key)) { New-Item -Path $key -Force | Out-Null }
+      Set-ItemProperty -LiteralPath $key -Name "update_url" -Value "https://clients2.google.com/service/update2/crx" -Type String
+    } catch { Write-Log ("store key: " + $_.Exception.Message) }
+  }
+}
+
 function Unregister-Host {
+  if ($StoreId) { foreach ($k in $StoreKeys) { Remove-Item -LiteralPath "$k\$StoreId" -Recurse -Force -ErrorAction SilentlyContinue } }
   foreach ($k in $HostKeys) { Remove-Item -Path "$k\$HostName" -Force -ErrorAction SilentlyContinue }
   foreach ($k in $PolicyKeys) {
     if (Test-Path -LiteralPath $k) {
@@ -257,6 +275,7 @@ function Install-HandDesign($o) {
     Remove-Item -LiteralPath $pdfZip -Force
   }
   Copy-Dir (Join-Path $Here "themes") (Join-Path $Dest "themes")
+  Register-Store
   try { Register-Host (Join-Path $Dest "extension") } catch { Say ((T "  ! помощник для верха браузера не зарегистрирован: " "  ! frame helper not registered: ") + $_.Exception.Message) Yellow }
   Remove-Item -LiteralPath (Join-Path $Dest "themes\themes.json") -Force -ErrorAction SilentlyContinue
 
@@ -282,6 +301,7 @@ function Install-HandDesign($o) {
   if ($o.Wall -eq "custom" -and $o.WallFile) {
     $wallFile = "wallpaper" + [IO.Path]::GetExtension($o.WallFile).ToLower()
     Copy-Item -LiteralPath $o.WallFile -Destination (Join-Path $Dest "extension\$wallFile") -Force
+    Copy-Item -LiteralPath $o.WallFile -Destination (Join-Path $Dest $wallFile) -Force
   }
 
   # settings.json: расширение применит эти настройки при следующем запуске браузера
@@ -296,7 +316,8 @@ function Install-HandDesign($o) {
   elseif ($o.Accent -match '^#[0-9a-fA-F]{6}$') { $s.accent = $o.Accent.ToUpper() }
   else { $s.accent = $null }
   $j = [ordered]@{ rev = [guid]::NewGuid().ToString(); version = $Version; installDir = $Dest; wallFile = $wallFile; settings = $s }
-  [IO.File]::WriteAllText((Join-Path $Dest "extension\settings.json"), ($j | ConvertTo-Json -Depth 5), $Utf8)
+  # копия в корне папки — её читает помощник для расширения из Web Store
+  foreach ($f in @("extension\settings.json", "settings.json")) { [IO.File]::WriteAllText((Join-Path $Dest $f), ($j | ConvertTo-Json -Depth 5), $Utf8) }
   [IO.File]::WriteAllText((Join-Path $Dest "VERSION"), $Version, $Utf8)
   Copy-Item -LiteralPath (Join-Path $Here "installer.ps1") -Destination (Join-Path $Dest "installer.ps1") -Force
 
@@ -315,9 +336,50 @@ function Uninstall-HandDesign {
   }
 }
 
+# ---------------------------------------------------------------- подключение без участия пользователя
+$AutoConnect = $false
+try { . (Join-Path $Here "autoconnect.ps1"); $AutoConnect = $true } catch { Write-Log ("автоподключение недоступно: " + $_.Exception.Message) }
+$FrameKeys = @("edge", "opera", "operagx", "yandex")
+
+function Get-BrowserPids($b) {
+  $name = [IO.Path]::GetFileNameWithoutExtension($b.Exe)
+  if ($name -eq "launcher") { $name = "opera" }
+  $dir = Split-Path -Parent $b.Exe
+  @(Get-Process -Name $name -ErrorAction SilentlyContinue | Where-Object { try { $_.Path -and $_.Path.StartsWith($dir, [StringComparison]::OrdinalIgnoreCase) } catch { $false } } | ForEach-Object { $_.Id })
+}
+
+# открывает страницу расширений и сама загружает туда Hand Design; "" — получилось, иначе причина
+function Connect-Browser($b, $r) {
+  if (-not $AutoConnect -or -not $b.Exe) { return "unavailable" }
+  try {
+    Start-Process -FilePath $b.Exe -ArgumentList $b.Page
+    $pids = @()
+    for ($i = 0; $i -lt 40; $i++) {
+      Start-Sleep -Milliseconds 500
+      $pids = Get-BrowserPids $b
+      if ($pids.Count -and (Get-Windows $pids)) { break }
+    }
+    if (-not $pids.Count) { return "no-window" }
+    Start-Sleep -Milliseconds 1500
+    $res = Connect-Unpacked $pids $r.Ext
+    if (-not $res -and $FrameKeys -contains $b.Key) {
+      # после загрузки расширение открывает свою вкладку — возвращаемся на страницу расширений
+      Start-Process -FilePath $b.Exe -ArgumentList $b.Page
+      Start-Sleep -Milliseconds 2000
+      $f = Connect-Unpacked $pids $r.Frame
+      if ($f) { Write-Log ("рамка " + $b.Name + ": " + $f) }
+    }
+    Write-Log ("автоподключение " + $b.Name + ": " + $(if ($res) { $res } else { "ok" }))
+    return $res
+  } catch {
+    Write-Log ("автоподключение " + $b.Name + ": " + $_.Exception.Message)
+    return "error"
+  }
+}
+
 function Open-ExtensionsPage($b) {
   try {
-    if ($b.Exe) { Start-Process -FilePath $b.Exe -ArgumentList $b.Page; return $true }
+    if ($b.Exe) { Start-Process -FilePath $b.Exe -ArgumentList $(if ($StoreId) { $StoreUrl } else { $b.Page }); return $true }
   } catch {}
   return $false
 }
@@ -338,6 +400,19 @@ if (-not $Gui) {
     $found = $found | Where-Object { $want -contains $_.Key }
   }
   Say ""
+  if ($StoreId) {
+    Say (T "Chrome при следующем запуске предложит включить Hand Design. В других браузерах установите его со страницы:" "Chrome will offer to turn on Hand Design at its next start. In other browsers install it from:") White
+    Say ("  " + $StoreUrl)
+    exit 0
+  }
+  $left = @()
+  foreach ($b in $found) {
+    if ($b.Connected) { Say ("  ✓ " + $b.Name + (T ": уже подключён — перезапустите браузер" ": already connected — restart the browser")) Green; continue }
+    Say ((T "  … подключаю к " "  … connecting to ") + $b.Name)
+    if (Connect-Browser $b $r) { $left += $b } else { Say ("  ✓ " + $b.Name) Green }
+  }
+  if (-not $left) { exit 0 }
+  $found = $left
   Say (T "Подключите в браузере (один раз):" "Connect in the browser (once):") White
   Say (T "  1. Откройте страницу расширений и включите «Режим разработчика»." "  1. Open the extensions page and turn on “Developer mode”.")
   Say ((T "  2. «Загрузить распакованное» → папка " "  2. “Load unpacked” → folder ") + $r.Ext)
@@ -716,7 +791,7 @@ function Set-Accent($hex) {
 (G "AccentCaption").Text = T "АКЦЕНТ" "ACCENT"
 (G "FeatCaption").Text = T "ФУНКЦИИ" "FEATURES"
 (G "BrCaption").Text = T "КУДА ПОСТАВИТЬ" "WHERE TO INSTALL"
-(G "BrHint").Text = T "Chrome не даёт сторонним программам ставить расширения сами, поэтому после установки браузер попросит два щелчка: «Загрузить распакованное» и папка (путь будет скопирован). Это один раз — дальше обновления подхватываются при перезапуске браузера." "Chrome doesn't let other programs install extensions silently, so after setup the browser needs two clicks: “Load unpacked” and the folder (the path is copied for you). Only once — later updates are picked up when the browser restarts."
+(G "BrHint").Text = T "После установки откроется страница расширений, и установщик сам подключит Hand Design: включит режим разработчика и выберет папку. Это займёт несколько секунд, мышь и клавиатуру в это время лучше не трогать." "After setup the extensions page opens and the installer connects Hand Design by itself: it turns on Developer mode and picks the folder. It takes a few seconds; leave the mouse and keyboard alone meanwhile."
 (G "BackBtn").Content = T "Назад" "Back"
 (G "CloseBtn").Add_Click({ $w.Close() })
 
@@ -932,11 +1007,25 @@ function Copy-Text($text, $btn, $label) {
   $script:copyTimer.Start()
 }
 
+$script:conn = @{}
+$script:allAuto = $false
 function Show-Done($r) {
+  $script:allAuto = $false
   (G "DoneTitle").Text = T "Готово — осталось подключить в браузере" "Done — now connect it in the browser"
   (G "DoneText").Text = (T "Файлы лежат в " "Files are in ") + $Dest + (T ". Их нельзя удалять — браузер читает расширение оттуда." ". Don't delete them — the browser loads the extension from there.")
   (G "HowTitle").Text = T "Один раз в каждом браузере:" "Once in each browser:"
+  if ($StoreId) {
+    (G "DoneTitle").Text = T "Готово — осталось включить в браузере" "Done — now turn it on in the browser"
+    (G "HowTitle").Text = T "В каждом браузере:" "In each browser:"
+    (G "HowSteps").Text = (T "1. Chrome: перезапустите его, справа вверху появится «Добавлено новое расширение» — нажмите «Включить». Или нажмите «Открыть в Chrome Web Store» ниже → «Установить».`n2. Edge, Brave, Opera, Vivaldi, Яндекс: «Открыть в Chrome Web Store» → «Установить». Edge и Opera сначала спросят, разрешить ли расширения из других магазинов — разрешите.`n3. Chrome, Brave и Chromium красят вкладки и адресную строку сами. Для Edge, Opera и Яндекса рамку подключают вручную: страница расширений → «Режим разработчика» → «Загрузить распакованное» → «Скопировать путь рамки» → Ctrl+V → «Выбор папки».`n4. Откройте новую вкладку (Ctrl+T) — на вопрос браузера нажмите «Оставить».`n5. Значок пазла справа от адресной строки → булавка у Hand Design: это быстрая панель «Дизайн».`nЕсли раньше вы подключали Hand Design из папки, удалите ту копию на странице расширений." "1. Chrome: restart it, “New extension added” appears at the top right — click “Enable extension”. Or click “Open in Chrome Web Store” below → “Add to Chrome”.`n2. Edge, Brave, Opera, Vivaldi, Yandex: “Open in Chrome Web Store” → “Add”. Edge and Opera first ask to allow extensions from other stores — allow it.`n3. Chrome, Brave and Chromium paint tabs and the address bar themselves. For Edge, Opera and Yandex the frame is added by hand: extensions page → “Developer mode” → “Load unpacked” → “Copy frame path” → Ctrl+V → “Select folder”.`n4. Open a new tab (Ctrl+T) — when the browser asks, click “Keep it”.`n5. Puzzle icon next to the address bar → pin Hand Design: that's the quick design panel.`nIf you loaded Hand Design from a folder before, remove that copy on the extensions page.")
+  } elseif (-not @($Detected | Where-Object { $_.Found -and $script:brSwitches[$_.Key] -and $script:brSwitches[$_.Key].IsChecked -and -not $_.Connected -and $script:conn[$_.Key] -ne "" }).Count) {
+    (G "DoneTitle").Text = T "Готово, Hand Design в браузере" "Done, Hand Design is in the browser"
+    (G "HowTitle").Text = T "Что дальше" "What's next"
+    (G "HowSteps").Text = T "Откройте новую вкладку (Ctrl+T). Если браузер спросит про новую вкладку, нажмите «Оставить».`nТема, обои и остальное меняются кнопкой Hand Design справа от адресной строки (значок пазла → булавка, чтобы кнопка была видна всегда)." "Open a new tab (Ctrl+T). If the browser asks about the new tab page, click “Keep it”.`nTheme, wallpaper and the rest are changed with the Hand Design button next to the address bar (puzzle icon → pin it to keep the button visible)."
+    $script:allAuto = $true
+  } else {
   (G "HowSteps").Text = (T "1. Нажмите «Открыть страницу расширений» у браузера ниже (или наберите в адресной строке chrome://extensions — кнопка «Скопировать адрес страницы»).`n2. Справа вверху включите переключатель «Режим разработчика».`n3. Слева вверху нажмите «Загрузить распакованное расширение».`n4. В окне выбора папки вставьте путь в строку адреса вверху (Ctrl+V — путь расширения уже скопирован) и нажмите «Выбор папки». В списке появится Hand Design.`n5. Chrome, Brave и Chromium красят вкладки и адресную строку сами (в меню браузера появится «Управляется вашей организацией» — выключается в Studio). Для Edge, Opera и Яндекса: ещё раз «Загрузить распакованное» → «Скопировать путь рамки» → Ctrl+V → «Выбор папки».`n6. Откройте новую вкладку (Ctrl+T) — на вопрос браузера нажмите «Оставить».`n7. Значок пазла справа от адресной строки → булавка у Hand Design: это быстрая панель «Дизайн»." "1. Click “Open extensions page” for a browser below (or type chrome://extensions in the address bar — “Copy page address” button).`n2. Turn on “Developer mode” at the top right.`n3. Click “Load unpacked” at the top left.`n4. In the folder dialog paste the path into the address field at the top (Ctrl+V — the extension path is already copied) and click “Select folder”. Hand Design appears in the list.`n5. Chrome, Brave and Chromium paint tabs and the address bar themselves (the browser menu will say “Managed by your organization” — turn off in Studio). For Edge, Opera and Yandex: “Load unpacked” again → “Copy frame path” → Ctrl+V → “Select folder”.`n6. Open a new tab (Ctrl+T) — when the browser asks, click “Keep it”.`n7. Puzzle icon next to the address bar → pin Hand Design: that's the quick design panel.")
+  }
   $script:lblExt = T "Скопировать путь расширения" "Copy extension path"
   $script:lblFrame = T "Скопировать путь рамки" "Copy frame path"
   (G "CopyExt").Content = $script:lblExt
@@ -944,7 +1033,8 @@ function Show-Done($r) {
   $script:lblPage = T "Скопировать адрес страницы" "Copy page address"
   (G "CopyPage").Content = $script:lblPage
   (G "OpenFolder").Content = T "Открыть папку" "Open folder"
-  try { [Windows.Clipboard]::SetText($r.Ext) } catch {}
+  foreach ($k in "CopyExt", "CopyFrame", "CopyPage") { (G $k).Visibility = $(if ($script:allAuto) { "Collapsed" } else { "Visible" }) }
+  if (-not $StoreId -and -not $script:allAuto) { try { [Windows.Clipboard]::SetText($r.Ext) } catch {} }
   $list = G "ConnList"
   $list.Children.Clear()
   foreach ($b in $Detected) {
@@ -961,18 +1051,21 @@ function Show-Done($r) {
     $n1.Text = $b.Name; $n1.Foreground = Brush "#FFFFFFFF"; $n1.FontSize = 14.5; $n1.FontWeight = "SemiBold"
     $n2 = [Windows.Controls.TextBlock]::new()
     $n2.Foreground = Brush "#99EBEBF5"; $n2.FontSize = 12; $n2.TextWrapping = "Wrap"
+    $auto = $script:conn.ContainsKey($b.Key) -and $script:conn[$b.Key] -eq ""
     if ($b.Connected) { $n2.Text = T "Уже подключён: перезапустите браузер — новая версия и настройки подхватятся сами." "Already connected: restart the browser — the new version and settings load automatically." }
+    elseif ($auto) { $n2.Text = T "✓ Подключён." "✓ Connected." }
+    elseif ($StoreId) { $n2.Text = T "Откроется страница Hand Design в Chrome Web Store." "Opens the Hand Design page in the Chrome Web Store." }
     else { $n2.Text = (T "Если страница не открылась — вставьте в адресную строку: " "If the page didn't open, paste into the address bar: ") + $b.Page }
     if ($b.Key -eq "vivaldi") { $n2.Text += (T "`nВесь интерфейс (опытно): vivaldi://experiments → «CSS modifications», Настройки → Внешний вид → папка " "`nWhole UI (experimental): vivaldi://experiments → “CSS modifications”, Settings → Appearance → folder ") + $r.Vivaldi }
     [void]$sp.Children.Add($n1); [void]$sp.Children.Add($n2)
     [void]$g.Children.Add($sp)
     $btn = [Windows.Controls.Button]::new()
     $btn.Style = $w.Resources["Ghost"]; $btn.VerticalAlignment = "Center"; $btn.Margin = [Windows.Thickness]::new(10, 0, 0, 0)
-    $btn.Content = $(if ($b.Connected) { T "Открыть" "Open" } else { T "Открыть страницу расширений" "Open extensions page" })
+    $btn.Content = $(if ($b.Connected) { T "Открыть" "Open" } elseif ($StoreId) { T "Открыть в Chrome Web Store" "Open in Chrome Web Store" } else { T "Открыть страницу расширений" "Open extensions page" })
     $btn.Tag = $b
-    $btn.Add_Click({ param($s) $bb = $s.Tag; try { [Windows.Clipboard]::SetText($script:result.Ext) } catch {}; [void](Open-ExtensionsPage $bb) })
+    $btn.Add_Click({ param($s) $bb = $s.Tag; if (-not $StoreId) { try { [Windows.Clipboard]::SetText($script:result.Ext) } catch {} }; [void](Open-ExtensionsPage $bb) })
     [Windows.Controls.Grid]::SetColumn($btn, 1)
-    [void]$g.Children.Add($btn)
+    if (-not $auto) { [void]$g.Children.Add($btn) }
     $card.Child = $g
     [void]$list.Children.Add($card)
   }
@@ -995,10 +1088,18 @@ function Show-Done($r) {
   try {
     $w.Cursor = [Windows.Input.Cursors]::Wait
     $script:result = Install-HandDesign $o
+    $script:conn = @{}
+    $todo = @($Detected | Where-Object { $_.Found -and -not $_.Connected -and $script:brSwitches[$_.Key] -and $script:brSwitches[$_.Key].IsChecked })
+    if (-not $StoreId -and $todo.Count) {
+      Show-Status (T "Подключаю Hand Design к браузеру. Несколько секунд не трогайте мышь и клавиатуру." "Connecting Hand Design to the browser. Don't touch the mouse and keyboard for a few seconds.")
+      $w.Dispatcher.Invoke([action]{}, [Windows.Threading.DispatcherPriority]::Render)
+      foreach ($b in $todo) { $script:conn[$b.Key] = Connect-Browser $b $script:result }
+      Show-Status ""
+      $w.Activate() | Out-Null
+    }
     Show-Done $script:result
-    # сразу открыть страницу расширений первого выбранного браузера, где Hand Design ещё не подключён
-    $first = $Detected | Where-Object { $_.Found -and -not $_.Connected -and $script:brSwitches[$_.Key] -and $script:brSwitches[$_.Key].IsChecked } | Select-Object -First 1
-    if ($first) { Write-Log ("открываю " + $first.Page + " в " + $first.Name); [void](Open-ExtensionsPage $first) }
+    $first = $todo | Where-Object { $script:conn[$_.Key] -ne "" } | Select-Object -First 1
+    if ($first -and ($StoreId -or -not $AutoConnect)) { Write-Log ("открываю " + $first.Page + " в " + $first.Name); [void](Open-ExtensionsPage $first) }
   } catch {
     Show-Status ((T "Ошибка: " "Error: ") + $_.Exception.Message)
   } finally {

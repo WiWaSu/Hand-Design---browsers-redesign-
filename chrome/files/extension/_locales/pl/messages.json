@@ -1,0 +1,32 @@
+{
+  "extName": {
+    "message": "Hand Design"
+  },
+  "extDesc": {
+    "message": "24 motywy dla Chrome: nowa karta z tapetą i zegarem, Studio, Now Bar, pasek rozmowy, podgląd kart, notatki i PDF."
+  },
+  "actionTitle": {
+    "message": "Hand Design: wygląd"
+  },
+  "cmdAction": {
+    "message": "Szybki panel „Wygląd”"
+  },
+  "cmdSwitcher": {
+    "message": "Przełącznik kart z podglądem"
+  },
+  "cmdMic": {
+    "message": "Pasek rozmowy: mikrofon wł./wył."
+  },
+  "cmdStudio": {
+    "message": "Otwórz Hand Design Studio"
+  },
+  "cmdCam": {
+    "message": "Pasek rozmowy: kamera wł./wył."
+  },
+  "cmdMedia": {
+    "message": "Now Bar: pauza lub wznów"
+  },
+  "cmdNotes": {
+    "message": "Notatki Hand Design"
+  }
+}

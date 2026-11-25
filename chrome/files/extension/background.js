@@ -60,12 +60,35 @@ async function openStartPage(attempt = 0) {
 }
 
 /* settings.json пишет установщик. Новая «ревизия» (rev) = пользователь переустановил с другими
-   настройками → они важнее сохранённых. */
+   настройками → они важнее сохранённых. Расширение из Chrome Web Store не видит папку установщика —
+   тогда файлы отдаёт помощник (native messaging). */
+async function hostFile(name) {
+  const parts = [];
+  for (let offset = 0; ; ) {
+    const r = await hostSend({ cmd: "file", name, offset });
+    if (!r?.ok) throw new Error(r?.error || "host");
+    const bin = atob(r.b64 || "");
+    const buf = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+    parts.push(buf);
+    offset += buf.length;
+    if (!buf.length || offset >= r.size) break;
+  }
+  const ext = name.split(".").pop().toLowerCase();
+  return new Blob(parts, { type: `image/${ext === "jpg" ? "jpeg" : ext}` });
+}
 async function importInstaller() {
   try {
-    const res = await fetch(chrome.runtime.getURL("settings.json"), { cache: "no-store" });
-    if (!res.ok) return;
-    const j = await res.json();
+    let j = null;
+    let readFile = async name => (await fetch(chrome.runtime.getURL(name))).blob();
+    const res = await fetch(chrome.runtime.getURL("settings.json"), { cache: "no-store" }).catch(() => null);
+    if (res?.ok) j = await res.json();
+    else {
+      const r = await hostSend({ cmd: "settings" });
+      if (!r?.ok || !r.text) return;
+      j = JSON.parse(r.text);
+      readFile = hostFile;
+    }
     const { hdInstallerRev } = await chrome.storage.local.get("hdInstallerRev");
     if (!j || !j.rev || j.rev === hdInstallerRev) return;
     const got = await chrome.storage.local.get(KEY);
@@ -77,7 +100,7 @@ async function importInstaller() {
     // своя картинка для обоев: установщик кладёт её рядом (wallpaper.jpg / .png / .webp)
     if (j.wallFile && /^wallpaper\.(jpe?g|png|webp|gif|bmp|avif)$/i.test(j.wallFile)) {
       try {
-        const blob = await (await fetch(chrome.runtime.getURL(j.wallFile))).blob();
+        const blob = await readFile(j.wallFile);
         const buf = new Uint8Array(await blob.arrayBuffer());
         let bin = "";
         for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
@@ -86,8 +109,8 @@ async function importInstaller() {
       } catch {}
     }
     await chrome.storage.local.set({ [KEY]: sanitize(merged), hdInstallerRev: j.rev, hdInstallDir: j.installDir || "" });
-  } catch (e) {
-    // settings.json нет — расширение загружено вручную, без установщика
+  } catch {
+    // ни settings.json, ни помощника — расширение поставлено без установщика
   }
 }
 
@@ -134,10 +157,11 @@ async function publish() {
     const tabId = Number(id);
     // музыка: последний игравший звук; на паузе — ещё 20 минут, чтобы можно было продолжить
     for (const r of Object.values(st.media || {})) {
-      // плеер пропал или сайт ничего не играл по-настоящему — не показываем
-      if (!r || r.gone || (!r.playing && (!r.title || now - r.t > 20 * 60e3))) continue;
-      const score = (r.playing ? 1e13 : 0) + r.t;
-      if (!media || score > media.score) media = { ...r, tabId, score, site: st.host || "", favicon: st.favicon || "" };
+      // играет только то, что Chrome слышит во вкладке (значок динамика); иначе — пауза с названием трека, 20 минут
+      const playing = !!r?.playing && !!st.audible;
+      if (!r || r.gone || r.pip || (!playing && (!r.title || now - r.t > 20 * 60e3))) continue;
+      const score = (playing ? 1e13 : 0) + r.t;
+      if (!media || score > media.score) media = { ...r, playing, title: r.title || st.title || "", tabId, score, site: st.host || "", favicon: st.favicon || "" };
     }
     // звонок: есть живой микрофон или камера; после пропажи ждём 30 с (смена устройства)
     let mic = "none";
@@ -169,6 +193,7 @@ async function remember(tab, kind, frameId, data) {
   st.host = hostOf(tab.url);
   st.title = tab.title || "";
   st.favicon = tab.favIconUrl || "";
+  st.audible = !!tab.audible;
   (st[kind] ||= {})[frameId] = { ...data, t: Date.now() };
   persist();
 }
@@ -191,6 +216,11 @@ chrome.tabs.onUpdated.addListener(async (id, info, tab) => {
     persist();
   }
   if (info.status === "complete" && tab.active) thumbSoon(tab.windowId);
+  if (tabsState[id] && ("audible" in info || "title" in info)) {
+    tabsState[id].audible = !!tab.audible;
+    tabsState[id].title = tab.title || "";
+    persist();
+  }
   if (info.status === "loading" && tab.url && /^file:/i.test(tab.url)) ready.then(() => {
     if (S.pdf) maybeLocalPdf(tab);
     maybeLocalDoc(tab);
@@ -254,7 +284,7 @@ function sanitizeMedia(d = {}) {
   return {
     playing: !!d.playing, title: str(d.title), artist: str(d.artist), album: str(d.album),
     artwork: /^(https?:|data:image\/)/.test(d.artwork || "") ? str(d.artwork, 2000) : "",
-    hasNext: !!d.hasNext, hasPrev: !!d.hasPrev, video: !!d.video, gone: !!d.gone,
+    hasNext: !!d.hasNext, hasPrev: !!d.hasPrev, video: !!d.video, pip: !!d.pip, gone: !!d.gone,
   };
 }
 function sanitizeCall(d = {}) {

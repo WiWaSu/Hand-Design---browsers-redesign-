@@ -263,6 +263,67 @@ const OPS = {
     if (folder === null || (isFolder && (folder === rel || folder.startsWith(rel + "/")))) return { ok: false, error: "bad path" };
     return moveTo(rel, isFolder, folder, fs.splitRel(rel)[1]);
   },
+  async importPick(data) {
+    const LIMIT = 400 * 1024 * 1024;
+    let h;
+    try {
+      h = data?.mode === "folder"
+        ? await showDirectoryPicker({ id: "hd-import", mode: "read" })
+        : (await showOpenFilePicker({
+            id: "hd-import",
+            types: (data?.filters || []).map(([description, mask]) => ({ description: String(description), accept: { "application/octet-stream": String(mask).split(";").map(m => m.trim().replace(/^\*/, "")) } })),
+          }))[0];
+    } catch {
+      return { ok: false, cancel: true };
+    }
+    if (h.kind === "file") {
+      const f = await h.getFile();
+      if (f.size > LIMIT) return { ok: false, error: t("Файл слишком большой") };
+      return { ok: true, name: f.name, b64: await fs.toB64(f) };
+    }
+    const files = [];
+    let total = 0;
+    const visit = async (dir, rel, depth) => {
+      for await (const [name, c] of dir.entries()) {
+        if (name.startsWith(".") || name === "node_modules") continue;
+        const r = rel ? `${rel}/${name}` : name;
+        if (c.kind === "directory") {
+          if (depth < 8) await visit(c, r, depth + 1);
+          continue;
+        }
+        const f = await c.getFile().catch(() => null);
+        if (f && files.length < 5000 && total + f.size <= LIMIT) {
+          total += f.size;
+          files.push({ rel: r, b64: await fs.toB64(f) });
+        }
+      }
+    };
+    await visit(h, "", 0);
+    return { ok: true, name: h.name, files };
+  },
+  async importBegin(data) {
+    const top = fs.cleanName(t("Импорт")) || "Import";
+    const dir = await root.getDirectoryHandle(top, { create: true });
+    const name = await fs.freeName(dir, fs.cleanName(data?.name) || "Import", "");
+    await dir.getDirectoryHandle(name, { create: true });
+    return { ok: true, folder: `${top}/${name}` };
+  },
+  async importWrite(data) {
+    const base = fs.safeRel(data?.folder, false);
+    if (!base) return { ok: false, error: "bad path" };
+    let written = 0;
+    for (const it of data?.items || []) {
+      const parts = String(it?.rel || "").split("/").map(p => fs.cleanName(p).replace(/[. ]+$/, ""));
+      if (!parts.length || parts.some(p => !p)) continue;
+      const dir = await fs.dirAt(root, [base, ...parts.slice(0, -1)].join("/"), true);
+      const last = parts.at(-1);
+      const ext = (last.match(/\.[^.]+$/) || [""])[0];
+      const name = await fs.freeName(dir, last.slice(0, last.length - ext.length), ext);
+      await fs.write(await dir.getFileHandle(name, { create: true }), typeof it.text === "string" ? it.text : fs.fromB64(it.b64));
+      written++;
+    }
+    return { ok: true, written };
+  },
   async delete(data) {
     const isFolder = !!data?.isFolder;
     const rel = entryRel(data);
@@ -299,7 +360,7 @@ async function moveTo(rel, isFolder, destFolder, newName) {
 const NEEDS_ROOT = new Set(["state", "pick", "useDefault", "settings", "reveal"]);
 window.hdNotes = {
   t,
-  caps: { reveal: false },
+  caps: { reveal: false, import: true },
   call(op, json, done) {
     let data = null;
     try {

@@ -1,0 +1,32 @@
+{
+  "extName": {
+    "message": "Hand Design"
+  },
+  "extDesc": {
+    "message": "24 Themes für Chrome: neuer Tab mit Hintergrund und Uhr, Studio, Now Bar, Anrufleiste, Tab-Vorschau, Notizen und PDF."
+  },
+  "actionTitle": {
+    "message": "Hand Design: Design"
+  },
+  "cmdAction": {
+    "message": "Schnellleiste „Design“"
+  },
+  "cmdSwitcher": {
+    "message": "Tab-Umschalter mit Vorschau"
+  },
+  "cmdMic": {
+    "message": "Anrufleiste: Mikrofon an/aus"
+  },
+  "cmdStudio": {
+    "message": "Hand Design Studio öffnen"
+  },
+  "cmdCam": {
+    "message": "Anrufleiste: Kamera an/aus"
+  },
+  "cmdMedia": {
+    "message": "Now Bar: Pause oder weiter"
+  },
+  "cmdNotes": {
+    "message": "Hand Design Notizen"
+  }
+}

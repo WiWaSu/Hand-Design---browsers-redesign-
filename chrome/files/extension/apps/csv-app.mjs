@@ -1,4 +1,7 @@
 /* Hand Design — редактор таблиц CSV. Файл читает и пишет браузер через window.hdCsv (FloorpPdfTweaksChild). */
+import { ensureIcons } from "./hd-icons.mjs";
+
+ensureIcons();
 
 await new Promise(resolve => {
   if (window.hdCsv) resolve();
@@ -92,17 +95,8 @@ function serialize(rows, d, eol, tail) {
 
 /* ------------------------------ страница ------------------------------ */
 
-const P = d => `<path d="${d}"/>`;
-const svg = body => `<svg viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
-const ICON = {
-  rowAdd: `<rect x="4" y="4.5" width="16" height="9" rx="2"/>` + P("M12 16.5v5M9.5 19h5"),
-  colAdd: `<rect x="4.5" y="4" width="9" height="16" rx="2"/>` + P("M16.5 12h5M19 9.5v5"),
-  rowDel: `<rect x="4" y="4.5" width="16" height="9" rx="2"/>` + P("M9.5 19h5"),
-  colDel: `<rect x="4.5" y="4" width="9" height="16" rx="2"/>` + P("M16.5 12h5"),
-  sortUp: P("M7 15l5-5 5 5"),
-  sortDown: P("M7 9l5 5 5-5"),
-  search: `<circle cx="11" cy="11" r="6.5"/>` + P("M16 16l4 4"),
-};
+const svg = name => `<i class="hd-ic" style="--i: var(--fm-ic-${name})" aria-hidden="true"></i>`;
+const ICON = { rowAdd: "rowAdd", colAdd: "colAdd", rowDel: "rowDel", colDel: "colDel", sortUp: "chevronUp", sortDown: "chevronDown", search: "search" };
 
 document.documentElement.setAttribute("data-hd-md", "");
 document.body.innerHTML = `

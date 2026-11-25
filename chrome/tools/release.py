@@ -64,8 +64,7 @@ def notes(img_prefix, zip_link, back_link):
 
 1. Скачайте **Hand-Design-Chromium-Setup-v{ver}.exe** ниже и запустите. Без .exe: распакуйте {zip_link} и запустите **Setup.cmd**. / Download **Hand-Design-Chromium-Setup-v{ver}.exe** below and run it. Without the .exe: unzip {zip_link} and run **Setup.cmd**.
 2. Выберите тему и браузеры, нажмите «Установить». / Pick a theme and browsers, press Install.
-3. В браузере один раз: страница расширений → «Режим разработчика» → «Загрузить распакованное» → Ctrl+V → «Выбрать папку». / Once in the browser: extensions page → Developer mode → Load unpacked → Ctrl+V → Select folder.
-4. Только для Edge, Opera, Яндекса или если хочется картинку темы под вкладками: так же загрузите папку `frame`. В Chrome, Brave и Chromium цвет верха ставится сам. / Edge, Opera, Yandex, or if you want the theme picture behind the tabs: load the `frame` folder the same way. Chrome, Brave and Chromium get the frame color automatically.
+3. Установщик сам откроет страницу расширений и подключит Hand Design. Несколько секунд не трогайте мышь и клавиатуру. Если не получится, он покажет, что нажать. / The installer opens the extensions page and connects Hand Design by itself. Leave the mouse and keyboard alone for a few seconds. If it fails, it shows what to click.
 
 Уже стоит — запустите установщик новой версии и нажмите ⟳ на карточке Hand Design на странице расширений, настройки сохранятся. / Already installed — run the new installer and press ⟳ on the Hand Design card, settings are kept.
 
@@ -74,7 +73,7 @@ def notes(img_prefix, zip_link, back_link):
 
 
 def release_zip(dest):
-    skip_top = {"build-exe.bat", "tools"}
+    skip_top = {"build-exe.bat", "tools", "store"}
     with zipfile.ZipFile(dest, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
         for name in sorted(os.listdir(CHROME)):
             if name in skip_top or name.endswith((".zip", ".exe")):
@@ -83,7 +82,7 @@ def release_zip(dest):
             if os.path.isdir(p):
                 for d, _, files in os.walk(p):
                     for f in sorted(files):
-                        if f == "settings.json" or f.startswith("wallpaper.") or "__pycache__" in d:
+                        if f == "settings.json" or f.startswith("wallpaper.") or f == "Cached Theme.pak" or "__pycache__" in d:
                             continue
                         z.write(os.path.join(d, f), os.path.relpath(os.path.join(d, f), CHROME))
             else:
@@ -102,7 +101,7 @@ arch = os.path.join(HD, "archive", "versions", "chrome")
 snap = os.path.join(arch, "v" + ver)
 if os.path.exists(snap):
     shutil.rmtree(snap)
-shutil.copytree(CHROME, snap, ignore=shutil.ignore_patterns("*.exe", "*.zip", "__pycache__", "settings.json"))
+shutil.copytree(CHROME, snap, ignore=shutil.ignore_patterns("*.exe", "*.zip", "__pycache__", "settings.json", "Cached Theme.pak", "store"))
 # pdf.js лежит архивом и в снимке — копируем отдельно (ignore выше отбросил *.zip)
 shutil.copy2(os.path.join(CHROME, "files", "extension", "pdf", "lib.zip"), os.path.join(snap, "files", "extension", "pdf", "lib.zip"))
 snapshot_zip(snap, os.path.join(arch, f"Hand-Design-Chromium-v{ver}.zip"))

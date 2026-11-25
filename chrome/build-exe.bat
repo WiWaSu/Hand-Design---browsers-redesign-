@@ -26,7 +26,7 @@ mkdir "%WORK%" || (echo Не получилось создать временн�
 
 echo Hand Design for Chromium v%VER%: упаковываю файлы...
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-  "$items = Get-ChildItem -LiteralPath '%~dp0.' -Force | Where-Object { $_.Name -notmatch '\.(exe|zip)$' -and $_.Name -notin 'build-exe.bat', 'tools' };" ^
+  "$items = Get-ChildItem -LiteralPath '%~dp0.' -Force | Where-Object { $_.Name -notmatch '\.(exe|zip)$' -and $_.Name -notin 'build-exe.bat', 'tools', 'store' };" ^
   "Compress-Archive -Path ($items.FullName) -DestinationPath '%WORK%\payload.zip' -Force"
 if not exist "%WORK%\payload.zip" (echo Не получилось упаковать файлы & pause & exit /b 1)
 

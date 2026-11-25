@@ -1,0 +1,32 @@
+{
+  "extName": {
+    "message": "Hand Design"
+  },
+  "extDesc": {
+    "message": "24 thèmes pour Chrome : nouvel onglet avec fond et horloge, Studio, Now Bar, barre d’appel, aperçu des onglets, notes et PDF."
+  },
+  "actionTitle": {
+    "message": "Hand Design : design"
+  },
+  "cmdAction": {
+    "message": "Panneau rapide « Design »"
+  },
+  "cmdSwitcher": {
+    "message": "Sélecteur d’onglets avec aperçu"
+  },
+  "cmdMic": {
+    "message": "Barre d’appel : micro activé/coupé"
+  },
+  "cmdStudio": {
+    "message": "Ouvrir Hand Design Studio"
+  },
+  "cmdCam": {
+    "message": "Barre d’appel : caméra activée/coupée"
+  },
+  "cmdMedia": {
+    "message": "Now Bar : pause ou lecture"
+  },
+  "cmdNotes": {
+    "message": "Notes Hand Design"
+  }
+}

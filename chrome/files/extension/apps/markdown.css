@@ -311,7 +311,9 @@
   border: 1.5px solid var(--md-muted);
 }
 .hd-md-check:not([data-done]):hover { border-color: var(--md-accent); background: var(--md-soft); }
-.hd-md-check[data-done] { border-color: var(--md-accent); background: var(--md-accent) center / 70% no-repeat url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12.5l4.5 4.5L19 7.5'/></svg>"); }
+.hd-md-check[data-done] { border-color: var(--md-accent); background: var(--md-accent); }
+.hd-md-check[data-done]::after { content: ""; position: absolute; inset: 15%; background: var(--md-on-accent, #fff); mask: var(--fm-ic-check, url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12.5l4.5 4.5L19 7.5'/></svg>")) center / contain no-repeat; }
+.hd-md-check[data-done] { position: relative; }
 .hd-md-task[data-done] > span:last-child { color: var(--md-muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--md-muted) 60%, transparent); }
 
 .hd-md-page blockquote {
@@ -442,10 +444,10 @@
   background: var(--md-accent);
   mask: center / 20px no-repeat var(--glyph);
 }
-.hd-docs-glyph[data-glyph="new"] { --glyph: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'><path d='M12 5v14M5 12h14'/></svg>"); }
-.hd-docs-glyph[data-glyph="table"] { --glyph: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><rect x='3.5' y='4.5' width='17' height='15' rx='2'/><path d='M3.5 10h17M3.5 15h17M10 4.5v15'/></svg>"); }
-.hd-docs-glyph[data-glyph="open"] { --glyph: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><path d='M3.5 7.5A2 2 0 0 1 5.5 5.5h4l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z'/></svg>"); }
-.hd-docs-glyph[data-glyph="image"] { --glyph: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><rect x='3.5' y='4.5' width='17' height='15' rx='2'/><circle cx='9' cy='10' r='1.6'/><path d='M4 17l5-4.5 4 3.5 3-2.5 4 3.5'/></svg>"); }
+.hd-docs-glyph[data-glyph="new"] { --glyph: var(--fm-ic-note, url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'><path d='M12 5v14M5 12h14'/></svg>")); }
+.hd-docs-glyph[data-glyph="table"] { --glyph: var(--fm-ic-table, url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><rect x='3.5' y='4.5' width='17' height='15' rx='2'/><path d='M3.5 10h17M3.5 15h17M10 4.5v15'/></svg>")); }
+.hd-docs-glyph[data-glyph="open"] { --glyph: var(--fm-ic-folder, url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><path d='M3.5 7.5A2 2 0 0 1 5.5 5.5h4l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z'/></svg>")); }
+.hd-docs-glyph[data-glyph="image"] { --glyph: var(--fm-ic-image, url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'><rect x='3.5' y='4.5' width='17' height='15' rx='2'/><circle cx='9' cy='10' r='1.6'/><path d='M4 17l5-4.5 4 3.5 3-2.5 4 3.5'/></svg>")); }
 
 .hd-docs-recent h2 {
   margin: 0 0 8px;
@@ -652,6 +654,26 @@
 .hd-notes-folder { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; text-align: start; }
 .hd-notes-folder span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hd-notes-folder svg { flex: none; width: 16px; height: 16px; }
+.hd-notes-import { flex: none; display: grid; place-items: center; }
+.hd-notes-import svg { width: 16px; height: 16px; }
+.hd-qs { position: fixed; inset: 0; z-index: 50; display: flex; justify-content: center; align-items: flex-start; padding-top: 12vh; background: rgb(0 0 0 / .3); }
+.hd-qs-card {
+  width: min(560px, calc(100vw - 32px)); max-height: 70vh; display: flex; flex-direction: column; overflow: hidden;
+  background: var(--md-bg); color: var(--md-ink); border: 1px solid var(--md-line); border-radius: 16px; box-shadow: 0 16px 48px rgb(0 0 0 / .3);
+}
+.hd-qs-card input { appearance: none; border: 0; border-bottom: 1px solid var(--md-line); background: transparent; color: inherit; font: 15px var(--md-ui); padding: 14px 16px; outline: none; }
+.hd-qs-card ol { list-style: none; margin: 0; padding: 6px; overflow: auto; }
+.hd-qs-card li { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: 10px; cursor: pointer; }
+.hd-qs-card li[data-on] { background: var(--md-hover); }
+.hd-qs-card li b { font: 500 14px var(--md-ui); }
+.hd-qs-card li small { color: var(--md-muted); font: 12px var(--md-ui); }
+.hd-qs-card li small:empty { display: none; }
+.hd-notes-progress { display: grid; gap: 14px; padding: 18px 20px; }
+.hd-notes-progress p { margin: 0; font: 14px/1.5 var(--md-ui); }
+.hd-notes-progress button {
+  justify-self: end; appearance: none; border: 0; border-radius: 999px; padding: 8px 18px; cursor: pointer;
+  background: var(--md-accent); color: var(--md-on-accent); font: 600 13px var(--md-ui);
+}
 
 .hd-notes-main { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--md-bg); }
 .hd-notes[data-bg="paper"] .hd-notes-main { --md-bg: light-dark(#f7f3ea, #1d1b17); --md-ink: light-dark(#2b2620, #efe7d8); --md-text: light-dark(#3a332a, #d9d0bf); }
@@ -768,7 +790,9 @@
   cursor: pointer;
 }
 .cm-lp-check:not([data-done]):hover { border-color: var(--md-accent); background: var(--md-soft); }
-.cm-lp-check[data-done] { border-color: var(--md-accent); background: var(--md-accent) center / 70% no-repeat url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12.5l4.5 4.5L19 7.5'/></svg>"); }
+.cm-lp-check[data-done] { border-color: var(--md-accent); background: var(--md-accent); }
+.cm-lp-check[data-done]::after { content: ""; position: absolute; inset: 15%; background: var(--md-on-accent, #fff); mask: var(--fm-ic-check, url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12.5l4.5 4.5L19 7.5'/></svg>")) center / contain no-repeat; }
+.cm-lp-check[data-done] { position: relative; }
 .cm-lp-done { color: var(--md-muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--md-muted) 60%, transparent); }
 .cm-lp-quote { border-inline-start: 3px solid var(--md-accent); padding-inline-start: 1em !important; background: color-mix(in srgb, var(--md-accent) 7%, transparent); }
 .cm-lp-hr { display: inline-block; width: 100%; height: 1px; background: var(--md-line); vertical-align: middle; }
@@ -953,3 +977,15 @@
 .hd-md-align[data-align="center"] { text-align: center; }
 .hd-md-align[data-align="right"] { text-align: end; }
 .hd-md-align > :last-child { margin-bottom: 1.05em; }
+
+/* значки из пака (--fm-ic-*): цвет — currentColor */
+.hd-ic { display: inline-block; flex: none; width: 18px; height: 18px; background: currentColor; mask: var(--i) center / contain no-repeat; vertical-align: middle; }
+.hd-md-tools .hd-ic { display: block; margin: auto; }
+.hd-csv-tools .hd-ic, .cm-lp-tbar .hd-ic { width: 17px; height: 17px; }
+.hd-csv-col .hd-ic { width: 13px; height: 13px; margin-inline-start: 4px; vertical-align: -2px; color: var(--md-accent); }
+.hd-tree-icon .hd-ic, .hd-tree-chev .hd-ic { width: 15px; height: 15px; }
+.hd-tree-chev .hd-ic { transition: rotate .12s; }
+.hd-tree-folder[data-open] .hd-tree-chev .hd-ic { rotate: 90deg; }
+.hd-notes-folder .hd-ic, .hd-notes-import .hd-ic, .cm-lp-menu .hd-ic { width: 16px; height: 16px; }
+.cm-lp-menu .hd-ic { color: var(--md-muted); }
+.cm-lp-callout-icon .hd-ic { width: 1.05em; height: 1.05em; }
