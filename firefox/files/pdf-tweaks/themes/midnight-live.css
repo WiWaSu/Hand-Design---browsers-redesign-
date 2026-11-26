@@ -48,7 +48,7 @@
 
 
 /* ---------------- Тема: Midnight ---------------- */
-@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+@-moz-document url-prefix("about:"), url("resource://handdesign/newtab.html"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
   :root[fm-theme="midnight"][fm-theme] {
     --fm-accent: var(--fm-user-accent, #6C8CFF) !important;
     --fm-on-accent: #0b1022 !important;

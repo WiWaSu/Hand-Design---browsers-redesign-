@@ -48,7 +48,7 @@
 
 
 /* ---------------- Тема: Material You ---------------- */
-@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+@-moz-document url-prefix("about:"), url("resource://handdesign/newtab.html"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
   :root[fm-theme="material"][fm-theme] {
     --fm-accent: light-dark(color-mix(in srgb, var(--fm-user-accent, AccentColor) 80%, black), color-mix(in srgb, var(--fm-user-accent, AccentColor) 55%, white)) !important;
     --fm-on-accent: light-dark(#ffffff, #10131a) !important;

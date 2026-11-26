@@ -1,6 +1,6 @@
 /* FM-THEME BEGIN mint content */
 /* ---------------- Тема: Mint ---------------- */
-@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+@-moz-document url-prefix("about:"), url("resource://handdesign/newtab.html"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
   :root:not([fm-theme]:not([fm-theme="mint"])) {
     --fm-accent: var(--fm-user-accent, #16A37A) !important;
     --fm-on-accent: #ffffff !important;

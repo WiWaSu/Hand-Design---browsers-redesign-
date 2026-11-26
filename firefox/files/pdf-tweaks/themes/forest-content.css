@@ -1,6 +1,6 @@
 /* FM-THEME BEGIN forest content */
 /* ---------------- Тема: Forest ---------------- */
-@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+@-moz-document url-prefix("about:"), url("resource://handdesign/newtab.html"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
   :root:not([fm-theme]:not([fm-theme="forest"])) {
     --fm-accent: var(--fm-user-accent, #7BC47F) !important;
     --fm-on-accent: #0c1a0f !important;

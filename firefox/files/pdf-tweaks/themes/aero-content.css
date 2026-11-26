@@ -1,6 +1,6 @@
 /* FM-THEME BEGIN aero content */
 /* ---------------- Тема: Aero ---------------- */
-@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+@-moz-document url-prefix("about:"), url("resource://handdesign/newtab.html"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
   :root:not([fm-theme]:not([fm-theme="aero"])) {
     --fm-accent: var(--fm-user-accent, #2B7CD3) !important;
     --fm-on-accent: #ffffff !important;

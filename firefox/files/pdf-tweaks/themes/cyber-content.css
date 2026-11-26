@@ -1,6 +1,6 @@
 /* FM-THEME BEGIN cyber content */
 /* ---------------- Тема: Cyberpunk ---------------- */
-@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+@-moz-document url-prefix("about:"), url("resource://handdesign/newtab.html"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
   :root:not([fm-theme]:not([fm-theme="cyber"])) {
     --fm-accent: var(--fm-user-accent, #FCEE0A) !important;
     --fm-on-accent: #000000 !important;
