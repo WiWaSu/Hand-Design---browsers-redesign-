@@ -7,7 +7,7 @@
 **A redesign for Firefox and Chromium browsers on Windows.**<br>
 24 themes, a Studio for every detail, a new tab with clock and wallpapers, notes like in Obsidian, PDF, Markdown, CSV and image editors right in the browser.
 
-[![Firefox](https://img.shields.io/badge/Firefox-3.0.0-ff7139?style=for-the-badge)](firefox/CHANGELOG.md)
+[![Firefox](https://img.shields.io/badge/Firefox-3.1.0-ff7139?style=for-the-badge)](firefox/CHANGELOG.md)
 [![Chromium](https://img.shields.io/badge/Chromium-1.1.0-4285f4?style=for-the-badge)](chrome/CHANGELOG.md)
 [![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-2b7cd3?style=for-the-badge)](#install)
 [![License](https://img.shields.io/badge/license-MIT-2ea44f?style=for-the-badge)](LICENSE)
@@ -28,7 +28,7 @@ The themes, Studio, new tab, notes and file editors are the same code in both. W
 | How it installs | installer puts a script loader into the browser folder and styles into the profile | installer copies an extension; you press "Load unpacked" once |
 | Browser interface | fully restyled: tabs, address bar, menus, animations | tabs and address bar take the theme color; Vivaldi also gets CSS for the whole interface (experimental) |
 | Only here | icon packs for the whole browser, password window, live preview in Studio, a loading line per theme, tab hover previews, screen sharing like in Discord, hiding tabs | search history on the new tab, tab switcher with previews (`Alt+Q`) |
-| Version | [3.0.0](firefox/CHANGELOG.md) | [1.1.0](chrome/CHANGELOG.md), details in [chrome/README.md](chrome/README.md) |
+| Version | [3.1.0](firefox/CHANGELOG.md) | [1.1.0](chrome/CHANGELOG.md), details in [chrome/README.md](chrome/README.md) |
 
 Chrome gives extensions no access to its own icons, saved passwords or loading line, so those parts stay Firefox-only.
 
@@ -231,6 +231,49 @@ Also:
 - **10 languages**: English, Russian, Ukrainian, German, French, Spanish, Portuguese, Polish, Turkish, Chinese
 - **updates**: each start the browser checks `latest.json` here and shows a notice if a new version is out. Nothing is downloaded by itself; the check can be turned off in Studio → Updates
 
+## New tab and widgets (Firefox)
+
+Studio → New tab → **Hand Design new tab with widgets** replaces the browser's new tab with a Hand Design page: clock, search, shortcuts and wallpaper in the current theme, plus widgets. Press **Widgets** in the bottom right corner: drag anything anywhere (the clock, search and shortcuts too), resize by the corner, remove with ×, add from the gallery at the bottom. Widgets take the look of the theme: glass in iOS and Night Drive, windows in Retro 98, dot matrix in Nothing, paper in Paper.
+
+Built in: weather (now, hourly, week), world clock, calendar, countdown, a note from Notes with tickable tasks, to-do list, recent documents, a bookmarks folder, recently closed tabs, music from any tab, a timer you set to any time right on the widget, a stopwatch with laps, Pomodoro, RSS feed, exchange rates, text, picture. Weather, rates and RSS go online only after you add them; the browser's own new tab widgets are not used while this page is on.
+
+**Your own widget** is one `.html` file: Widgets → Your own widget → paste the code or open the file. You can write it yourself or have an AI write it in one or two requests: copy the brief below (the **i** button in that window copies it too), add what the widget should show, paste the answer. Your widget runs in an isolated frame with no access to the browser, cookies or your files; it can only reach the addresses it lists, and you see them before adding it.
+
+<details>
+<summary>Brief for the AI</summary>
+
+```text
+Make a widget for the new tab page of a browser with Hand Design. Rules:
+
+1. The widget is ONE HTML file: markup, <style> and <script> inside, no external files or libraries.
+2. The <head> must contain a JSON description (no comments):
+   <meta name="hd-widget" content='{"name": "Name", "size": [260, 180], "network": [], "settings": []}'>
+   - size — default width and height in pixels (140 to 900);
+   - network — addresses the widget fetches data from, e.g. ["https://api.example.com"]; [] if none;
+   - settings — fields the user fills in: {"id": "city", "type": "text", "label": "City"}.
+     Types: text, number, date, time, color, toggle, select (then add "options": [["value", "label"], ...]).
+3. The widget runs in an isolated frame: no access to the browser, cookies, localStorage or the network directly.
+   Everything it needs comes from the window.hd object:
+   - hd.settings — values of the settings fields; hd.onSettings(fn) — called when they change;
+   - await hd.store.get(key), await hd.store.set(key, value) — keep your own data (up to 64 KB);
+   - await hd.fetch(url) — request only to addresses listed in network, returns { ok, status, text, json };
+   - hd.open(url) — open a link in a new tab;
+   - hd.onTheme(fn) — the theme changed (the variables below are already updated).
+4. Take the look from the theme variables, don't set your own colors:
+   --hd-card (card background), --hd-ink (text), --hd-muted (secondary text), --hd-accent, --hd-on-accent,
+   --hd-line (lines), --hd-radius (corner radius), --hd-font, --hd-mono.
+   The body background is transparent: Hand Design draws the card around it.
+5. The user resizes the frame. Make the layout fluid (flex or grid, %, cqw, cqh units);
+   nothing may overflow or get cut off.
+6. No alert, prompt, popups or sound that plays by itself.
+
+Send only the complete file.
+
+My widget:<describe what it should show and do>
+```
+
+</details>
+
 ## Shortcuts
 
 | Keys | Firefox | Chromium |
@@ -254,7 +297,7 @@ In Chromium browsers shortcuts can be changed on `chrome://extensions/shortcuts`
 ### Firefox edition
 
 1. Download **`Hand-Design-Setup-v<version>.exe`** from [Releases](https://github.com/WiWaSu/Hand-Design---browsers-redesign-/releases) and run it.
-2. Allow administrator rights. They are needed once, to put a small script loader into the browser's program folder.
+2. Allow administrator rights. They are needed once, to put a small script loader into the browser's program folder. What it does with them, what goes online and how to remove it: [SECURITY.md](SECURITY.md).
 3. Pick a theme, wallpaper, accent, corners, animations and browsers, press Install.
 4. Restart the browser.
 
@@ -367,7 +410,7 @@ This is an unofficial project, not connected with Mozilla, Google, Microsoft or 
 | Как ставится | установщик кладёт загрузчик в папку браузера и стили в профиль | установщик копирует расширение, один раз нажать «Загрузить распакованное» |
 | Интерфейс браузера | меняется весь: вкладки, адресная строка, меню, анимации | вкладки и адресная строка в цвет темы; в Vivaldi ещё CSS для всего интерфейса (опытная функция) |
 | Только здесь | паки значков для всего браузера, окно паролей, предпросмотр в Studio, своя полоска загрузки у каждой темы, превью вкладок при наведении, показ экрана как в Discord, скрытие вкладок | история поиска на новой вкладке, вкладки с превью (`Alt+Q`) |
-| Версия | [3.0.0](firefox/CHANGELOG.md) | [1.1.0](chrome/CHANGELOG.md), подробно в [chrome/README.md](chrome/README.md) |
+| Версия | [3.1.0](firefox/CHANGELOG.md) | [1.1.0](chrome/CHANGELOG.md), подробно в [chrome/README.md](chrome/README.md) |
 
 Chrome не даёт расширениям менять свои значки, читать сохранённые пароли и полоску загрузки, поэтому эти части есть только в Firefox. Раньше проект назывался Redesigned Fox, а ещё раньше Floorp Modern.
 
@@ -435,6 +478,49 @@ Studio открывается из быстрой панели или по `Alt+
 - 10 языков интерфейса, язык выбирается в установщике и в Studio
 - проверка обновлений при каждом запуске браузера; сама ничего не скачивает, выключается в Studio → «Обновления»
 
+### Новая вкладка и виджеты (Firefox)
+
+Studio → Новая вкладка → **Своя новая вкладка с виджетами** заменяет новую вкладку браузера страницей Hand Design: часы, поиск, ярлыки и обои в оформлении темы и виджеты. Кнопка **Виджеты** справа внизу включает правку: что угодно перетаскивается куда угодно (часы, поиск и ярлыки тоже), размер меняется за уголок, × убирает, галерея снизу добавляет. Виджеты рисуются в стиле темы: стекло в iOS и Night Drive, окна в Retro 98, точки в Nothing, бумага в Paper.
+
+Готовые: погода (сейчас, по часам, на неделю), часы мира, календарь, обратный отсчёт, заметка из Заметок с галочками, список дел, последние документы, папка закладок, недавно закрытые вкладки, музыка из любой вкладки, таймер на любое время прямо на виджете, секундомер с кругами, помидор, лента RSS, курсы валют, текст, картинка. Погода, курсы и RSS ходят в интернет, только когда вы их добавили. Пока страница включена, виджеты новой вкладки самого браузера не используются.
+
+**Свой виджет** — один файл `.html`: Виджеты → Свой виджет → вставьте код или откройте файл. Его можно написать самому или получить от нейросети за один-два запроса: скопируйте задание ниже (кнопка **i** в этом окне копирует его же), допишите, что виджет должен показывать, и вставьте ответ. Свой виджет работает в изолированной рамке без доступа к браузеру, cookies и файлам. В интернет он ходит только по адресам, которые сам объявил, и вы видите их до добавления.
+
+<details>
+<summary>Задание для нейросети</summary>
+
+```text
+Сделай виджет для новой вкладки браузера с Hand Design. Правила:
+
+1. Виджет — ОДИН файл HTML: разметка, <style> и <script> внутри, без внешних файлов и библиотек.
+2. В <head> обязательно описание в виде JSON (без комментариев):
+   <meta name="hd-widget" content='{"name": "Название", "size": [260, 180], "network": [], "settings": []}'>
+   - size — ширина и высота по умолчанию в пикселях (от 140 до 900);
+   - network — адреса, куда виджет ходит за данными, например ["https://api.example.com"]; если не нужно — [];
+   - settings — поля, которые человек заполнит сам: {"id": "city", "type": "text", "label": "Город"}.
+     Типы: text, number, date, time, color, toggle, select (тогда добавь "options": [["значение", "подпись"], ...]).
+3. Виджет работает в изолированной рамке: нет доступа к браузеру, cookies, localStorage и сети напрямую.
+   Всё нужное даёт объект window.hd:
+   - hd.settings — значения полей из settings; hd.onSettings(fn) — когда их поменяли;
+   - await hd.store.get(key), await hd.store.set(key, value) — хранить свои данные (до 64 КБ);
+   - await hd.fetch(url) — запрос только к адресам из network, ответ { ok, status, text, json };
+   - hd.open(url) — открыть ссылку в новой вкладке;
+   - hd.onTheme(fn) — тема сменилась (переменные ниже уже обновлены).
+4. Оформление бери из переменных темы, свои цвета не задавай:
+   --hd-card (фон карточки), --hd-ink (текст), --hd-muted (второстепенный текст), --hd-accent, --hd-on-accent,
+   --hd-line (линии), --hd-radius (скругление), --hd-font, --hd-mono.
+   Фон body прозрачный: карточку вокруг рисует Hand Design.
+5. Размер рамки меняет человек. Верстай резиновой (flex или grid, единицы %, cqw, cqh),
+   ничего не должно вылезать и обрезаться.
+6. Без alert, prompt, всплывающих окон и автоматического звука.
+
+Пришли только готовый файл целиком.
+
+Мой виджет: <опишите, что он должен показывать и уметь>
+```
+
+</details>
+
 ### Горячие клавиши
 
 | Клавиши | Firefox | Chromium |
@@ -456,7 +542,7 @@ Studio открывается из быстрой панели или по `Alt+
 ### Установка: Firefox
 
 1. Скачайте **`Hand-Design-Setup-v<версия>.exe`** со страницы [Releases](https://github.com/WiWaSu/Hand-Design---browsers-redesign-/releases) и запустите.
-2. Разрешите права администратора. Они нужны один раз, чтобы положить загрузчик в папку браузера.
+2. Разрешите права администратора. Они нужны один раз, чтобы положить загрузчик в папку браузера. Что он делает с этими правами, что уходит в интернет и как всё убрать — в [SECURITY.md](SECURITY.md#по-русски).
 3. Выберите тему, обои, акцент, скругления, анимации и браузеры, нажмите «Установить».
 4. Перезапустите браузер.
 

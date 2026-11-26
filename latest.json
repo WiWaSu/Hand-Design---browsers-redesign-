@@ -1,8 +1,8 @@
 {
-  "version": "3.0.0",
-  "date": "2026-11-25",
+  "version": "3.1.0",
+  "date": "2026-11-26",
   "zip": "https://github.com/WiWaSu/Hand-Design---browsers-redesign-/releases",
-  "notes": "https://github.com/WiWaSu/Hand-Design---browsers-redesign-/releases/tag/v3.0.0",
+  "notes": "https://github.com/WiWaSu/Hand-Design---browsers-redesign-/releases/tag/v3.1.0",
   "page": "https://github.com/WiWaSu/Hand-Design---browsers-redesign-",
   "chrome": {
     "version": "1.1.0",
