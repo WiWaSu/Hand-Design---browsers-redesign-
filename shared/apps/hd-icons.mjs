@@ -838,8 +838,17 @@ const FRAMES = {
 };
 
 // рисунок значка в стиле пака: { defs, art, crisp }; id — приставка для фильтров и масок
+// полые линии, свечение и ореол на мелком размере дают кашу: там рисуем обычной линией, крупно — как в паке
+const SMALL_CSS = ".hs{display:none}@media (max-width:26px){.hb{display:none}.hs{display:inline}}";
 function draw(name, pack, ink, id = "") {
   const st = PACKS[pack] || PACKS[BASE_PACK];
+  const big = drawStyle(name, st, ink, id, pack);
+  if (!st.hollow && !st.glow && !st.halo) return big;
+  const small = drawStyle(name, { ...st, hollow: false, glow: 0, halo: false, sw: st.hollow ? st.sw * 1.2 : st.sw }, ink, id + "s", pack);
+  return { defs: big.defs + small.defs, art: `<g class='hb'>${big.art}</g><g class='hs'>${small.art}</g>`, crisp: big.crisp, sized: true };
+}
+
+function drawStyle(name, st, ink, id, pack) {
   // своя форма рисунка у семейства пака, если она нарисована
   let body = (GEO_ALT[st.family] && GEO_ALT[st.family][name]) || GEO[name];
   if (st.rx !== 1) body = body.replace(/ rx='([\d.]+)'/g, (m, v) => ` rx='${fmt(Number(v) * st.rx)}'`);
@@ -934,15 +943,15 @@ function draw(name, pack, ink, id = "") {
 const svgOpen = size => `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}' viewBox='0 0 24 24'`;
 export function render(name, pack = BASE_PACK, { paint = "mask", size = 16 } = {}) {
   if (GEO[name] === undefined) return "";
-  const { defs, art, crisp } = draw(name, pack, paint === "mask" ? "black" : "context-fill");
-  return `${svgOpen(size)}${crisp}>${defs ? `<defs>${defs}</defs>` : ""}${art}</svg>`;
+  const { defs, art, crisp, sized } = draw(name, pack, paint === "mask" ? "black" : "context-fill");
+  return `${svgOpen(size)}${crisp}>${sized ? `<style>${SMALL_CSS}</style>` : ""}${defs ? `<defs>${defs}</defs>` : ""}${art}</svg>`;
 }
 
 /* один файл со всеми паками: нужный вариант включает настройка браузера (pref) прямо внутри SVG,
    поэтому значки браузера меняются сразу, без перезагрузки картинок */
 export function renderAll(name, pref, { size = 16 } = {}) {
   if (GEO[name] === undefined) return "";
-  let defs = "", body = "", css = "g.p{display:none}";
+  let defs = "", body = "", css = "g.p{display:none}" + SMALL_CSS;
   for (const pack of PACK_IDS) {
     const d = draw(name, pack, "context-fill", pack);
     defs += d.defs;
