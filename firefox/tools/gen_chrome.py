@@ -587,6 +587,9 @@ moz-urlbar:not([focused], [open]) .urlbar-input { text-align: center !important;
 .titlebar-max { content: url("resource://hdicons/maximize.svg") !important; }
 .titlebar-restore { content: url("resource://hdicons/restoreWin.svg") !important; }
 .titlebar-close { content: url("resource://hdicons/close.svg") !important; }
+.titlebar-button { width: 46px !important; height: var(--hd-titlebar-h, 32px) !important; padding: calc((var(--hd-titlebar-h, 32px) - 18px) / 2) 14px !important; box-sizing: border-box !important; object-fit: contain; }
+#panel-sidebar-select-box #hd-panel > img { content: url("resource://hdicons/fileText.svg"); -moz-context-properties: fill, fill-opacity; fill: currentColor; }
+.tabbrowser-tab .tab-close-button { list-style-image: url("resource://hdicons/close.svg") !important; -moz-context-properties: fill, fill-opacity; fill: currentColor; }
 /* «Сведения о странице»: вкладки были картинками из одного PNG */
 :is(#generalTab, #mediaTab, #permTab, #securityTab) { -moz-image-region: auto !important; -moz-context-properties: fill, fill-opacity; fill: currentColor; }
 #generalTab { list-style-image: url("resource://hdicons/pageInfo.svg") !important; }
@@ -760,6 +763,7 @@ findbar:not([hidden]) { animation: fm-rise calc(.38s * var(--fm-k)) var(--fm-spr
 
 #fm-studio-button { list-style-image: url("resource://hdicons/palette.svg") !important; -moz-context-properties: fill, fill-opacity; }
 #fm-notes-button { list-style-image: url("resource://hdicons/note.svg") !important; -moz-context-properties: fill, fill-opacity; }
+#fm-panel-button { list-style-image: url("resource://hdicons/fileText.svg") !important; -moz-context-properties: fill, fill-opacity; }
 #appMenu-fm-studio { list-style-image: url("resource://hdicons/palette.svg") !important; -moz-context-properties: fill, fill-opacity; --fm-tile: #8e6bff; }
 
 #downloadsPanel { --panel-padding: 8px !important; }
@@ -1188,6 +1192,81 @@ tab-group {
   color: var(--fm-muted);
 }
 #tabbrowser-tabs[orient="vertical"] .tab-group-overflow-count { color: var(--fm-muted) !important; background: none !important; }
+/* своя группа вкладок Hand Design: цвет акцента, ярлык с буквой H */
+tab-group[id^="hand-design"] {
+  --tab-group-color: var(--fm-accent) !important;
+  --tab-group-color-invert: var(--fm-on-accent) !important;
+  --tab-group-color-pale: color-mix(in srgb, var(--fm-accent) 22%, transparent) !important;
+  --tab-group-background-color: var(--fm-accent) !important;
+  --tab-group-background-color-hover: color-mix(in srgb, var(--fm-accent) 85%, var(--fm-ink)) !important;
+  --tab-group-text-color: var(--fm-on-accent) !important;
+  --tab-group-line-color: var(--fm-accent) !important;
+  --fm-group: var(--fm-accent);
+}
+#tabbrowser-tabs tab-group[id^="hand-design"][label] .tab-group-label {
+  position: relative !important;
+  padding-inline: 21px 8px !important;
+  background: linear-gradient(120deg, var(--fm-accent), color-mix(in oklab, var(--fm-accent) 62%, #ff6fb0)) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .25), 0 2px 8px color-mix(in srgb, var(--fm-accent) 35%, transparent) !important;
+}
+#tabbrowser-tabs tab-group[id^="hand-design"][label] .tab-group-label::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 7px;
+  top: calc(50% - 5.5px);
+  width: 11px;
+  height: 11px;
+  border-radius: 0;
+  background: #fff;
+  mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'><path d='M4.5 3v10M11.5 3v10M4.5 8h7'/></svg>") center / contain no-repeat;
+}
+#context_moveTabToGroupPopupMenu menuitem[tab-group-id^="hand-design"] { display: none !important; }
+#tabbrowser-tabs[orient="vertical"]:not([expanded]) tab-group[id^="hand-design"] .tab-group-label {
+  padding: 0 !important;
+  font-size: 0 !important;
+}
+#tabbrowser-tabs[orient="vertical"]:not([expanded]) tab-group[id^="hand-design"] .tab-group-label::before {
+  inset-inline-start: calc(50% - 6px);
+  top: calc(50% - 6px);
+  width: 12px;
+  height: 12px;
+}
+#tabbrowser-tabs[orient="vertical"][expanded] tab-group[id^="hand-design"] .tab-group-label-hover-highlight {
+  width: fit-content !important;
+  background: none !important;
+}
+#tabbrowser-tabs[orient="vertical"][expanded] tab-group[id^="hand-design"] .tab-group-label {
+  height: 24px !important;
+  margin-block: 4px !important;
+  padding: 0 24px 0 21px !important;
+  color: #fff !important;
+  font-size: 12px !important;
+  line-height: 24px !important;
+}
+#tabbrowser-tabs[orient="vertical"][expanded] tab-group[id^="hand-design"] .tab-group-label::before {
+  inset-inline-start: 7px;
+  top: calc(50% - 5.5px);
+  width: 11px;
+  height: 11px;
+  border-radius: 0;
+  background: #fff;
+}
+#tabbrowser-tabs[orient="vertical"][expanded] tab-group[id^="hand-design"] .tab-group-label::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: 8px;
+  top: calc(50% - 5px);
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>") center / contain no-repeat;
+}
+#tabbrowser-tabs[orient="vertical"][expanded] tab-group[id^="hand-design"][collapsed] .tab-group-label::after {
+  mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M9 6l6 6-6 6'/></svg>");
+}
+#tab-preview-panel .tab-preview-uri:empty { display: none; }
 #tab-preview-panel {
   --panel-background: var(--fm-bar) !important;
   --panel-color: var(--fm-ink) !important;
@@ -1210,7 +1289,7 @@ tab-group {
 CONTENT = r"""
 /* ======================= FLOORP-MODERN BEGIN ======================= */
 /* Блок ставит и убирает установщик. Правки внутри пропадут при переустановке. */
-@-moz-document regexp("about:(?!blank|srcdoc).*"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+@-moz-document regexp("about:(?!blank|srcdoc).*"), url("resource://handdesign/newtab.html"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
   :root {
 @TOKENS@
     --background-color-canvas: var(--fm-frame) !important;
@@ -1337,7 +1416,7 @@ CONTENT = r"""
   :is(moz-message-bar, notification-message):is([type="error"], [type="critical"]) { --fm-mb: #e5484d; }
   :is(moz-message-bar, notification-message)[type="success"] { --fm-mb: #30a46c; }
 }
-@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
+@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home"), url("resource://handdesign/newtab.html") {
   :root {
     --fm-accent: AccentColor;
     --fm-glow: color-mix(in srgb, AccentColor 75%, white);
@@ -1380,7 +1459,8 @@ CONTENT = r"""
   /* Activity Stream: #fm-clock добавляет скрипт просмотрщика */
   #fm-clock .flex { display: flex !important; align-items: center !important; }
   #fm-clock .flex-col { display: flex !important; }
-  #fm-clock { font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; color: #fff !important; pointer-events: none !important; }
+  #fm-clock { font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; color: #fff !important; }
+  :root:not([hd-edit]) #fm-clock { pointer-events: none !important; }
   :root:has(#fm-clock) :is(.logo-and-wordmark-wrapper, .logo-and-wordmark) { display: none !important; }
   :root:has(#fm-clock) :is(.outer-wrapper, .nova-outer-wrapper) { padding-top: 36vh !important; }
   .bg-cover[style*="noraneko-newtab"] { display: none !important; }

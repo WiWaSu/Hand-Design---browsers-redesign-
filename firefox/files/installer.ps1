@@ -41,7 +41,7 @@ $ErrorActionPreference = "Stop"
 try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch {}
 
 # версия установщика (меняется вместе с файлом VERSION и CHANGELOG.md)
-$Version = "3.0.0"
+$Version = "3.1.0"
 $Here = $PSScriptRoot
 $Utf8 = New-Object System.Text.UTF8Encoding($false)
 # ---------------------------------------------------------------- языки
@@ -398,8 +398,8 @@ function Get-SettingsCss($o) {
   $order = "@layer fm-studio, fm-settings;"
   $c = @($head, $order, "@layer fm-settings {") + $chrome + @("}")
   $t = @($head, $order, "@layer fm-settings {") + $global + @("}")
-  if ($content.Count) { $t += '@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/") {'; $t += "@layer fm-settings {"; $t += $content; $t += "}"; $t += "}" }
-  if ($newtab.Count) { $t += '@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {'; $t += "@layer fm-settings {"; $t += $newtab; $t += "}"; $t += "}" }
+  if ($content.Count) { $t += '@-moz-document url-prefix("about:"), url("resource://handdesign/newtab.html"), url-prefix("chrome://browser/content/") {'; $t += "@layer fm-settings {"; $t += $content; $t += "}"; $t += "}" }
+  if ($newtab.Count) { $t += '@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home"), url("resource://handdesign/newtab.html") {'; $t += "@layer fm-settings {"; $t += $newtab; $t += "}"; $t += "}" }
   if ($o.Corners -eq "none") {
     # без скруглений вообще: окно, меню, вкладки, страницы браузера, новая вкладка, PDF
     $c += (Read-Text (Join-Path $Here "pdf-tweaks\square-chrome.css")).Replace("@layer LAYER", "@layer fm-settings")

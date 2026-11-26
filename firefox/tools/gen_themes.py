@@ -26,8 +26,8 @@ TILE_IDS = [
     "#appMenu-tab-groups-button", "#appMenu-quit-button2", "#appMenu-fullscreen-button2",
 ]
 TILE_SEL = ", ".join(TILE_IDS)
-PREFIXES = '@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/")'
-NEWTAB = '@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home")'
+PREFIXES = '@-moz-document url-prefix("about:"), url("resource://handdesign/newtab.html"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/")'
+NEWTAB = '@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home"), url("resource://handdesign/newtab.html")'
 CLOCK = ".absolute.top-4.right-4"
 SEARCH = ".group.cursor-pointer:has(input[readonly])"
 SEARCH_INPUT = SEARCH + " :is(input, input:focus, input:hover)"

@@ -313,7 +313,7 @@ findbar { background: transparent !important; }
 """
 
 # ================================================================ страницы about:, настройки, новая вкладка
-CONTENT_PREFIXES = '@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/")'
+CONTENT_PREFIXES = '@-moz-document url-prefix("about:"), url("resource://handdesign/newtab.html"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/")'
 
 CONTENT = r"""
 /* ---------------- iOS 26 · Liquid Glass ---------------- */
@@ -404,7 +404,7 @@ CONTENT = r"""
 }
 
 /* ---------- новая вкладка: экран блокировки iOS 26 ---------- */
-@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
+@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home"), url("resource://handdesign/newtab.html") {
   html { background: #050611 !important; }
   /* обои iOS 26: глубокий синий, фиолетовый и тёплый всполох. Неподвижные: стекло
      поверх движущегося фона пришлось бы перерисовывать каждый кадр */

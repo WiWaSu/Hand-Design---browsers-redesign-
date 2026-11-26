@@ -1,7 +1,7 @@
 
 /* ======================= FLOORP-MODERN BEGIN ======================= */
 /* Блок ставит и убирает установщик. Правки внутри пропадут при переустановке. */
-@-moz-document regexp("about:(?!blank|srcdoc).*"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+@-moz-document regexp("about:(?!blank|srcdoc).*"), url("resource://handdesign/newtab.html"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
   :root {
 
     --fm-accent: light-dark(var(--fm-user-accent, AccentColor), color-mix(in srgb, var(--fm-user-accent, AccentColor) 62%, white));
@@ -148,7 +148,7 @@
   :is(moz-message-bar, notification-message):is([type="error"], [type="critical"]) { --fm-mb: #e5484d; }
   :is(moz-message-bar, notification-message)[type="success"] { --fm-mb: #30a46c; }
 }
-@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
+@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home"), url("resource://handdesign/newtab.html") {
   :root {
     --fm-accent: var(--fm-user-accent, AccentColor);
     --fm-glow: color-mix(in srgb, var(--fm-user-accent, AccentColor) 75%, white);
@@ -191,7 +191,8 @@
   /* Activity Stream: #fm-clock добавляет скрипт просмотрщика */
   #fm-clock .flex { display: flex !important; align-items: center !important; }
   #fm-clock .flex-col { display: flex !important; }
-  #fm-clock { font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; color: #fff !important; pointer-events: none !important; }
+  #fm-clock { font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; color: #fff !important; }
+  :root:not([hd-edit]) #fm-clock { pointer-events: none !important; }
   :root:has(#fm-clock) :is(.logo-and-wordmark-wrapper, .logo-and-wordmark) { display: none !important; }
   :root:has(#fm-clock) :is(.outer-wrapper, .nova-outer-wrapper) { padding-top: 36vh !important; }
   .bg-cover[style*="noraneko-newtab"] { display: none !important; }

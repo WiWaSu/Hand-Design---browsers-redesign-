@@ -1,5 +1,5 @@
 /* Hand Design: «Без скруглений» — страницы браузера, новая вкладка, PDF (LAYER заменяется на имя слоя) */
-@-moz-document url-prefix("about:"), url-prefix("chrome://"), url-prefix("resource://") {
+@-moz-document url-prefix("about:"), url("resource://handdesign/newtab.html"), url-prefix("chrome://"), url-prefix("resource://") {
 @layer LAYER {
 :root {
   --fm-radius: 0px !important; --x-radius: 0px !important; --card-border-radius: 0px !important;

@@ -144,7 +144,7 @@ const fileUri = path => Services.io.newFileURI(new FileUtils.File(path));
 // меняется вместе с рисунками и стилями — тогда файлы пересобираются
 const STAMP = (() => {
   let h = 0;
-  for (const ch of "v2" + JSON.stringify(PACKS) + JSON.stringify(GEO_ALT) + Object.values(GEO).join("") + Object.keys(MAP).join("")) h = (h * 31 + ch.charCodeAt(0)) | 0;
+  for (const ch of "v3" + JSON.stringify(PACKS) + JSON.stringify(GEO_ALT) + Object.values(GEO).join("") + Object.keys(MAP).join("")) h = (h * 31 + ch.charCodeAt(0)) | 0;
   return String(h >>> 0);
 })();
 

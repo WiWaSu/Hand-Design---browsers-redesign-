@@ -106,6 +106,8 @@ export function openStudio(win) {
   return "opened";
 }
 
+import { handleNewtab, NEWTAB_URL, PANEL_URL, PANEL_CHROME_URL } from "resource://pdftweaks/HandDesignNewtabParent.sys.mjs";
+
 export const DOCS_URL = "resource://handdesign/docs.html";
 const RECENT_PREF = "floorp.modern.md.recent";
 const MD_RE = /\.(md|markdown|mdown|mkd|mkdn)$/i;
@@ -140,7 +142,61 @@ function readRecent() {
 function remember(path) {
   const list = readRecent().filter(x => x.path.toLowerCase() !== path.toLowerCase());
   list.unshift({ path, time: Date.now() });
-  Services.prefs.setStringPref(RECENT_PREF, JSON.stringify(list.slice(0, 12)));
+  Services.prefs.setStringPref(RECENT_PREF, JSON.stringify(list.slice(0, 30)));
+}
+
+async function docsList() {
+  const pins = readPins();
+  const all = [...readRecent(), ...readFiles()];
+  for (const p of pins) {
+    if (!all.some(x => same(x.path, p))) {
+      all.push({ path: p, time: 0 });
+    }
+  }
+  const out = [];
+  for (const x of all) {
+    const item = { path: x.path, time: x.time, exists: await IOUtils.exists(x.path), pinned: pins.some(p => same(p, x.path)) };
+    const pg = PDF_RE.test(x.path) && pdfPage(x.path);
+    if (pg) {
+      item.page = pg.p;
+      item.pages = pg.n || 0;
+      item.time = Math.max(item.time || 0, pg.t || 0);
+    }
+    out.push(item);
+  }
+  return out.sort((a, b) => (b.time || 0) - (a.time || 0));
+}
+
+/* PDF и картинки для страницы «Документы» и закреплённые файлы. Отдельно от списка .md и .csv:
+   тот ещё и разрешает редактору таблиц открыть файл */
+const FILES_PREF = "floorp.modern.docs.files";
+const PINS_PREF = "floorp.modern.docs.pins";
+const PDF_RE = /\.pdf$/i;
+const HUB_RE = /\.(md|markdown|mdown|mkd|mkdn|csv|tsv|pdf|png|jpe?g|gif|webp|avif|bmp)$/i;
+const readJSON = (pref, fallback) => {
+  try {
+    const v = JSON.parse(Services.prefs.getStringPref(pref, ""));
+    return Array.isArray(v) ? v : fallback;
+  } catch (e) {
+    return fallback;
+  }
+};
+const readFiles = () => readJSON(FILES_PREF, []).filter(x => typeof x?.path === "string" && HUB_RE.test(x.path));
+const readPins = () => readJSON(PINS_PREF, []).filter(x => typeof x === "string" && HUB_RE.test(x));
+const same = (a, b) => a.toLowerCase() === b.toLowerCase();
+function rememberFile(path) {
+  const list = readFiles().filter(x => !same(x.path, path));
+  list.unshift({ path, time: Date.now() });
+  Services.prefs.setStringPref(FILES_PREF, JSON.stringify(list.slice(0, 40)));
+}
+const knownDoc = path => !!path && ([...readRecent(), ...readFiles()].some(x => same(x.path, path)) || readPins().some(x => same(x, path)));
+function pdfPage(path) {
+  try {
+    const map = JSON.parse(Services.prefs.getStringPref("floorp.pdftweaks.pages", "{}"));
+    return map[PathUtils.toFileURI(path)] || null;
+  } catch (e) {
+    return null;
+  }
 }
 
 /* .csv из адресной строки, проводника или перетаскивания — открывается редактором таблиц */
@@ -169,7 +225,9 @@ function encode1251(text) {
 }
 
 function forget(path) {
-  Services.prefs.setStringPref(RECENT_PREF, JSON.stringify(readRecent().filter(x => x.path !== path)));
+  Services.prefs.setStringPref(RECENT_PREF, JSON.stringify(readRecent().filter(x => !same(x.path, path))));
+  Services.prefs.setStringPref(FILES_PREF, JSON.stringify(readFiles().filter(x => !same(x.path, path))));
+  Services.prefs.setStringPref(PINS_PREF, JSON.stringify(readPins().filter(x => !same(x, path))));
 }
 
 function pickFile(bc, mode, title, name, csv = false) {
@@ -177,7 +235,7 @@ function pickFile(bc, mode, title, name, csv = false) {
     const fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
     fp.init(bc, title, mode);
     if (mode === Ci.nsIFilePicker.modeOpen) {
-      fp.appendFilter("Markdown, CSV", "*.md; *.markdown; *.csv; *.tsv");
+      fp.appendFilter("Markdown, CSV, PDF", "*.md; *.markdown; *.csv; *.tsv; *.pdf; *.png; *.jpg; *.jpeg; *.gif; *.webp; *.avif; *.bmp");
     }
     if (csv) {
       fp.appendFilter("CSV", "*.csv; *.tsv");
@@ -218,6 +276,7 @@ function rememberImage(path) {
   const list = imgRecent().filter(x => x.toLowerCase() !== path.toLowerCase());
   list.unshift(path);
   Services.prefs.setStringPref(IMG_RECENT_PREF, JSON.stringify(list.slice(0, 40)));
+  rememberFile(path);
 }
 
 export function openImage(browser, path) {
@@ -494,7 +553,7 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
   #fromNewtab() {
     try {
       const spec = this.manager.documentURI?.spec || "";
-      return /^(about:(newtab|home)|chrome:\/\/noraneko-newtab\/)/.test(spec);
+      return /^(about:(newtab|home)|chrome:\/\/noraneko-newtab\/)/.test(spec) || spec === NEWTAB_URL;
     } catch (e) {
       return false;
     }
@@ -1081,12 +1140,30 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
     return null;
   }
 
-  #openFile(path) {
-    remember(path);
-    const url = CSV_RE.test(path) ? CSV_URL + "#" + encodeURIComponent(path) : PathUtils.toFileURI(path);
-    this.browsingContext.top.loadURI(Services.io.newURI(url), {
-      triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(),
-    });
+  #openFile(path, inTab = false) {
+    let url = PathUtils.toFileURI(path);
+    if (PDF_RE.test(path)) {
+      rememberFile(path);
+    } else if (EDIT_IMG_RE.test(path)) {
+      if (imageEditorEnabled()) {
+        rememberImage(path);
+        url = IMAGE_URL + "#" + encodeURIComponent(path);
+      } else {
+        rememberFile(path);
+      }
+    } else {
+      remember(path);
+      if (CSV_RE.test(path)) {
+        url = CSV_URL + "#" + encodeURIComponent(path);
+      }
+    }
+    const principal = Services.scriptSecurityManager.getSystemPrincipal();
+    const gB = this.browsingContext.topChromeWindow?.gBrowser;
+    if (inTab && gB) {
+      gB.selectedTab = gB.addTrustedTab(url, { triggeringPrincipal: principal, inBackground: false });
+      return;
+    }
+    this.browsingContext.top.loadURI(Services.io.newURI(url), { triggeringPrincipal: principal });
   }
 
   /* страница «Документы» и кнопка в редакторе; выбор файла — только через системное окно */
@@ -1115,11 +1192,10 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
         return null;
       }
       if (op === "list") {
-        const out = [];
-        for (const x of readRecent()) {
-          out.push({ path: x.path, time: x.time, exists: await IOUtils.exists(x.path) });
-        }
-        return out;
+        return await docsList();
+      }
+      if (op === "search") {
+        return await this.#searchDocs(String(data?.q || ""));
       }
       if (op === "open") {
         const file = await pickFile(this.browsingContext, Ci.nsIFilePicker.modeOpen, t("Открыть документ"));
@@ -1161,7 +1237,7 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
         return null;
       }
       const path = String(data?.path || "");
-      if (!readRecent().some(x => x.path === path)) {
+      if (!knownDoc(path)) {
         return null;
       }
       if (op === "recent") {
@@ -1174,6 +1250,23 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
       if (op === "forget") {
         forget(path);
       }
+      if (op === "pin") {
+        const pins = readPins().filter(x => !same(x, path));
+        if (data?.on) {
+          pins.unshift(path);
+        }
+        Services.prefs.setStringPref(PINS_PREF, JSON.stringify(pins.slice(0, 30)));
+        return { ok: true };
+      }
+      if (op === "reveal") {
+        const f = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
+        f.initWithPath(path);
+        if (f.exists()) {
+          f.reveal();
+          return { ok: true };
+        }
+        return { ok: false };
+      }
     } catch (e) {
       bootLog.push({ t: new Date().toISOString(), msg: "документы: ОШИБКА " + e });
       writeLog();
@@ -1181,7 +1274,59 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
     return null;
   }
 
+  /* поиск по тексту .md и .csv из списка «Документов»: кусок строки вокруг найденного */
+  async #searchDocs(q) {
+    q = q.trim().toLowerCase().replace(/ё/g, "е");
+    if (q.length < 2 || q.length > 100) {
+      return [];
+    }
+    const paths = [...readRecent().map(x => x.path), ...readPins().filter(p => DOC_RE.test(p))];
+    const seen = new Set();
+    const hits = [];
+    for (const path of paths) {
+      if (seen.has(path.toLowerCase()) || hits.length >= 20) {
+        continue;
+      }
+      seen.add(path.toLowerCase());
+      try {
+        if ((await IOUtils.stat(path)).size > 2 * 1024 * 1024) {
+          continue;
+        }
+        const bytes = await IOUtils.read(path);
+        let text;
+        try {
+          text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+        } catch {
+          text = new TextDecoder("windows-1251").decode(bytes);
+        }
+        const low = text.toLowerCase().replace(/ё/g, "е");
+        const at = low.indexOf(q);
+        if (at < 0) {
+          continue;
+        }
+        const from = Math.max(0, at - 60);
+        let snippet = text.slice(from, at + q.length + 80).replace(/[\s;]+/g, " ").trim();
+        if (from > 0) {
+          snippet = "…" + snippet;
+        }
+        hits.push({ path, snippet: snippet + "…" });
+      } catch (e) {}
+    }
+    return hits;
+  }
+
   receiveMessage(msg) {
+    if (msg.name === "PdfTweaks:opened") {
+      // открыт PDF с диска — в список «Документов»; адрес должен совпадать с адресом самой вкладки
+      const url = String(msg.data?.url || "");
+      const doc = this.manager.documentURI;
+      if (doc?.schemeIs("file") && doc.spec.split("#")[0] === url && PDF_RE.test(url)) {
+        try {
+          rememberFile(Services.io.newURI(url).QueryInterface(Ci.nsIFileURL).file.path);
+        } catch (e) {}
+      }
+      return;
+    }
     if (msg.name === "PdfTweaks:boot") {
       boot();
       return;
@@ -1197,6 +1342,21 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
     }
     if (msg.name.startsWith("HDImg:")) {
       return this.#image(msg.name.slice(6), msg.data);
+    }
+    if (msg.name.startsWith("HDNewtab:")) {
+      return handleNewtab(this, msg.name.slice(9), msg.data, {
+        docsList,
+        openDoc: async path => {
+          if (!knownDoc(path) || !(await IOUtils.exists(path))) {
+            return { ok: false };
+          }
+          this.#openFile(path, [PANEL_URL, PANEL_CHROME_URL].includes(this.manager.documentURI?.spec));
+          return { ok: true };
+        },
+        openNote: () => openNotes(this.browsingContext.topChromeWindow),
+        openDocs: () => openDocs(this.browsingContext.topChromeWindow),
+        openStudio: () => openStudio(this.browsingContext.topChromeWindow),
+      });
     }
     if (msg.name.startsWith("HDNotes:")) {
       return this.#notes(msg.name.slice(8), msg.data);
@@ -1312,7 +1472,7 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
       try {
         map = JSON.parse(Services.prefs.getStringPref("floorp.pdftweaks.pages", "{}")) || {};
       } catch (e) {}
-      map[url] = { p: Math.floor(page), t: Date.now() };
+      map[url] = { p: Math.floor(page), n: Math.floor(Number(msg.data.n) || 0), t: Date.now() };
       const keys = Object.keys(map);
       if (keys.length > 150) {
         keys.sort((a, b) => (map[a].t || 0) - (map[b].t || 0));

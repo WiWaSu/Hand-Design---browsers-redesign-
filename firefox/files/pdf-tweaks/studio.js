@@ -15,7 +15,7 @@ const mk = (tag, cls, text) => {
   return e;
 };
 // значения по умолчанию для переключателей (null = как в теме)
-const BOOL_DEFAULT = { ctrlTabPreview: false, square: false, pdfAutoParams: false, pdfInkSelect: false, notesSpell: false, notesToolbar: false, notesCompact: false, imgEditor: false, notesMarks: false };
+const BOOL_DEFAULT = { ownNewtab: false, sidePanelButton: false, ctrlTabPreview: false, square: false, pdfAutoParams: false, pdfInkSelect: false, notesSpell: false, notesToolbar: false, notesCompact: false, imgEditor: false, notesMarks: false };
 
 let cfg = {};
 let connected = false;

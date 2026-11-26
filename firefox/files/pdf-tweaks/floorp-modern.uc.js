@@ -288,6 +288,322 @@
     syncThemeButton();
 
   });
+  safe("window buttons", () => {
+    // кнопки окна высотой со строку вкладок, рядом с которой стоят: значок по её центру.
+    // Меряем сам список вкладок: панели вокруг кнопок растягиваются под них.
+    const set = () => {
+      const tabs = win.gBrowser?.tabContainer;
+      const box = [...doc.querySelectorAll(".titlebar-buttonbox-container")].find(c => c.getBoundingClientRect().width);
+      const t = tabs?.getBoundingClientRect();
+      const b = box?.getBoundingClientRect();
+      const h = Math.round(t?.height || 0);
+      const beside = b && tabs.getAttribute("orient") !== "vertical" && Math.abs(b.top - t.top) < 12;
+      if (beside && h >= 24 && h <= 64) {
+        doc.documentElement.style.setProperty("--hd-titlebar-h", h + "px");
+      } else {
+        doc.documentElement.style.removeProperty("--hd-titlebar-h");
+      }
+    };
+    const ro = new win.ResizeObserver(() => win.requestAnimationFrame(set));
+    const tabsEl = doc.getElementById("tabbrowser-tabs");
+    if (tabsEl) {
+      ro.observe(tabsEl);
+    }
+    onUnload.push(() => ro.disconnect());
+    set();
+  });
+  safe("vpn state icons", () => {
+    // значки состояния в панели VPN (context-fill) рисуются тёмным квадратом — подменяем значками набора
+    const STATES = {
+      excluded: ["shieldOff", "--icon-color-success"],
+      on: ["vpnOn", "--icon-color-success"],
+      included: ["vpnOn", "--icon-color-success"],
+      loading: ["vpn", "--icon-color"],
+      paused: ["vpnPaused", "--icon-color"],
+      off: ["vpn", "--icon-color"],
+      error: ["warning", "--icon-color-critical"],
+      info: ["info", "--icon-color-information"],
+    };
+    const css = Object.entries(STATES)
+      .map(([k, [name, color]]) => `img[src$="/ipprotection/assets/states/ipprotection-${k}.svg"] { content: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>") !important; background-color: var(${color}, currentColor) !important; mask: var(--fm-ic-${name}) center / 60% no-repeat !important; }`)
+      .join("\n");
+    const sheet = new win.CSSStyleSheet();
+    sheet.replaceSync(css);
+    const adopt = el => {
+      const r = el.shadowRoot;
+      if (r && !r.adoptedStyleSheets.includes(sheet)) {
+        r.adoptedStyleSheets = [...r.adoptedStyleSheets, sheet];
+      }
+    };
+    const TAGS = ["ipprotection-content", "ipprotection-status-card"];
+    // карточки, созданные до перехвата: ищем и в теневых деревьях
+    const scan = (root = doc) => {
+      for (const el of root.querySelectorAll(TAGS.join(","))) {
+        adopt(el);
+        if (el.shadowRoot) {
+          scan(el.shadowRoot);
+        }
+      }
+    };
+    for (const tag of TAGS) {
+      win.customElements.whenDefined(tag).then(cls => {
+        const proto = cls.prototype;
+        const connected = proto.connectedCallback;
+        proto.connectedCallback = function (...args) {
+          connected?.apply(this, args);
+          adopt(this);
+        };
+        win.setTimeout(scan, 0);
+      });
+    }
+    const onShown = e => e.target.querySelector?.("ipprotection-content") && scan();
+    win.addEventListener("popupshown", onShown, true);
+    win.addEventListener("ViewShown", onShown, true);
+    onUnload.push(() => {
+      win.removeEventListener("popupshown", onShown, true);
+      win.removeEventListener("ViewShown", onShown, true);
+    });
+  });
+  safe("tab preview", () => {
+    // в превью вкладки вместо «handdesign» и «fmstudio»: у новой вкладки адреса нет, у остальных — «Hand Design»
+    const tabs = win.gBrowser?.tabContainer;
+    if (typeof tabs?.ensureTabPreviewPanelLoaded !== "function") {
+      return;
+    }
+    const patch = () => {
+      const p = tabs.previewPanel?.tabPanel;
+      if (!p || p.hdPretty || typeof p.getPrettyURI !== "function") {
+        return;
+      }
+      const pretty = p.getPrettyURI.bind(p);
+      p.getPrettyURI = uri => {
+        if (/^resource:\/\/handdesign\/newtab\.html/.test(uri)) {
+          return "";
+        }
+        return /^(resource:\/\/handdesign\/|chrome:\/\/fmstudio\/)/.test(uri) ? "Hand Design" : pretty(uri);
+      };
+      p.hdPretty = true;
+    };
+    const load = tabs.ensureTabPreviewPanelLoaded;
+    tabs.ensureTabPreviewPanelLoaded = function (...args) {
+      const r = load.apply(this, args);
+      patch();
+      return r;
+    };
+    patch();
+  });
+  safe("own newtab", () => {
+    // своя новая вкладка Hand Design: включается в Studio → Новая вкладка
+    const { AboutNewTab } = ChromeUtils.importESModule("resource:///modules/AboutNewTab.sys.mjs");
+    const studio = ChromeUtils.importESModule("resource://pdftweaks/FloorpModernStudio.sys.mjs");
+    const URL = "resource://handdesign/newtab.html";
+    const apply = () => {
+      const on = studio.readConfig().ownNewtab === true;
+      if (on && AboutNewTab.newTabURL !== URL) {
+        AboutNewTab.newTabURL = URL;
+      } else if (!on && AboutNewTab.newTabURL === URL) {
+        AboutNewTab.resetNewTabURL();
+      }
+      if (Array.isArray(win.gInitialPages) && !win.gInitialPages.includes(URL)) {
+        win.gInitialPages.push(URL);
+      }
+    };
+    apply();
+    const obs = { observe: apply };
+    Services.prefs.addObserver("floorp.modern.studio", obs);
+    onUnload.push(() => Services.prefs.removeObserver("floorp.modern.studio", obs));
+  });
+  safe("hd tab group", () => {
+    // все вкладки Hand Design (Заметки, Документы, Studio, таблицы, картинки) — в одной своей группе
+    const gB = win.gBrowser;
+    if (typeof gB?.addTabGroup !== "function") {
+      return;
+    }
+    // список свёрнутой группы берёт значки из базы favicon, где наших страниц нет — ставим значок самой вкладки
+    const fixPreview = e => {
+      if (e.target.id !== "tabgroup-preview-panel") {
+        return;
+      }
+      for (const b of e.target.querySelectorAll(".group-preview-button")) {
+        if (b.tab?.image && b.getAttribute("image")?.startsWith("page-icon:")) {
+          b.setAttribute("image", b.tab.image);
+        }
+      }
+    };
+    win.addEventListener("TabGroupPreviewUpdated", fixPreview);
+    win.addEventListener("popupshowing", fixPreview, true);
+    onUnload.push(() => {
+      win.removeEventListener("TabGroupPreviewUpdated", fixPreview);
+      win.removeEventListener("popupshowing", fixPreview, true);
+    });
+    const studio = ChromeUtils.importESModule("resource://pdftweaks/FloorpModernStudio.sys.mjs");
+    const HD = /^(resource:\/\/handdesign\/(?!newtab\.html|panel\.html)|chrome:\/\/fmstudio\/content\/studio\.html)/;
+    const PREFIX = "hand-design";
+    const isHd = tab => HD.test(tab.linkedBrowser?.currentURI?.spec || "") || HD.test(tab.linkedBrowser?.userTypedValue || "");
+    // чужие вкладки в группу не пускаем: перетащенная, добавленная из меню или открытая рядом сразу выходит
+    const guard = e => {
+      const g = e.target;
+      const tab = e.detail;
+      if (!g?.id?.startsWith(PREFIX) || !tab || isHd(tab)) {
+        return;
+      }
+      win.setTimeout(() => {
+        if (tab.group === g && !tab.closing && !isHd(tab)) {
+          gB.ungroupTab(tab);
+        }
+      }, 0);
+    };
+    win.addEventListener("TabGrouped", guard);
+    onUnload.push(() => win.removeEventListener("TabGrouped", guard));
+    const enabled = () => studio.readConfig().hdGroup !== false && Services.prefs.getBoolPref("browser.tabs.groups.enabled", true);
+    const ours = () => (gB.tabGroups || []).find(g => g.id?.startsWith(PREFIX));
+    const place = tab => {
+      if (!tab || tab.pinned || tab.closing || !tab.linkedBrowser) {
+        return;
+      }
+      const hd = HD.test(tab.linkedBrowser.currentURI?.spec || "");
+      const inOurs = tab.group?.id?.startsWith(PREFIX);
+      try {
+        if (hd && !inOurs && enabled()) {
+          const g = ours();
+          if (g) {
+            g.addTabs([tab]);
+          } else {
+            gB.addTabGroup([tab], { id: `${PREFIX}-${Date.now()}`, label: "Hand Design", color: "purple", insertBefore: tab });
+          }
+        } else if (!hd && inOurs) {
+          gB.ungroupTab(tab);
+        }
+      } catch (e) {
+        log("группа вкладок", e);
+      }
+    };
+    const listener = {
+      onLocationChange(browser, webProgress) {
+        if (webProgress?.isTopLevel) {
+          win.setTimeout(() => place(gB.getTabForBrowser(browser)), 0);
+        }
+      },
+    };
+    gB.addTabsProgressListener(listener);
+    onUnload.push(() => gB.removeTabsProgressListener(listener));
+    const all = () => [...gB.tabs].forEach(place);
+    win.setTimeout(all, 1500);
+    const obs = { observe: () => enabled() && all() };
+    Services.prefs.addObserver("floorp.modern.studio", obs);
+    onUnload.push(() => Services.prefs.removeObserver("floorp.modern.studio", obs));
+  });
+  safe("side panel", () => {
+    // панель «Заметки и документы»: во Floorp — в его боковой панели, в Firefox — в боковой панели Firefox
+    const studio = ChromeUtils.importESModule("resource://pdftweaks/FloorpModernStudio.sys.mjs");
+    const on = () => studio.readConfig().sidePanel !== false;
+    const ADDED = "floorp.modern.panel.added";
+    const FDATA = "floorp.panelSidebar.data";
+    let sync;
+    if (Services.prefs.getPrefType(FDATA) === Services.prefs.PREF_STRING) {
+      sync = () => {
+        let d;
+        try {
+          d = JSON.parse(Services.prefs.getStringPref(FDATA));
+        } catch {
+          return;
+        }
+        if (!Array.isArray(d?.data)) {
+          return;
+        }
+        const has = d.data.some(x => x.id === "hd-panel");
+        if (on() && !has && !Services.prefs.getBoolPref(ADDED, false)) {
+          const at = d.data.findIndex(x => x.id === "default-panel-notes");
+          d.data.splice(at < 0 ? d.data.length : at + 1, 0, { id: "hd-panel", url: "resource://handdesign/panel.html", width: 340, type: "web" });
+          Services.prefs.setBoolPref(ADDED, true);
+          Services.prefs.setStringPref(FDATA, JSON.stringify(d));
+        } else if (!on() && has) {
+          d.data = d.data.filter(x => x.id !== "hd-panel");
+          Services.prefs.setBoolPref(ADDED, false);
+          Services.prefs.setStringPref(FDATA, JSON.stringify(d));
+        }
+      };
+    } else if (win.SidebarController?.sidebars) {
+      const S = win.SidebarController;
+      const ID = "viewHandDesignSidebar";
+      const NAME = "handdesign";
+      const ICON = "resource://hdicons/fileText.svg";
+      const TOOLS = "sidebar.main.tools";
+      const label = () => {
+        const btn = doc.querySelector("sidebar-main")?.shadowRoot?.querySelector(`moz-button[view="${ID}"]`);
+        if (btn) {
+          btn.title = T("Заметки и документы");
+          btn.setAttribute("aria-label", btn.title);
+        }
+      };
+      sync = () => {
+        if (!on()) {
+          if (S.sidebars.has(ID)) {
+            if (S.currentID === ID) S.hide();
+            S.sidebars.delete(ID);
+            S.toolsAndExtensions.delete(ID);
+            Services.prefs.setBoolPref(ADDED, false);
+            win.dispatchEvent(new win.CustomEvent("SidebarItemChanged"));
+          }
+          return;
+        }
+        const base = S.sidebars.get("viewHistorySidebar") || {};
+        if (!S.sidebars.has(ID)) {
+          S.sidebars.set(ID, {
+            ...base, title: T("Заметки и документы"), name: NAME, url: "chrome://fmstudio/content/panel.html", iconUrl: ICON,
+            menuId: null, triggerButtonId: null, keyId: null, menuL10nId: null, revampL10nId: null, contextMenuId: null,
+            toolContextMenuId: null, gleanEvent: null, gleanClickEvent: null,
+          });
+        }
+        const tools = Services.prefs.getStringPref(TOOLS, "");
+        if (!Services.prefs.getBoolPref(ADDED, false)) {
+          Services.prefs.setBoolPref(ADDED, true);
+          if (!tools.split(",").includes(NAME)) Services.prefs.setStringPref(TOOLS, tools ? tools + "," + NAME : NAME);
+        }
+        if (!S.toolsAndExtensions.has(ID)) {
+          S.toolsAndExtensions.set(ID, {
+            commandID: ID, view: ID, name: NAME, iconUrl: ICON, l10nId: null, hidden: false, attention: false, contextMenu: null,
+            disabled: !Services.prefs.getStringPref(TOOLS, "").split(",").includes(NAME),
+          });
+        }
+        win.dispatchEvent(new win.CustomEvent("SidebarItemChanged"));
+        win.setTimeout(label, 300);
+      };
+      win.addEventListener("SidebarItemChanged", () => win.setTimeout(label, 100));
+    }
+    // кнопка панели на панели инструментов (Studio → Боковая панель)
+    const BTN = "fm-panel-button";
+    const CUI = win.CustomizableUI;
+    const toggle = w => {
+      const d = w.document;
+      const floorpBtn = d.querySelector("#panel-sidebar-select-box #hd-panel");
+      if (floorpBtn) floorpBtn.click();
+      else w.SidebarController?.toggle("viewHandDesignSidebar");
+    };
+    if (CUI.getWidget(BTN)?.provider !== CUI.PROVIDER_API) {
+      try {
+        CUI.createWidget({ id: BTN, type: "button", label: T("Заметки и документы"), tooltiptext: T("Заметки и документы"), onCommand: e => toggle(e.target.ownerDocument.defaultView) });
+      } catch (e) {}
+    }
+    const placeBtn = () => {
+      const cfg = studio.readConfig();
+      const want = cfg.sidePanel !== false && cfg.sidePanelButton === true;
+      const placed = !!CUI.getPlacementOfWidget(BTN);
+      if (want && !placed) CUI.addWidgetToArea(BTN, CUI.AREA_NAVBAR);
+      else if (!want && placed) CUI.removeWidgetFromArea(BTN);
+    };
+    const prevSync = sync;
+    sync = () => {
+      prevSync?.();
+      placeBtn();
+    };
+    if (sync) {
+      sync();
+      const obs = { observe: sync };
+      Services.prefs.addObserver("floorp.modern.studio", obs);
+      onUnload.push(() => Services.prefs.removeObserver("floorp.modern.studio", obs));
+    }
+  });
   safe("icons", () => {
     ChromeUtils.importESModule("resource://pdftweaks/FloorpModernIcons.sys.mjs").init();
   });

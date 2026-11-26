@@ -300,6 +300,19 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       console.error("[pdf-tweaks] studio:", e);
     }
     try {
+      if (doc.documentURI === "resource://handdesign/newtab.html") {
+        this.#setupHdNewtab();
+        return;
+      }
+      if (doc.documentURI === "resource://handdesign/panel.html" || doc.documentURI === "chrome://fmstudio/content/panel.html") {
+        const win = this.contentWindow;
+        for (const s of ["markdown.css", "panel.css"]) {
+          win.windowUtils.loadSheetUsingURIString("resource://pdftweaks/" + s, win.windowUtils.AUTHOR_SHEET);
+        }
+        const { mountPanel } = ChromeUtils.importESModule("resource://pdftweaks/HandDesignPanel.sys.mjs");
+        mountPanel(win, doc, { t, q: (op, data) => this.sendQuery("HDNewtab:" + op, data) });
+        return;
+      }
       if (doc.documentURI === "resource://handdesign/docs.html") {
         this.#setupDocs();
         return;
@@ -400,6 +413,12 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
     } catch (e) {
       console.error("[pdf-tweaks] params:", e);
     }
+    try {
+      const href = String(this.contentWindow.location.href).split("#")[0];
+      if (href.startsWith("file:") && /\.pdf$/i.test(href)) {
+        this.sendAsyncMessage("PdfTweaks:opened", { url: href });
+      }
+    } catch {}
     try {
       this.#setupResume();
     } catch (e) {
@@ -544,7 +563,34 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       open: () => this.sendQuery("HDDocs:open"),
       openRecent: path => this.sendQuery("HDDocs:recent", { path }),
       forget: path => this.sendQuery("HDDocs:forget", { path }),
+      pin: (path, on) => this.sendQuery("HDDocs:pin", { path, on }),
+      reveal: path => this.sendQuery("HDDocs:reveal", { path }),
+      search: q => this.sendQuery("HDDocs:search", { q }),
     });
+  }
+
+  /* своя новая вкладка Hand Design с виджетами */
+  #setupHdNewtab() {
+    const win = this.contentWindow;
+    const doc = this.document;
+    win.windowUtils.loadSheetUsingURIString("resource://pdftweaks/newtab.css", win.windowUtils.AUTHOR_SHEET);
+    const PREF = "floorp.modern.widgets";
+    this.#buildNewtabClock();
+    const { mountNewtab } = ChromeUtils.importESModule("resource://pdftweaks/HandDesignNewtab.sys.mjs");
+    mountNewtab(win, doc, {
+      t,
+      q: (op, data) => this.sendQuery("HDNewtab:" + op, data),
+      onState: cb => {
+        const obs = { observe: () => cb() };
+        Services.prefs.addObserver(PREF, obs);
+        win.addEventListener("pagehide", () => Services.prefs.removeObserver(PREF, obs), { once: true });
+      },
+    });
+    try {
+      this.#setupNewtabWallpaper();
+    } catch (e) {
+      console.error("[pdf-tweaks] newtab wallpaper:", e);
+    }
   }
 
   #setupCsv() {
@@ -1217,7 +1263,7 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       if (now && now !== last) {
         last = now;
         try {
-          this.sendAsyncMessage("PdfTweaks:page", { url: key, page: now });
+          this.sendAsyncMessage("PdfTweaks:page", { url: key, page: now, n: total() });
         } catch {}
       }
     }, 1500);

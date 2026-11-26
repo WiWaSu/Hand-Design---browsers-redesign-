@@ -514,6 +514,59 @@
 .hd-docs-empty { padding: 4px 12px; color: var(--md-muted); }
 .hd-docs-empty[hidden] { display: none; }
 
+.hd-docs-forget { display: grid; place-items: center; }
+.hd-docs-forget .hd-ic { width: 16px; height: 16px; }
+.hd-docs-file[data-k] { --k: #7f77dd; background: color-mix(in srgb, var(--k) 16%, transparent); }
+.hd-docs-file[data-k]::before { color: light-dark(color-mix(in srgb, var(--k) 78%, black), color-mix(in srgb, var(--k) 72%, white)); }
+.hd-docs-file[data-k="csv"] { --k: #1d9e75; }
+.hd-docs-file[data-k="pdf"] { --k: #e24b4a; }
+.hd-docs-file[data-k="img"] { --k: #378add; }
+
+/* «Документы»: поиск, закреплённые, фильтры, найденное в тексте */
+.hd-hub-find {
+  display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 18px; margin: -8px 0 20px;
+  border-radius: 999px; background: var(--md-well); color: var(--md-muted); cursor: text;
+}
+.hd-hub-find:focus-within { box-shadow: 0 0 0 2px color-mix(in srgb, var(--md-accent) 55%, transparent); }
+.hd-hub-find input { flex: 1; min-width: 0; border: 0; background: none; outline: none; color: var(--md-ink); font: inherit; font-size: 15px; }
+.hd-hub-find input::-moz-search-clear-button { display: none; }
+.hd-hub-find kbd { padding: 2px 7px; border: 1px solid var(--md-line); border-radius: 6px; color: var(--md-muted); font: 600 11px var(--md-mono); }
+main.hd-hub > .hd-docs-actions.hd-docs-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 32px; }
+main.hd-hub > .hd-docs-actions.hd-docs-actions:has(> :nth-child(3):not([hidden])) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.hd-hub .hd-docs-card { grid-template-columns: 1fr; grid-template-rows: auto; row-gap: 3px; padding: 16px; }
+.hd-hub .hd-docs-glyph { grid-row: auto; margin-bottom: 8px; }
+.hd-hub .hd-docs-card small { grid-column: auto; }
+.hd-hub h2 {
+  margin: 0 0 8px; padding-inline: 12px; color: var(--md-muted);
+  font-size: 11.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+}
+.hd-hub-list h2:not(:first-child) { margin-top: 18px; }
+.hd-hub-pins, .hd-hub-hits { margin-bottom: 28px; }
+.hd-hub-pins[hidden], .hd-hub-hits[hidden] { display: none; }
+.hd-hub-pingrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.hd-hub-pin { display: flex; align-items: center; border: 1px solid var(--md-line); border-radius: 14px; background: var(--md-bg); }
+.hd-hub-pin:hover { border-color: color-mix(in srgb, var(--md-accent) 45%, transparent); }
+.hd-hub-pin[data-missing] { opacity: .55; }
+.hd-hub-pin .hd-docs-open { grid-template-columns: auto minmax(0, 1fr); }
+.hd-hub-pin:hover .hd-docs-forget, .hd-docs-forget[data-on] { visibility: visible; }
+.hd-docs-forget[data-on] { color: var(--md-accent); }
+.hd-hub-filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; padding-inline: 6px; }
+.hd-hub-chip {
+  appearance: none; padding: 5px 13px; border: 1px solid var(--md-line); border-radius: 999px;
+  background: none; color: var(--md-muted); font: 600 12.5px var(--md-ui); cursor: pointer;
+}
+.hd-hub-chip:hover { color: var(--md-ink); }
+.hd-hub-chip[on] { border-color: transparent; background: var(--md-soft); color: var(--md-accent); }
+.hd-hub-hits ol { list-style: none; margin: 0; padding: 0; }
+.hd-docs-names .hd-hub-snip {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+  direction: ltr; white-space: normal; text-align: start;
+}
+.hd-hub-snip mark { border-radius: 3px; background: color-mix(in srgb, var(--md-accent) 30%, transparent); color: inherit; }
+@media (max-width: 720px) {
+  main.hd-hub > .hd-docs-actions.hd-docs-actions:is(*, :has(> :nth-child(3):not([hidden]))) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 /* редактор таблиц CSV */
 .hd-csv-body { grid-row: 3; overflow: auto; min-height: 0; outline: none; background: var(--md-bg); }
 .hd-csv-tools { display: flex; align-items: center; gap: 4px; }

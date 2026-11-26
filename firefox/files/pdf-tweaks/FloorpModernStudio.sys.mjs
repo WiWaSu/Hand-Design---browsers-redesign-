@@ -12,7 +12,7 @@ import { PARTS } from "resource://pdftweaks/themes/parts.sys.mjs";
 
 export const PREF = "floorp.modern.studio";
 // версия Hand Design — меняется вместе с VERSION (tools/build.sh проверяет)
-export const APP_VERSION = "3.0.0";
+export const APP_VERSION = "3.1.0";
 
 /* Описание всех настроек: из него рисуется страница, проверяются значения
    и собирается CSS. null = «как в теме». */
@@ -78,6 +78,7 @@ export const SCHEMA = [
     { key: "tabClose", type: "select", label: "Крестик закрытия", hint: "Когда показывать крестик на вкладке", options: [["always", "Всегда"], ["hover", "При наведении"], ["never", "Никогда"]] },
     { key: "tabWeight", type: "range", label: "Жирность названия", hint: "Толщина шрифта в названиях вкладок", min: 300, max: 800, step: 100 },
     { key: "tabsHide", type: "select", label: "Прятать вкладки", hint: "«У края» — вкладки выезжают, когда мышь у края окна. «Совсем» — их не видно, показать можно Alt+Shift+T", options: [["edge", "У края"], ["always", "Совсем"]] },
+    { key: "hdGroup", type: "bool", label: "Вкладки Hand Design в своей группе", hint: "Заметки, Документы, Studio, таблицы и редактор картинок открываются в одной группе вкладок «Hand Design», а не вперемешку с сайтами" },
     { key: "tabPreview", type: "cards", label: "Превью при наведении", hint: "Что появляется, если задержать мышь на вкладке", options: [
       ["card", "Карточка", "Миниатюра, под ней название и адрес"],
       ["compact", "Компактное", "Только название и адрес"],
@@ -137,6 +138,7 @@ export const SCHEMA = [
 
   /* ---------------- Новая вкладка ---------------- */
   { group: "newtab", section: "Новая вкладка", icon: "home", title: "Новая вкладка", desc: "Часы, поиск, ярлыки и обои", area: "newtab", items: [
+    { key: "ownNewtab", type: "bool", label: "Своя новая вкладка с виджетами", hint: "Вместо новой вкладки браузера открывается страница Hand Design: часы, поиск, ярлыки, обои и виджеты, которые можно поставить куда угодно. Выкл. — обычная новая вкладка" },
     { key: "clockPos", type: "select", label: "Часы", options: [["top", "Сверху"], ["center", "По центру"], ["hidden", "Не показывать"]] },
     { key: "clockSize", type: "range", label: "Размер часов", min: 40, max: 220, step: 4, unit: "px" },
     { key: "clockWeight", type: "range", label: "Толщина цифр", min: 100, max: 900, step: 100 },
@@ -148,6 +150,10 @@ export const SCHEMA = [
   ] },
 
   /* ---------------- Функции ---------------- */
+  { group: "sidepanel", section: "Функции", icon: "fileText", title: "Боковая панель", desc: "Заметки и документы сбоку от страницы", area: "page", items: [
+    { key: "sidePanel", type: "bool", label: "Панель «Заметки и документы»", hint: "Кнопка в боковой панели: заметки, последние файлы, поиск и быстрая заметка во «Входящие». Во Floorp — в его боковой панели, в Firefox — в боковой панели Firefox" },
+    { key: "sidePanelButton", type: "bool", label: "Кнопка на панели инструментов", hint: "Кнопка рядом с адресной строкой открывает и закрывает панель «Заметки и документы»", area: "toolbar" },
+  ] },
   { group: "passwords", section: "Функции", icon: "key", title: "Пароли", desc: "Окно сохранённых паролей", area: "page", items: [
     { key: "passwordsPanel", type: "bool", label: "Компактное окно паролей", hint: "Пароли открываются небольшим окном у края, со стороны кнопки, а не отдельной вкладкой. Кнопка «Развернуть» открывает полный менеджер" },
   ] },
@@ -878,10 +884,10 @@ export function buildCss(cfgRaw) {
   const out = ["/* Hand Design Studio — собрано автоматически */", "@layer fm-studio, fm-settings;"];
   const R = root.length ? `:root, menupopup, panel, tooltip, #urlbar, .urlbarView { ${root.join(" ")} }` : "";
   out.push(`@-moz-document url("chrome://browser/content/browser.xhtml") {\n${boost(R + "\n:root { --fm-studio-ok: 1 !important; }\n" + withPanelVars(chrome.join("\n")))}\n}`);
-  out.push(`@-moz-document url("about:newtab"), url("about:home"), url-prefix("chrome://noraneko-newtab/") {\n${boost(R + "\n" + newtab.join("\n"))}\n}`);
+  out.push(`@-moz-document url("about:newtab"), url("about:home"), url("resource://handdesign/newtab.html"), url-prefix("chrome://noraneko-newtab/") {\n${boost(R + "\n" + newtab.join("\n"))}\n}`);
   if (R) {
     // PDF и встроенные страницы тоже берут акцент и скорость анимаций
-    out.push(`@-moz-document url-prefix("resource://pdf.js/"), url-prefix("about:"), url-prefix("resource://handdesign/"), url-prefix("chrome://fmstudio/") {\n${boost(R)}\n}`);
+    out.push(`@-moz-document url-prefix("resource://pdf.js/"), url-prefix("about:"), url("resource://handdesign/newtab.html"), url-prefix("resource://handdesign/"), url-prefix("chrome://fmstudio/") {\n${boost(R)}\n}`);
   }
   const pdfVars = [];
   for (const [key, prop] of [["pdfBar", "--x-bar"], ["pdfWell", "--x-well"]]) {
